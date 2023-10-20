@@ -1,6 +1,8 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
 using SimU_GameService.Api.Hubs;
+using SimU_GameService.Application.Common;
+using SimU_GameService.Application.Services;
 using SimU_GameService.Contracts.Requests;
 using SimU_GameService.Contracts.Responses;
 
@@ -10,22 +12,51 @@ namespace SimU_GameService.Api.Controllers;
 [Route("[controller]")]
 public class AuthenticationController : ControllerBase
 {
-    private readonly ILogger<AuthenticationController> _logger;
     private readonly IHubContext<UnityClientHub, IUnityClient> _hubContext;
+    private readonly AuthenticationService _authenticationService;
 
     public AuthenticationController(
-        ILogger<AuthenticationController> logger,
-        IHubContext<UnityClientHub, IUnityClient> hubContext)
+        IHubContext<UnityClientHub, IUnityClient> hubContext,
+        IUserRepository userRepository)
     {
-        _logger = logger;
         _hubContext = hubContext;
+        _authenticationService = new AuthenticationService(userRepository);
     }
 
     [HttpPost("register", Name = "RegisterUser")]
-    public async Task<RegisterUserResponse> RegisterUser([FromBody] RegisterUserRequest request)
+    public async Task<AuthenticationResponse> RegisterUser([FromBody] RegisterRequest request)
     {
-        var response = new RegisterUserResponse(request.Username, request.Email);
-        await _hubContext.Clients.All.ReceiveMessage("Server", $"{response}");
-        return response;
+        var userId = await _authenticationService.RegisterUser(
+            request.Username,
+            request.Email,
+            request.Password);
+
+        if (userId == Guid.Empty)
+        {
+            return new AuthenticationResponse(userId.ToString(), "Account with email already registered.");
+        }
+
+        await _hubContext.Clients.All.ReceiveMessage("Server",
+            $"New user {request.Username} with ID {userId} has registered.");
+
+        return new AuthenticationResponse(userId.ToString(), "User registered.");
+    }
+
+    [HttpPost("login", Name = "LoginUser")]
+    public async Task<AuthenticationResponse> LoginUser([FromBody] LoginRequest request)
+    {
+        var userId = await _authenticationService.LoginUser(
+            request.Email,
+            request.Password);
+
+        if (userId == Guid.Empty)
+        {
+            return new AuthenticationResponse(userId.ToString(), "User not found.");
+        }
+
+        await _hubContext.Clients.All.ReceiveMessage("Server",
+            $"User {request.Email} with ID {userId} has logged in.");
+
+        return new AuthenticationResponse(userId.ToString(), "User logged in.");
     }
 }

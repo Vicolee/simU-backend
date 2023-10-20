@@ -11,8 +11,8 @@ public interface IUnityClient
     /// <summary>
     /// Broadcasts a message to all connected clients.
     /// </summary>
-    /// <param name="user">The sender of the message</param>
+    /// <param name="sender">The client (can also be the server) sending the message</param>
     /// <param name="message">The content of the message</param>
     /// <returns></returns>
-    Task ReceiveMessage(string user, string message);
+    Task ReceiveMessage(string sender, string message);
 }

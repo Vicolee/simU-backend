@@ -1,5 +1,6 @@
-using Microsoft.AspNetCore.SignalR;
 using SimU_GameService.Api.Hubs;
+using SimU_GameService.Application.Common;
+using SimU_GameService.Infrastructure.Persistence;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -7,6 +8,8 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
 builder.Services.AddSignalR();
+
+builder.Services.AddSingleton<IUserRepository, UserRepository>();
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();

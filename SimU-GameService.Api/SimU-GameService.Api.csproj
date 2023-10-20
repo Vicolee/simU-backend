@@ -14,6 +14,8 @@
 
   <ItemGroup>
     <ProjectReference Include="..\SimU-GameService.Contracts\SimU-GameService.Contracts.csproj" />
+    <ProjectReference Include="..\SimU-GameService.Application\SimU-GameService.Application.csproj" />
+    <ProjectReference Include="..\SimU-GameService.Infrastructure\SimU-GameService.Infrastructure.csproj" />
   </ItemGroup>
 
 </Project>

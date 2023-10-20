@@ -476,5 +476,7 @@ $RECYCLE.BIN/
 # Windows shortcuts
 *.lnk
 
-# custom additions
-Requests/
+## custom additions
+
+# HTTP requests
+.requests/
