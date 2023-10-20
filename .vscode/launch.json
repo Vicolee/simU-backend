@@ -8,7 +8,7 @@
             "name": "C#: SimU-GameService.Api Debug",
             "type": "dotnet",
             "request": "launch",
-            "projectPath": "${workspaceFolder}/SimU-GameService.Api/SimU-GameService.Api.csproj"
+            "projectPath": "${workspaceFolder}/src/SimU-GameService.Api/SimU-GameService.Api.csproj"
         },
         {
             "name": ".NET Core Attach",
