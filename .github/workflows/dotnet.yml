@@ -20,11 +20,9 @@ jobs:
       uses: actions/setup-dotnet@v3
       with:
         dotnet-version: 7.0.x
-    - name: Switch to src directory
-      run: cd src/
     - name: Restore dependencies
-      run: dotnet restore
+      run: dotnet restore src/*.sln
     - name: Build
-      run: dotnet build --no-restore
+      run: dotnet build --no-restore src
     - name: Test
-      run: dotnet test --no-build --verbosity normal
+      run: dotnet test --no-build --verbosity normal src
