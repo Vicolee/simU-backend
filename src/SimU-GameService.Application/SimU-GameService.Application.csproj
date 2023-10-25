@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <ItemGroup>
-    <ProjectReference Include="..\SimU-GameService.Domain\SimU-GameService.Domain.csproj" />
+    <ProjectReference Include="..\SimU-GameService.Domain\SimU-GameService.Domain.csproj"/>
   </ItemGroup>
 
   <PropertyGroup>

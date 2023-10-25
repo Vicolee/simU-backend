@@ -11,6 +11,10 @@ builder.Services.AddSignalR();
 
 builder.Services.AddSingleton<IUserRepository, UserRepository>();
 
+// EfCore dbContext -- also instantiates the database provider we are using
+builder.Services.AddDbContext<SimUDbContext>(
+    options => options.UseNpgsql(builder.Configuration.GetConnectionString("SimUDb")));
+
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();

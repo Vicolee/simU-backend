@@ -1,13 +1,18 @@
-using Microsoft.AspNetCore.Components.Routing;
+using System.ComponentModel.DataAnnotations;
 
-namespace GameService.Models;
+namespace SimU_GameService.Domain;
 
 public class User
 {
-    public string? userID { get; set; }
+    public Guid userID { get; set; }
+    [Required]
     public string? firebaseID { get; set; }
     public string? username { get; set; }
+    [Required]
+    [MaxLength(32)]
+    [MinLength(2)]
     public string? email { get; set; }
+    [Required]
     public DateTime createdAt { get; set; }
     public List<Friend>? friends { get; set; }
     public Location? lastLocation { get; set; }
@@ -31,5 +36,4 @@ public class Location
 {
     public int x { get; set; }
     public int y { get; set; }
-
 }

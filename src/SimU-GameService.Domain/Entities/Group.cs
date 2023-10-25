@@ -1,6 +1,4 @@
-using Microsoft.AspNetCore.Components.Routing;
-
-namespace GameService.Models;
+namespace SimU_GameService.Domain;
 public class Group {
     public string? groupID { get; set; }
     public List<string>? users {get; set; }

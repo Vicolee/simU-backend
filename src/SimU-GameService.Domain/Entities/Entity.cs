@@ -1,4 +1,4 @@
-namespace SimU_GameService.Domain.Entities;
+namespace SimU_GameService.Domain;
 
 public abstract class Entity
 {

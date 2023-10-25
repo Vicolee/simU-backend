@@ -1,6 +1,4 @@
-using Microsoft.AspNetCore.Components.Routing;
-
-namespace GameService.Models;
+namespace SimU_GameService.Domain;
 public class Chat {
     public string? chatID { get; set; }
     public string? senderID { get; set; }
