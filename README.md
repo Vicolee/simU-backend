@@ -5,7 +5,7 @@ This repository contains code for the backend implementation of the Sim-U projec
 ## Running the application
 
 - Clone the repository and run `dotnet build` in the [`src`](src/) directory.
-- Navigate to the [Api](src/SimU-GameService.Api/) directory.
+- Navigate to the [API](src/SimU-GameService.Api/) directory.
 - Run the `dotnet run` command to launch the application.
 
 ## Code structure
