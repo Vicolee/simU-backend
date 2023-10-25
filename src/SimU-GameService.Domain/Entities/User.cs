@@ -1,14 +1,35 @@
-﻿namespace SimU_GameService.Domain.Entities;
+using Microsoft.AspNetCore.Components.Routing;
 
-public class User : Entity
+namespace GameService.Models;
+
+public class User
 {
-    public string Username { get; private set; }
-    public string Email { get; private set; }
-    public string Password { get; private set; }
-    public User(string username, string email, string password) : base()
-    {
-        Username = username;
-        Email = email;
-        Password = password;
-    }
+    public string? userID { get; set; }
+    public string? firebaseID { get; set; }
+    public string? username { get; set; }
+    public string? email { get; set; }
+    public DateTime createdAt { get; set; }
+    public List<Friend>? friends { get; set; }
+    public Location? lastLocation { get; set; }
+    public string? map_id { get; set; }
+
+    // public Memory memories { get; set; }
+
+    // public Personality personality { get; set; }
+
+
+
+}
+
+public class Friend
+{
+    public string userID { get; set; }
+    public DateTime befriendedAt { get; set; }
+}
+
+public class Location
+{
+    public int x { get; set; }
+    public int y { get; set; }
+
 }
