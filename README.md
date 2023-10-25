@@ -34,7 +34,7 @@ This project contains the code that handles our application's infrastructure. Fo
 
 ### [Contracts](src/SimU-GameService.Contracts/)
 
-This is a simple class library that defines the *data transfer objects* (DTO) for the WebAPI. The requests define the structure of the data objects that the API expects from clients, whereas the responses define the data models sent back. This component can be thought of as an extension of the WebAPI.
+This is a simple class library that defines the shared *data transfer objects* (DTO) for the WebAPI. The requests define the structure of the data objects that the API expects from clients, whereas the responses define the data models sent back. This component can be thought of as an extension of the WebAPI.
 
 ### [Api](src/SimU-GameService.Api/)
 
