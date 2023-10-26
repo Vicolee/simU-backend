@@ -1,6 +1,7 @@
 using SimU_GameService.Api.Hubs;
 using SimU_GameService.Application.Common;
 using SimU_GameService.Infrastructure.Persistence;
+using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -13,7 +14,7 @@ builder.Services.AddSingleton<IUserRepository, UserRepository>();
 
 // EfCore dbContext -- also instantiates the database provider we are using
 builder.Services.AddDbContext<SimUDbContext>(
-    options => options.UseNpgsql(builder.Configuration.GetConnectionString("SimUDb")));
+    options => options.UseNpgsql(builder.Configuration.GetConnectionString("SimUDb"), b => b.MigrationsAssembly("SimU-GameService.Api")));
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();

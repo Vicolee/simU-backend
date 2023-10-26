@@ -1,5 +1,5 @@
 ﻿using SimU_GameService.Application.Common;
-using SimU_GameService.Domain.Entities;
+using SimU_GameService.Domain;
 
 namespace SimU_GameService.Infrastructure.Persistence;
 
@@ -21,7 +21,7 @@ public class UserRepository : IUserRepository
 
     public Task<User?> GetUserByEmail(string email)
     {
-        var result = _users.FirstOrDefault(u => u.Email == email);
+        var result = _users.FirstOrDefault(u => u.email == email);
         return Task.FromResult(result);
     }
 

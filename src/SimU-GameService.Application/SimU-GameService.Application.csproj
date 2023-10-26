@@ -3,7 +3,6 @@
   <ItemGroup>
     <ProjectReference Include="..\SimU-GameService.Domain\SimU-GameService.Domain.csproj"/>
   </ItemGroup>
-
   <PropertyGroup>
     <TargetFramework>net7.0</TargetFramework>
     <RootNamespace>SimU_GameService.Application</RootNamespace>

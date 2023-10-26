@@ -1,5 +1,5 @@
 ﻿using SimU_GameService.Application.Common;
-using SimU_GameService.Domain.Entities;
+using SimU_GameService.Domain;
 
 namespace SimU_GameService.Application.Services;
 
@@ -47,7 +47,7 @@ public class AuthenticationService
         try
         {
             var user = await _userRepository.GetUserByEmail(email) ?? throw new Exception("User not found.");
-            if (user.Password != password)
+            if (user.password != password)
             {
                 throw new Exception("Incorrect password.");
             }
