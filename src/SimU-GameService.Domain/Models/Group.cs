@@ -1,17 +1,22 @@
+using SimU_GameService.Domain.Primitives;
+
 namespace SimU_GameService.Domain.Models;
 
-public class Group
+public class Group : Entity
 {
-    public Guid Id { get; private set; }
-    public string Name { get; set; }
+    public string? Name { get; set; }
     public DateTime CreatedTime { get; set; }
     private readonly List<Guid> _memberIds;
 
-    public Group(string name)
+    public Group() : base()
+    {
+        _memberIds = new();
+    }
+
+    public Group(string name) : this()
     {
         Name = name;
         CreatedTime = DateTime.Now;
-        _memberIds = new();
     }
 
     public void AddUser(Guid userId)
