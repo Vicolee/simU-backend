@@ -1,4 +1,4 @@
-namespace SimU_GameService.Domain;
+namespace SimU_GameService.Domain.Models;
 
 public class Chat
 {
