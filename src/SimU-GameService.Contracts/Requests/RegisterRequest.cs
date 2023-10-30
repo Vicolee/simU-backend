@@ -1,6 +1,7 @@
 ﻿namespace SimU_GameService.Contracts.Requests;
 
 public record class RegisterRequest(
-    string Username,
+    string FirstName,
+    string LastName,
     string Password,
     string Email);

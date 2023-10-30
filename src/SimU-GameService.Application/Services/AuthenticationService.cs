@@ -1,5 +1,5 @@
 ﻿using SimU_GameService.Application.Common;
-using SimU_GameService.Domain.Entities;
+using SimU_GameService.Domain.Models;
 
 namespace SimU_GameService.Application.Services;
 
@@ -22,9 +22,17 @@ public class AuthenticationService
     /// <param name="email"></param>
     /// <param name="password"></param>
     /// <returns> The user's ID. </returns>
-    public async Task<Guid> RegisterUser(string username, string email, string password)
+    public async Task<Guid> RegisterUser(string firstName, string lastName, string email)
     {
-        var user = new User(username, email, password);
+        // TODO: use Firebase authentication to get identity ID
+        // For now, use Guid.NewGuid()
+
+        var identityId = Guid.NewGuid();
+        var user = new User(
+            identityId,
+            firstName,
+            lastName,
+            email);
 
         if (await _userRepository.GetUserByEmail(email) != null)
         {
@@ -46,11 +54,8 @@ public class AuthenticationService
     {
         try
         {
+            // TODO: use Firebase authentication to log in user. For now, every user is logged in.
             var user = await _userRepository.GetUserByEmail(email) ?? throw new Exception("User not found.");
-            if (user.Password != password)
-            {
-                throw new Exception("Incorrect password.");
-            }
             return user.Id;
         }
         catch (Exception)

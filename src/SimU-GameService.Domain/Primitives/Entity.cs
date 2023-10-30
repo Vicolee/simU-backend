@@ -1,8 +1,8 @@
-namespace SimU_GameService.Domain.Entities;
+namespace SimU_GameService.Domain.Primitives;
 
 public abstract class Entity
 {
-    public Guid Id { get; protected set; }
+    public Guid Id { get; private set; }
 
     protected Entity()
     {
