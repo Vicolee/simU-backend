@@ -5,13 +5,15 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <RootNamespace>SimU_GameService.Api</RootNamespace>
   </PropertyGroup>
+  <PropertyGroup Condition=" '$(RunConfiguration)' == 'https' " />
+  <PropertyGroup Condition=" '$(RunConfiguration)' == 'http' " />
   <ItemGroup>
-    <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="7.0.12"/>
-    <PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0"/>
+    <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="7.0.12" />
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\SimU-GameService.Contracts\SimU-GameService.Contracts.csproj"/>
-    <ProjectReference Include="..\SimU-GameService.Application\SimU-GameService.Application.csproj"/>
-    <ProjectReference Include="..\SimU-GameService.Infrastructure\SimU-GameService.Infrastructure.csproj"/>
+    <ProjectReference Include="..\SimU-GameService.Contracts\SimU-GameService.Contracts.csproj" />
+    <ProjectReference Include="..\SimU-GameService.Application\SimU-GameService.Application.csproj" />
+    <ProjectReference Include="..\SimU-GameService.Infrastructure\SimU-GameService.Infrastructure.csproj" />
   </ItemGroup>
 </Project>
