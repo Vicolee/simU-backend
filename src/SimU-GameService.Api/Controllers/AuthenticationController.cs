@@ -26,10 +26,11 @@ public class AuthenticationController : ControllerBase
     [HttpPost("register", Name = "RegisterUser")]
     public async Task<AuthenticationResponse> RegisterUser([FromBody] RegisterRequest request)
     {
+        // TODO: update to pass password for Firebase auth
         var userId = await _authenticationService.RegisterUser(
-            request.Username,
-            request.Email,
-            request.Password);
+            request.FirstName,
+            request.LastName,
+            request.Email);
 
         if (userId == Guid.Empty)
         {
@@ -37,7 +38,7 @@ public class AuthenticationController : ControllerBase
         }
 
         await _hubContext.Clients.All.ReceiveMessage("Server",
-            $"New user {request.Username} with ID {userId} has registered.");
+            $"New user {request.FirstName} with ID {userId} has registered.");
 
         return new AuthenticationResponse(userId.ToString(), "User registered.");
     }
