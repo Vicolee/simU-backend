@@ -1,0 +1,46 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31903.59
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SimU-GameService.Api", "SimU-GameService.Api\SimU-GameService.Api.csproj", "{D570A0AF-F593-4AFC-B7B7-75A0639CD124}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SimU-GameService.Application", "SimU-GameService.Application\SimU-GameService.Application.csproj", "{0E9D75E0-ECF8-41B2-9BC1-3C69D9EF24C5}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SimU-GameService.Contracts", "SimU-GameService.Contracts\SimU-GameService.Contracts.csproj", "{EC45A018-55DD-438F-8917-65533064B8DF}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SimU-GameService.Domain", "SimU-GameService.Domain\SimU-GameService.Domain.csproj", "{CCFFDB91-B72A-4A8C-B535-E930C375ECDE}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SimU-GameService.Infrastructure", "SimU-GameService.Infrastructure\SimU-GameService.Infrastructure.csproj", "{81AE46EA-9371-4BEB-9CF3-6DC881DEB4ED}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{D570A0AF-F593-4AFC-B7B7-75A0639CD124}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D570A0AF-F593-4AFC-B7B7-75A0639CD124}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D570A0AF-F593-4AFC-B7B7-75A0639CD124}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D570A0AF-F593-4AFC-B7B7-75A0639CD124}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0E9D75E0-ECF8-41B2-9BC1-3C69D9EF24C5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0E9D75E0-ECF8-41B2-9BC1-3C69D9EF24C5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0E9D75E0-ECF8-41B2-9BC1-3C69D9EF24C5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0E9D75E0-ECF8-41B2-9BC1-3C69D9EF24C5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EC45A018-55DD-438F-8917-65533064B8DF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EC45A018-55DD-438F-8917-65533064B8DF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EC45A018-55DD-438F-8917-65533064B8DF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EC45A018-55DD-438F-8917-65533064B8DF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CCFFDB91-B72A-4A8C-B535-E930C375ECDE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CCFFDB91-B72A-4A8C-B535-E930C375ECDE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CCFFDB91-B72A-4A8C-B535-E930C375ECDE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CCFFDB91-B72A-4A8C-B535-E930C375ECDE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{81AE46EA-9371-4BEB-9CF3-6DC881DEB4ED}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{81AE46EA-9371-4BEB-9CF3-6DC881DEB4ED}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{81AE46EA-9371-4BEB-9CF3-6DC881DEB4ED}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{81AE46EA-9371-4BEB-9CF3-6DC881DEB4ED}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal

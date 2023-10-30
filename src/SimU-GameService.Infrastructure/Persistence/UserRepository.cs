@@ -1,39 +1,46 @@
-﻿using SimU_GameService.Application.Common;
-using SimU_GameService.Domain;
+﻿using Microsoft.EntityFrameworkCore;
+using SimU_GameService.Application.Common;
+using SimU_GameService.Domain.Models;
 
 namespace SimU_GameService.Infrastructure.Persistence;
 
-/// <summary>
-/// This class specifies our database implementation. 
-/// For now, we are using a simple in-memory database.
-/// To be replaced with an Entity Framework Core implementation.
-/// </summary>
 public class UserRepository : IUserRepository
 {
-    private readonly List<User> _users = new();
-    private IEnumerable<User> Users => _users;
+    private readonly SimUDbContext _dbContext;
+
+    public UserRepository(SimUDbContext dbContext)
+    {
+        _dbContext = dbContext;
+    }
 
     public Task AddUser(User user)
     {
-        _users.Add(user);
+        _dbContext.Add(user);
+        _dbContext.SaveChanges();
+
         return Task.CompletedTask;
     }
 
-    public Task<User?> GetUserByEmail(string email)
+    public async Task<User?> GetUserByEmail(string email)
     {
-        var result = _users.FirstOrDefault(u => u.email == email);
-        return Task.FromResult(result);
+        return await _dbContext.Users
+            .FirstOrDefaultAsync(u => u.Email == email);
     }
 
-    public Task<User?> GetUserById(Guid userId)
+    public async Task<User?> GetUserById(Guid userId)
     {
-        var result = _users.FirstOrDefault(u => u.Id == userId);
-        return Task.FromResult(result);
+        return await _dbContext.Users
+            .FirstOrDefaultAsync(u => u.Id == userId);
     }
 
-    public Task RemoveUser(Guid userId)
+    public async Task RemoveUser(Guid userId)
     {
-        _users.RemoveAll(u => u.Id == userId);
-        return Task.CompletedTask;
+        var user = await _dbContext.Users.FirstOrDefaultAsync(u => u.Id == userId);
+
+        if (user is not null)
+        {
+            _dbContext.Users.Remove(user);
+            _dbContext.SaveChanges();
+        }
     }
 }
