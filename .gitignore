@@ -477,6 +477,3 @@ $RECYCLE.BIN/
 *.lnk
 
 ## custom additions
-
-# HTTP requests
-.requests/
