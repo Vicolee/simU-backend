@@ -24,7 +24,7 @@ public class AuthenticationController : ControllerBase
     }
 
     [HttpPost("register", Name = "RegisterUser")]
-    public async Task<AuthenticationResponse> RegisterUser([FromBody] RegisterRequest request)
+    public async Task<ActionResult<AuthenticationResponse>> RegisterUser([FromBody] RegisterRequest request)
     {
         // TODO: update to pass password for Firebase auth
         var userId = await _authenticationService.RegisterUser(
@@ -34,17 +34,17 @@ public class AuthenticationController : ControllerBase
 
         if (userId == Guid.Empty)
         {
-            return new AuthenticationResponse(userId.ToString(), "Account with email already registered.");
+            return NotFound(new AuthenticationResponse(userId.ToString(), "User not found."));
         }
 
         await _hubContext.Clients.All.ReceiveMessage("Server",
             $"New user {request.FirstName} with ID {userId} has registered.");
 
-        return new AuthenticationResponse(userId.ToString(), "User registered.");
+        return Ok(new AuthenticationResponse(userId.ToString(), "User registered."));
     }
 
     [HttpPost("login", Name = "LoginUser")]
-    public async Task<AuthenticationResponse> LoginUser([FromBody] LoginRequest request)
+    public async Task<ActionResult<AuthenticationResponse>> LoginUser(LoginRequest request)
     {
         var userId = await _authenticationService.LoginUser(
             request.Email,
@@ -52,12 +52,26 @@ public class AuthenticationController : ControllerBase
 
         if (userId == Guid.Empty)
         {
-            return new AuthenticationResponse(userId.ToString(), "User not found.");
+            return NotFound(new AuthenticationResponse(userId.ToString(), "User not found."));
         }
 
         await _hubContext.Clients.All.ReceiveMessage("Server",
             $"User {request.Email} with ID {userId} has logged in.");
 
-        return new AuthenticationResponse(userId.ToString(), "User logged in.");
+        return Ok(new AuthenticationResponse(userId.ToString(), "User logged in."));
+    }
+
+    [HttpPut("{userId}/logout", Name = "LogoutUser")]
+    public Task<ActionResult> LogoutUser(Guid userId)
+    {
+        try
+        {
+            throw new NotImplementedException();
+        }
+        catch
+        {
+            return Task.FromResult<ActionResult>(
+                StatusCode(501, new { message = "This endpoint is not yet implemented." }));
+        }
     }
 }
