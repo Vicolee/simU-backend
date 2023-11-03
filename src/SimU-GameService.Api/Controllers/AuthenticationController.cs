@@ -34,7 +34,7 @@ public class AuthenticationController : ControllerBase
 
         if (userId == Guid.Empty)
         {
-            return NotFound(new AuthenticationResponse(userId.ToString(), "User not found."));
+            return NotFound(new AuthenticationResponse(userId.ToString(), "User already registered."));
         }
 
         await _hubContext.Clients.All.ReceiveMessage("Server",
