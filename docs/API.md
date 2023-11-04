@@ -20,143 +20,111 @@
 
 #### Description
 
-This endpoint registers (and logs in) a user with the game server.
-
-#### Function prototype
-
-```csharp
-Task<AuthenticationResponse> RegisterUserAsync(
-  string firstName, 
-  string lastName, 
-  string email, 
-  string password);
-public record AuthenticationResponse(Guid Id, string AuthToken);
-```
+- This endpoint registers (and logs in) a user with the game server.
 
 #### Request
 
-- `POST {{host}}/authentication/register`
+- `POST /authentication/register`
 
-```json
-{
-  "firstName" : "John",
-  "lastName" : "Doe",
-  "email" : "john.doe@example.com",
-  "password" : "MY_VERY_STRONG_PASSWORD"
-}
-```
+  ```json
+  {
+    "firstName": "string",
+    "lastName": "string",
+    "password": "string",
+    "email": "string"
+  }
+  ```
 
 #### Response
 
-```json
-{
-  "id": "00000000-0000-0000-0000-000000000000",
-  "authToken": "eyJhbGciOiJIUzI1...k6yJV_adQssw5c"
-}
-```
+- `200 OK`
+
+  ```json
+  {
+    "id": "string",
+    "authToken": "string"
+  }
+  ```
 
 ### LoginUser
 
 #### Description
 
-This endpoint logs in a user with the game server.
-
-#### Function prototype
-
-```csharp
-Task<AuthenticationResponse> LoginUserAsync(string email, string password);
-public record AuthenticationResponse(Guid Id, string AuthToken);
-```
+- This endpoint logs in a user with the game server.
 
 #### Request
 
-- `POST {{host}}/authentication/login`
+- `POST /authentication/login`
 
-```json
-{
-  "email" : "JohnDoe@example.com",
-  "password" : "MY_VERY_STRONG_PASSWORD"
-}
-```
+  ```json
+  {
+    "email" : "string",
+    "password" : "string"
+  }
+  ```
 
 #### Response
 
-```json
-{
-  "id": "00000000-0000-0000-0000-000000000000",
-  "authToken": "eyJhbGciOiJIUzI1...k6yJV_adQssw5c"
-}
-```
+- `200 OK`
+
+  ```json
+  {
+    "id": "string",
+    "authToken": "string"
+  }
+  ```
 
 ### LogoutUser
 
 #### Description
 
-This endpoint logs out the user from the game.
-
-#### Function prototype
-
-```csharp
-Task LogoutUser(Guid userId);
-```
+- This endpoint logs out the user from the game.
 
 #### Request
 
-`PUT {{host}}/authentication/{userId}/logout`
+- `PUT /authentication/{userId}/logout`
 
 #### Response
 
-`204 No Content`
+- `204 No Content`
 
 ## User Endpoints
 
-### GetQuestionnaire
+### GetQuestions
 
 #### Description
 
-This endpoint returns the user entrance questionnaire to the client.
-
-#### Function prototype
-
-```csharp
-Task<IEnumerable<string>> GetQuestionnaire();
-```
+- This endpoint returns the user entrance questionnaire to the client.
 
 #### Request
 
-- `GET {{host}}/user/questionnnaire`
+- `GET /users/questions`
 
 #### Response
 
-```json
-[
-  "Example question",
-  "Another example question"
-]
-```
+- `200 OK`
 
-### PostQuestionResponses
+  ```json
+  [
+    "string"
+  ]
+  ```
+
+### PostResponses
 
 #### Description
 
-This method records the clients responses from the entrance questionnaire.
-
-#### Function prototype
-
-```csharp
-Task PostQuestionResponses(Guid userId, List<string>);
-```
+This endpoint records the clients responses from the entrance questionnaire.
 
 #### Request
 
-- `POST {{host}}/user/{userId}/questionnnaire`
+- `POST /users/{userId}/responses`
 
-```json
-[
-  "Example response string",
-  "Another example response string"
-]
-```
+  ```json
+  [
+    "string"
+  ]
+  ```
 
 #### Response
 
@@ -172,16 +140,14 @@ This method updates the user’s location in the map whenever a user changes loc
 
 ```csharp
 Task UpdateLocation(Location location);
-public record Location(int X_coordinate, Y_coordinate);
+public record Location(int X_coordinate, int Y_coordinate);
 ```
 
 #### Request
 
-- SignalR code
-
 ```csharp
 Location location = new Location(0, 0);
-HubConnection.SendAsync("UpdateLocation", location.ToString())
+HubConnection.SendAsync("UpdateLocation", location)
 ```
 
 #### Response
@@ -189,51 +155,35 @@ HubConnection.SendAsync("UpdateLocation", location.ToString())
 The `UpdateLocation` callback on the server will broadcast the user’s new location to all other clients using the client-side `UpdateLocation` callback as shown below:
 
 ```csharp
-await Clients.All.SendAsync("UpdateLocation",
-    userId.ToString(),
-    location.ToString());
+await Clients.All.SendAsync("UpdateLocation", userId, location);
 ```
 
 ### GetUser
 
 #### Description
 
-This method returns user information for the given `userId`.
-
-#### Function prototype
-
-```csharp
-Task<UserResponse> GetUser(Guid userId);
-public record UserResponse(
- string FirstName,
- string LastName,
- string Email,
- bool IsLoggedIn,
- DateTime CreatedTime,
- DateTime LastActiveTime,
- Location LastKnownLocation);
-```
+This endpoint returns user information for the given `userId`.
 
 #### Request
 
-- `GET {{host}}/user/{userId}`
+- `GET /users/{userId}`
 
 #### Response
 
-```json
-{
-  "firstName": "John",
-  "lastName": "Doe",
-  "email": "john.doe@example.com",
-  "isLoggedIn" : true,
-  "createdTime": "2023-01-01T00:00:00",
-  "lastActiveTime" : "2023-01-01T00:00:00",
-  "lastKnownLocation": {
-      "x_coordinate": 0,
-      "y_coordinate": 0
-    }
-}
-```
+- `200 OK`
+
+  ```json
+  {
+    "firstName": "string",
+    "lastName": "string",
+    "email": "string",
+    "lastKnownX": 0,
+    "lastKnownY": 0,
+    "isLoggedIn": true,
+    "createdTime": "2023-11-04T22:54:19.911Z",
+    "lastActiveTime": "2023-11-04T22:54:19.911Z"
+  }
+  ```
 
 ### SendFriendRequest
 
@@ -249,11 +199,9 @@ Task SendFriendRequest(Guid userId);
 
 #### Request
 
-- SignalR code
-
 ```csharp
-Guid userId = Guid.Empty();
-await HubConnection.SendAsync("SendFriendRequest", userId.ToString());
+Guid userId = Guid.NewGuid();
+await HubConnection.SendAsync("SendFriendRequest", userId);
 ```
 
 #### Response
@@ -274,11 +222,9 @@ Task RespondToFriendRequest(Guid userId, bool accepted);
 
 #### Request
 
-- SignalR code
-
 ```csharp
-Guid userId = Guid.Empty();
-HubConnection.SendAsync("RespondToFriendRequest", userId.ToString(), true);
+Guid userId = Guid.NewGuid();
+HubConnection.SendAsync("RespondToFriendRequest", userId, true);
 ```
 
 #### Response
@@ -291,21 +237,9 @@ The `RespondToFriendRequest` server callback will handle creating a `Friend` obj
 
 This endpoint allows a user with ID `userId` to terminate a *friendship* with another user with ID `friendId` in the game.
 
-#### Function prototype
-
-```csharp
-Task RemoveFriend(Guid friendId);
-```
-
 #### Request
 
-- `DELETE {{host}}/user/{userId}/friends`
-
-```json
-{
-  "friendId" : "00000000-0000-0000-0000-000000000000"
-}
-```
+- `DELETE /users/{userId}/friends?friendId={friendIdValue}`
 
 #### Response
 
@@ -317,31 +251,22 @@ Task RemoveFriend(Guid friendId);
 
 This endpoint returns the list of friends that a certain user with ID `userId` has befriended.
 
-#### Function prototype
-
-```csharp
-Task<IEnumerable<Friend>> GetFriends(userId);
-public record Friend(Guid friendId, DateTime createdTime);
-```
-
 #### Request
 
-- `GET {{host}}/user/{userId}/friends`
+- `GET /users/{userId}/friends`
 
 #### Response
 
-```json
-[
-  {
-    "friendId" : "00000000-0000-0000-0000-000000000000",
-    "createdTime": "2022-01-01T00:00:00"
-  },
-  {
-    "friendId" : "00000000-0000-0000-0000-000000000000",
-    "createdTime": "2022-01-01T00:00:00"
-  }
-]
-```
+- `200 OK`
+
+  ```json
+  [
+    {
+      "friendId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+      "createdTime": "2023-11-04T23:00:27.828Z"
+    }
+  ]
+  ```
 
 ## Group Endpoints
 
@@ -351,50 +276,44 @@ public record Friend(Guid friendId, DateTime createdTime);
 
 Any client with ID `ownerId` uses this endpoint to create a new group with a given `name`.
 
-#### Function prototype
-
-```csharp
-Task<Guid> CreateGroup(Guid ownerId, string name);
-```
-
 #### Request
 
-- `POST {{host}}/group`
+- `POST /group`
 
-```json
-{
-  "ownerId" : "00000000-0000-0000-0000-000000000000",
-  "name" : "Example group name"
-}
-```
+  ```json
+  {
+    "ownerId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+    "name": "string"
+  }
+  ```
 
 #### Response
 
-```json
-{
-  "groupId" : "00000000-0000-0000-0000-000000000000",
-  "createdTime": "2022-01-01T00:00:00"
-}
-```
+- `200 OK`
+
+  ```json
+  {
+    "groupId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+    "createdTime": "2023-11-04T23:01:17.842Z"
+  }
+  ```
 
 ### JoinGroup
 
 #### Description
 
-A client with ID `userId` uses this endpoint to request to join a group with ID `groupId`.
+A client uses this endpoint to request to join a group with ID `groupId`.
 
 #### Function prototype
 
 ```csharp
-Task JoinGroup(Guid groupId, Guid userId);
+Task JoinGroup(Guid groupId);
 ```
 
 #### Request
 
-- SignalR code
-
 ```csharp
-await HubConnection.SendAsync("JoinGroup", groupId.ToString());
+await HubConnection.SendAsync("JoinGroup", groupId);
 ```
 
 #### Response
@@ -415,10 +334,12 @@ Task AddUser(Guid groupId, Guid ownerId, Guid userId);
 
 #### Request
 
-- SignalR code
-
 ```csharp
-await HubConnection.SendAsync("AddUser", groupId.ToString(), ownerId.ToString(), userId.ToString());
+Guid groupId = Guid.NewGuid();
+Guid userId = Guid.NewGuid();
+Guid ownerId = Guid.NewGuid();
+
+await HubConnection.SendAsync("AddUser", groupId, ownerId, userId);
 ```
 
 #### Response
@@ -429,7 +350,7 @@ The `AddUser` server callback adds the `userId` to the group and notifies the us
 
 #### Description
 
-- Remove a user from a group.
+Remove a user from a group.
 
 #### Function prototype
 
@@ -439,10 +360,8 @@ Task RemoveUser(Guid groupId, Guid ownerId, Guid userId);
 
 #### Request
 
-- SignalR code
-
 ```csharp
-await HubConnection.SendAsync("RemoveUser", groupId.ToString(), ownerId.ToString(), userId.ToString());
+await HubConnection.SendAsync("RemoveUser", groupId, ownerId, userId);
 ```
 
 #### Response
@@ -455,21 +374,9 @@ The `RemoveUser` server callback removes the `userId` from the group and (if app
 
 This endpoint deletes the group with ID `groupId` from the game server.
 
-#### Function prototype
-
-```csharp
-Task DeleteGroup(Guid groupId, Guid ownerId);
-```
-
 #### Request
 
-- `DELETE {{host}}/group/{groupId}`
-
-```json
-{
-  "ownerId" : "00000000-0000-0000-0000-000000000000"
-}
-```
+- `DELETE /group/{groupId}?ownerId={ownerIdValue}`
 
 #### Response
 
@@ -477,7 +384,7 @@ Task DeleteGroup(Guid groupId, Guid ownerId);
 
 ## Chat Endpoints
 
-### SendChat
+### SendMessage
 
 #### Description
 
@@ -486,17 +393,15 @@ This endpoint sends a message to a user/group through the server.
 #### Function prototype
 
 ```csharp
-Task SendChat(Guid receiverId, string message);
+Task SendMessage(Guid receiverId, string message);
 ```
 
 #### Request
 
-- SignalR code
-
 ```csharp
-Guid receiverId = Guid.Empty();
+Guid receiverId = Guid.NewGuid();
 string message = "Example message"
-HubConnection.SendAsync("SendMessage", receiverId.ToString(), message)
+HubConnection.SendAsync("SendMessage", receiverId, message)
 ```
 
 #### Response
@@ -507,23 +412,11 @@ HubConnection.SendAsync("SendMessage", receiverId.ToString(), message)
 
 #### Description
 
-This endpoint allows a user with ID `userId` to delete a message sent to a user/group through the server.
-
-#### Function prototype
-
-```csharp
-Task DeleteChat(Guid chatId, Guid userId);
-```
+This endpoint allows a user to delete a message sent to a user/group through the server.
 
 #### Request
 
-- `DELETE {{host}}/chat/{chatId}`
-
-```json
-{
-  "userId" : "00000000-0000-0000-0000-000000000000"
-}
-```
+- `DELETE /chats/{chatId}`
 
 #### Response
 
@@ -535,49 +428,32 @@ Task DeleteChat(Guid chatId, Guid userId);
 
 This endpoint gets the chat history between the current client and another user/group with `receiverId`.
 
-#### Function prototype
-
-```csharp
-Task<IEnumerable<ChatResponse>> GetChatHistory(Guid senderId, Guid receiverId);
-public record ChatResponse(
- Guid SenderId,
- Guid ReceiverId,
- string Content,
- bool IsGroupChat,
- DateTime CreatedTime);
-```
-
 #### Request
 
-- `GET {{host}}/chats/history`
+- `GET /chats/history`
 
-```json
-{
-  "senderId" : "00000000-0000-0000-0000-000000000000",
-  "receiverId" : "00000000-0000-0000-0000-000000000000"
-}
-```
+  ```json
+  {
+    "senderId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+    "recipientId": "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+  }
+  ```
 
 #### Response
 
-```json
-[
-  {
-    "SenderID": "00000000-0000-0000-0000-000000000000",
-    "ReceiverID": "00000000-0000-0000-0000-000000000000",
-    "Content": "Example chat message",
-    "IsGroupChat": false,
-    "CreatedTime": "2023-01-01T00:00:00"
-  },
-  {
-    "SenderID": "00000000-0000-0000-0000-000000000000",
-    "ReceiverID": "00000000-0000-0000-0000-000000000000",
-    "Content": "Another example chat message",
-    "IsGroupChat": false,
-    "CreatedTime": "2023-01-01T00:00:00"
-  }
-]
-```
+- `200 OK`
+
+  ```json
+  [
+    {
+      "senderId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+      "receiverId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+      "content": "string",
+      "isGroupChat": true,
+      "createdTime": "2023-11-04T23:07:50.727Z"
+    }
+  ]
+  ```
 
 ### GetUserChats
 
@@ -585,39 +461,22 @@ public record ChatResponse(
 
 Gets the IDs of all the chats sent by the user with ID `userId`.
 
-#### Function prototype
-
-```csharp
-Task<IEnumerable<ChatResponse>> GetUserChats(Guid userId);
-```
-
 #### Request
 
-- `GET {{host}}/chats`
-
-```json
-{
-  "userId" : "00000000-0000-0000-0000-000000000000"
-}
-```
+- `GET /chats?senderId={senderIdValue}`
 
 #### Response
 
-```json
-[
-  {
-    "SenderID": "00000000-0000-0000-0000-000000000000",
-    "ReceiverID": "00000000-0000-0000-0000-000000000000",
-    "Content": "Example chat message",
-    "IsGroupChat": true,
-    "CreatedTime": "2023-01-01T00:00:00"
-  },
-  {
-    "SenderID": "00000000-0000-0000-0000-000000000000",
-    "ReceiverID": "00000000-0000-0000-0000-000000000000",
-    "Content": "Another example chat message",
-    "IsGroupChat": false,
-    "CreatedTime": "2023-01-01T00:00:00"
-  }
-]
-```
+- `200 OK`
+
+  ```json
+  [
+    {
+      "senderId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+      "receiverId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+      "content": "string",
+      "isGroupChat": true,
+      "createdTime": "2023-11-04T23:10:06.106Z"
+    }
+  ]
+  ```

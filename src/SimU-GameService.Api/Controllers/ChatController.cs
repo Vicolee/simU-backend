@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using SimU_GameService.Contracts.Requests;
 using SimU_GameService.Contracts.Responses;
 
 namespace SimU_GameService.Api.Controllers;
@@ -56,8 +57,7 @@ public class ChatsController : ControllerBase
 
     [HttpGet("history", Name = "GetChatHistory")]
     public Task<ActionResult<IEnumerable<ChatResponse>>> GetChatHistory(
-        [FromQuery] Guid senderId,
-        [FromQuery] Guid receiverId)
+        ChatHistoryRequest request)
     {
         try
         {

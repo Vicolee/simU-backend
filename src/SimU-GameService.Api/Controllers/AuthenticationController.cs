@@ -1,6 +1,4 @@
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.SignalR;
-using SimU_GameService.Api.Hubs;
 using SimU_GameService.Application.Common;
 using SimU_GameService.Application.Services;
 using SimU_GameService.Contracts.Requests;
@@ -12,14 +10,10 @@ namespace SimU_GameService.Api.Controllers;
 [Route("[controller]")]
 public class AuthenticationController : ControllerBase
 {
-    private readonly IHubContext<UnityClientHub, IUnityClient> _hubContext;
     private readonly AuthenticationService _authenticationService;
 
-    public AuthenticationController(
-        IHubContext<UnityClientHub, IUnityClient> hubContext,
-        IUserRepository userRepository)
+    public AuthenticationController(IUserRepository userRepository)
     {
-        _hubContext = hubContext;
         _authenticationService = new AuthenticationService(userRepository);
     }
 
@@ -37,9 +31,6 @@ public class AuthenticationController : ControllerBase
             return NotFound(new AuthenticationResponse(userId.ToString(), "User already registered."));
         }
 
-        await _hubContext.Clients.All.ReceiveMessage("Server",
-            $"New user {request.FirstName} with ID {userId} has registered.");
-
         return Ok(new AuthenticationResponse(userId.ToString(), "User registered."));
     }
 
@@ -54,9 +45,6 @@ public class AuthenticationController : ControllerBase
         {
             return NotFound(new AuthenticationResponse(userId.ToString(), "User not found."));
         }
-
-        await _hubContext.Clients.All.ReceiveMessage("Server",
-            $"User {request.Email} with ID {userId} has logged in.");
 
         return Ok(new AuthenticationResponse(userId.ToString(), "User logged in."));
     }
