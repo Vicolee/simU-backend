@@ -1,6 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
-using SimU_GameService.Application.Common;
-using SimU_GameService.Application.Services;
+using SimU_GameService.Application.Common.Abstractions;
 using SimU_GameService.Contracts.Requests;
 using SimU_GameService.Contracts.Responses;
 
@@ -10,28 +9,27 @@ namespace SimU_GameService.Api.Controllers;
 [Route("[controller]")]
 public class AuthenticationController : ControllerBase
 {
-    private readonly AuthenticationService _authenticationService;
+    private readonly IAuthenticationService _authenticationService;
 
-    public AuthenticationController(IUserRepository userRepository)
+    public AuthenticationController(IAuthenticationService authenticationService)
     {
-        _authenticationService = new AuthenticationService(userRepository);
+        _authenticationService = authenticationService;
     }
 
     [HttpPost("register", Name = "RegisterUser")]
     public async Task<ActionResult<AuthenticationResponse>> RegisterUser([FromBody] RegisterRequest request)
     {
-        // TODO: update to pass password for Firebase auth
-        var userId = await _authenticationService.RegisterUser(
+        Guid userId = await _authenticationService.RegisterUser(
             request.FirstName,
             request.LastName,
-            request.Email);
+            request.Email,
+            request.Password);
 
         if (userId == Guid.Empty)
         {
-            return NotFound(new AuthenticationResponse(userId.ToString(), "User already registered."));
+            return NotFound(new AuthenticationResponse(userId, "User already registered."));
         }
-
-        return Ok(new AuthenticationResponse(userId.ToString(), "User registered."));
+        return Ok(new AuthenticationResponse(userId, "User registered."));
     }
 
     [HttpPost("login", Name = "LoginUser")]
@@ -43,10 +41,10 @@ public class AuthenticationController : ControllerBase
 
         if (userId == Guid.Empty)
         {
-            return NotFound(new AuthenticationResponse(userId.ToString(), "User not found."));
+            return NotFound(new AuthenticationResponse(userId, "User not found."));
         }
 
-        return Ok(new AuthenticationResponse(userId.ToString(), "User logged in."));
+        return Ok(new AuthenticationResponse(userId, "User logged in."));
     }
 
     [HttpPut("{userId}/logout", Name = "LogoutUser")]
