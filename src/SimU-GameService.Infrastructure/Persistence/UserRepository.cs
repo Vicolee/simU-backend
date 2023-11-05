@@ -1,5 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using SimU_GameService.Application.Common;
+using SimU_GameService.Application.Common.Abstractions;
 using SimU_GameService.Domain.Models;
 
 namespace SimU_GameService.Infrastructure.Persistence;

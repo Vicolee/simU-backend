@@ -4,7 +4,7 @@ namespace SimU_GameService.Domain.Models;
 
 public class User : Entity
 {
-    public Guid IdentityId { get; set; }
+    public string? IdentityId { get; set; }
     public string? FirstName { get; set; }
     public string? LastName { get; set; }
     public string? Email { get; set; }
@@ -24,7 +24,7 @@ public class User : Entity
     }
 
     public User(
-        Guid identityId,
+        string identityId,
         string firstName,
         string lastName,
         string email) : this()
