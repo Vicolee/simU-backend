@@ -1,7 +1,7 @@
 ﻿namespace SimU_GameService.Api.Hubs;
 
 /// <summary>
-/// Defines the methods that can be invoked by the <see cref="UnityClientHub"/>
+/// Defines the methods on the client-side that can be invoked by the <see cref="UnityHub"/> (server).
 /// </summary>
 public interface IUnityClient
 {

@@ -29,6 +29,6 @@ app.UseHttpsRedirection();
 app.UseAuthorization();
 
 app.MapControllers();
-app.MapHub<UnityClientHub>("/client");
+app.MapHub<UnityHub>("/unity");
 
 app.Run();
