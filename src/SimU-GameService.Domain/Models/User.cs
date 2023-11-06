@@ -39,6 +39,6 @@ public class User : Entity
         FirstName = firstName;
         LastName = lastName;
         Email = email;
-        CreatedTime = DateTime.Now;
+        CreatedTime = DateTime.UtcNow;
     }
 }

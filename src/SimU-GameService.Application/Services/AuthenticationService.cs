@@ -60,6 +60,10 @@ public class AuthenticationService : IAuthenticationService
         }
         catch (Exception e)
         {
+            if (e.InnerException != null)
+            {
+                Console.WriteLine($"Inner Exception: {e .InnerException.Message}");
+            }
             throw new Exception("Failed to register user: " + e.Message);
         }
     }
