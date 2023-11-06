@@ -13,7 +13,7 @@ using SimU_GameService.Infrastructure.Persistence;
 namespace SimU_GameService.Infrastructure.Migrations
 {
     [DbContext(typeof(SimUDbContext))]
-    [Migration("20231030035041_InitialMigration")]
+    [Migration("20231106055236_Initial-Migration")]
     partial class InitialMigration
     {
         /// <inheritdoc />
@@ -124,14 +124,18 @@ namespace SimU_GameService.Infrastructure.Migrations
                     b.Property<string>("FirstName")
                         .HasColumnType("text");
 
-                    b.Property<Guid>("IdentityId")
-                        .HasColumnType("uuid");
+                    b.Property<string>("IdentityId")
+                        .HasColumnType("text");
 
                     b.Property<Guid?>("LastKnownLocationLocationId")
                         .HasColumnType("uuid");
 
                     b.Property<string>("LastName")
                         .HasColumnType("text");
+
+                    b.Property<List<string>>("QuestionResponses")
+                        .IsRequired()
+                        .HasColumnType("text[]");
 
                     b.HasKey("Id");
 

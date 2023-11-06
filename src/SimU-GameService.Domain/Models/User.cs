@@ -1,3 +1,5 @@
+using System.Runtime.CompilerServices;
+using System;
 using SimU_GameService.Domain.Primitives;
 
 namespace SimU_GameService.Domain.Models;
@@ -12,26 +14,31 @@ public class User : Entity
     public List<Guid> ChatIds { get; set; }
     public List<Friend> Friends { get; set; }
     public Location? LastKnownLocation { get; set; }
+    public List<string> QuestionResponses { get; set; }
 
     // TODO: implement models for Memories and Personality later
     // public IEnumerable<Memory> Memories { get; set; }
-    // public Personality personality { get; set; }
+
 
     public User() : base()
     {
         ChatIds = new();
         Friends = new();
+        QuestionResponses = new();
+        LastKnownLocation = null;
     }
 
     public User(
         string identityId,
         string firstName,
         string lastName,
-        string email) : this()
+        string email
+        ) : this()
     {
         IdentityId = identityId;
         FirstName = firstName;
         LastName = lastName;
         Email = email;
+        CreatedTime = DateTime.UtcNow;
     }
 }
