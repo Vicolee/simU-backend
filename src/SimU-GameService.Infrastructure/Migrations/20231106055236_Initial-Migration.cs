@@ -59,13 +59,14 @@ namespace SimU_GameService.Infrastructure.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
-                    IdentityId = table.Column<Guid>(type: "uuid", nullable: false),
+                    IdentityId = table.Column<string>(type: "text", nullable: true),
                     FirstName = table.Column<string>(type: "text", nullable: true),
                     LastName = table.Column<string>(type: "text", nullable: true),
                     Email = table.Column<string>(type: "text", nullable: true),
                     CreatedTime = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     ChatIds = table.Column<List<Guid>>(type: "uuid[]", nullable: false),
-                    LastKnownLocationLocationId = table.Column<Guid>(type: "uuid", nullable: true)
+                    LastKnownLocationLocationId = table.Column<Guid>(type: "uuid", nullable: true),
+                    QuestionResponses = table.Column<List<string>>(type: "text[]", nullable: false)
                 },
                 constraints: table =>
                 {

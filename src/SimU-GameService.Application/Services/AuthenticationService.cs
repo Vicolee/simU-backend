@@ -1,4 +1,6 @@
-﻿using System.Net.Http.Json;
+﻿using System.Runtime.CompilerServices;
+using System;
+using System.Net.Http.Json;
 using SimU_GameService.Application.Common.Abstractions;
 using SimU_GameService.Domain.Models;
 using FirebaseAdmin.Auth;
@@ -45,7 +47,6 @@ public class AuthenticationService : IAuthenticationService
         {
             var userRecord = FirebaseAuth.DefaultInstance.CreateUserAsync(userArgs);
             string identityId = userRecord.Result.Uid;
-            
             var user = new User(
                 identityId,
                 firstName,

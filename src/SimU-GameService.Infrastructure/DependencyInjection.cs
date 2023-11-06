@@ -31,7 +31,7 @@ public static class DependencyInjection
         // changed from AddSingleton to AddScoped and the migration worked. Check back on this
         services.AddScoped<IAuthenticationService, AuthenticationService>();
         services.Configure<AuthenticationSettings>(configuration.GetSection("Authentication"));
-        
+
         services.AddHttpClient<IAuthenticationService, AuthenticationService>((sp, httpClient) =>
         {
             var authSettings = sp.GetRequiredService<IOptions<AuthenticationSettings>>().Value;
