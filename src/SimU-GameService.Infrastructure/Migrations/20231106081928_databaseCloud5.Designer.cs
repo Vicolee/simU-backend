@@ -13,8 +13,8 @@ using SimU_GameService.Infrastructure.Persistence;
 namespace SimU_GameService.Infrastructure.Migrations
 {
     [DbContext(typeof(SimUDbContext))]
-    [Migration("20231106062358_help")]
-    partial class help
+    [Migration("20231106081928_databaseCloud5")]
+    partial class databaseCloud5
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

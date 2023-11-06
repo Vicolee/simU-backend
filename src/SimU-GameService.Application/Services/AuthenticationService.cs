@@ -1,4 +1,4 @@
-﻿using System.Net.Http.Json;
+using System.Net.Http.Json;
 using SimU_GameService.Application.Common.Abstractions;
 using SimU_GameService.Domain.Models;
 using FirebaseAdmin.Auth;
@@ -85,14 +85,31 @@ public class AuthenticationService : IAuthenticationService
             };
 
             var response = await _httpClient.PostAsJsonAsync("", request);
-            var authToken = await response.Content.ReadFromJsonAsync<AuthToken>();
+            // authToken for later JWT authentication
+            // var authToken = await response.Content.ReadFromJsonAsync<AuthToken>();
 
+            // Extracting the status code from the response
+            var statusCode = response.StatusCode;
 
-            Console.Write(response);
+            // Checking if the response status code is 200 OK
+            if (statusCode == System.Net.HttpStatusCode.OK)
+            {
+                // Creating a variable called 'answer' and setting it equal to the status code
+                var answer = (int)statusCode;
 
-            // Retrieve user from your repository using identityId
-            var user = await _userRepository.GetUserByEmail(email) ?? throw new Exception("User not found.");
-            return user.Id;
+                // Now 'answer' contains the HTTP status code (200) from the response
+                Console.WriteLine($"Status Code: {answer}");
+
+                // Retrieve user from your repository using identityId
+                var user = await _userRepository.GetUserByEmail(email) ?? throw new Exception("User not found.");
+                return user.Id;
+            }
+            else
+            {
+                // Handle other status codes if necessary
+                Console.WriteLine($"Unexpected Status Code: {statusCode}");
+                return Guid.Empty;
+            }
         }
         catch (Exception)
         {

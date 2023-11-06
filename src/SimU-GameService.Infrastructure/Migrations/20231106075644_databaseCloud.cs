@@ -5,7 +5,7 @@
 namespace SimU_GameService.Infrastructure.Migrations
 {
     /// <inheritdoc />
-    public partial class fixedUser : Migration
+    public partial class databaseCloud : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
