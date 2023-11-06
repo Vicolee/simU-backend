@@ -5,6 +5,6 @@ POST {{host}}/Authentication/login HTTP/1.1
 Content-Type: application/json
 
 {
-  "email": "TestUser@gmail.com",
+  "email": "YetAnotherTestUser@gmail.com",
   "password": "MY_VERY_STRONG_PASSWORD"
 }
