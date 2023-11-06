@@ -1,4 +1,4 @@
-@host=http://localhost:5087
+host=http://localhost:5087
 
 
 POST {{host}}/Authentication/register HTTP/1.1
