@@ -202,6 +202,7 @@ This endpoint returns a list of all users that are currently connected to the se
   "userId1": { "locationX" = x, "locationY" = y, "characterSprite: null" },
   "userId2": { "locationX" = x, "locationY" = y, "characterSprite: null" }
 }
+```
 
 ### SendFriendRequest
 
