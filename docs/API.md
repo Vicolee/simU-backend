@@ -185,6 +185,24 @@ This endpoint returns user information for the given `userId`.
   }
   ```
 
+### InitalizeUserGameObjects()
+
+#### Description
+
+This endpoint returns a list of all users that are currently connected to the server. Typically, this function will be called when a user has just joined the server.
+
+#### Request
+- `GET /users/all`
+
+#### Response
+- `200 OK`
+
+```json
+{
+  "userId1": { "locationX" = x, "locationY" = y, "characterSprite: null" },
+  "userId2": { "locationX" = x, "locationY" = y, "characterSprite: null" }
+}
+
 ### SendFriendRequest
 
 #### Description
