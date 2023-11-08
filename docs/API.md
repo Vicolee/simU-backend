@@ -192,7 +192,7 @@ This endpoint returns user information for the given `userId`.
 This endpoint returns a list of all users that are currently connected to the server. Typically, this function will be called when a user has just joined the server.
 
 #### Request
-- `GET /users/all`
+- `GET /users`
 
 #### Response
 - `200 OK`
@@ -465,7 +465,7 @@ This endpoint gets the chat history between the current client and another user/
   ```json
   [
     {
-      "chatId": "chat_id",
+      "Id": "5fw92f53-5717-4562-b3fc-2c963f66afa6",
       "senderId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
       "receiverId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
       "content": "string",
