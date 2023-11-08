@@ -28,8 +28,9 @@ public class AuthenticationController : ControllerBase
         if (userId == Guid.Empty)
         {
             return NotFound(new AuthenticationResponse(userId, "User already registered."));
+        } else {
+            return Ok(new AuthenticationResponse(userId, "User registered."));
         }
-        return Ok(new AuthenticationResponse(userId, "User registered."));
     }
 
     [HttpPost("login", Name = "LoginUser")]

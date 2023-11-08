@@ -17,7 +17,7 @@ public static class DependencyInjection
     {
         /// add DB context for EF Core + Postgres SQL
         services.AddDbContext<SimUDbContext>(options =>
-            options.UseNpgsql(configuration.GetConnectionString("SimUDbCloud")));
+            options.UseNpgsql(configuration.GetConnectionString("SimUDb")));
 
         // add repository abstractions
         services.AddScoped<IUserRepository, UserRepository>();

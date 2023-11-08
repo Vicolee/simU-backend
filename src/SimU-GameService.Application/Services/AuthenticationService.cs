@@ -52,7 +52,8 @@ public class AuthenticationService : IAuthenticationService
                 identityId,
                 firstName,
                 lastName,
-                email
+                email,
+                false
             );
 
             await _userRepository.AddUser(user);
