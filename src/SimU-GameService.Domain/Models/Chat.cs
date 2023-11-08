@@ -4,9 +4,9 @@ namespace SimU_GameService.Domain.Models;
 
 public class Chat : Entity
 {
-    public Guid SenderID { get; private set; }
-    public Guid ReceiverID { get; private set; }
-    public string? Content { get; private set; }
+    public Guid SenderId { get; private set; }
+    public Guid RecipientId { get; private set; }
+    public string Content { get; private set; } = string.Empty;
     public bool IsGroupChat { get; private set; }
     public DateTime CreatedTime { get; private set; }
 
@@ -16,8 +16,8 @@ public class Chat : Entity
 
     public Chat(Guid senderID, Guid receiverID, string content, bool isGroupChat) : this()
     {
-        SenderID = senderID;
-        ReceiverID = receiverID;
+        SenderId = senderID;
+        RecipientId = receiverID;
         Content = content;
         IsGroupChat = isGroupChat;
         CreatedTime = DateTime.Now;

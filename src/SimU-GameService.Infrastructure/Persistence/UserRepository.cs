@@ -35,12 +35,14 @@ public class UserRepository : IUserRepository
 
     public async Task RemoveUser(Guid userId)
     {
-        var user = await _dbContext.Users.FirstOrDefaultAsync(u => u.Id == userId);
+        var user = await _dbContext.Users
+            .FirstOrDefaultAsync(u => u.Id == userId);
 
-        if (user is not null)
+        if (user is null)
         {
-            _dbContext.Users.Remove(user);
-            _dbContext.SaveChanges();
+            return;
         }
+        _dbContext.Users.Remove(user);
+        _dbContext.SaveChanges();
     }
 }
