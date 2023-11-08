@@ -48,12 +48,14 @@ public class AuthenticationService : IAuthenticationService
         {
             var userRecord = FirebaseAuth.DefaultInstance.CreateUserAsync(userArgs);
             string identityId = userRecord.Result.Uid;
+            // sets isAgent to false and description to empty string
             var user = new User(
                 identityId,
                 firstName,
                 lastName,
                 email,
-                false
+                false,
+                ""
             );
 
             await _userRepository.AddUser(user);
@@ -69,6 +71,37 @@ public class AuthenticationService : IAuthenticationService
             throw new Exception("Failed to register user: " + e.Message);
         }
     }
+
+
+public async Task<Guid> RegisterAgent(string firstName, string lastName, Boolean isAgent, string description)
+{
+
+    try
+    {
+        // sets identityID to empty string and email to empty string
+        var user = new User(
+            "",
+            firstName,
+            lastName,
+            "",
+            isAgent,
+            description
+        );
+
+        await _userRepository.AddUser(user);
+        return user.Id;
+
+    }
+    catch (Exception e)
+    {
+        if (e.InnerException != null)
+        {
+            Console.WriteLine($"Inner Exception: {e .InnerException.Message}");
+        }
+        throw new Exception("Failed to register agent: " + e.Message);
+    }
+}
+
 
     /// <summary>
     /// Logs in an existing user.

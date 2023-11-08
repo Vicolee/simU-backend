@@ -11,14 +11,12 @@ public class User : Entity
     public string? LastName { get; set; }
     public string? Email { get; set; }
     public Boolean IsAgent { get; set; } = false;
+	public string? Description { get; set; }
     public DateTime CreatedTime { get; set; }
     public List<Guid> ChatIds { get; set; }
     public List<Friend> Friends { get; set; }
     public Location? LastKnownLocation { get; set; }
     public List<string> QuestionResponses { get; set; }
-
-    // TODO: implement models for Memories and Personality later
-    // public IEnumerable<Memory> Memories { get; set; }
 
 
     public User() : base()
@@ -34,7 +32,8 @@ public class User : Entity
         string firstName,
         string lastName,
         string email,
-        Boolean isAgent
+        Boolean isAgent,
+        string description
         ) : this()
     {
         IdentityId = identityId;
@@ -42,6 +41,7 @@ public class User : Entity
         LastName = lastName;
         Email = email;
         IsAgent = isAgent;
+        Description = description;
         CreatedTime = DateTime.UtcNow;
     }
 }

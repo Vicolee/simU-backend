@@ -1,0 +1,12 @@
+@host=http://localhost:5087
+
+
+POST {{host}}/Authentication/register HTTP/1.1
+Content-Type: application/json
+
+{
+    "firstName": "Lambda",
+    "lastName": "Chi",
+    "isAgent": true,
+    "description": "I am an organziation"
+}
