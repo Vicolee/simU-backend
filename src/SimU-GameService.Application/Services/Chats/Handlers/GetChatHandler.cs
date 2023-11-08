@@ -1,9 +1,9 @@
 ﻿using MediatR;
 using SimU_GameService.Application.Common.Abstractions;
-using SimU_GameService.Application.Services.Queries;
+using SimU_GameService.Application.Services.Chats.Queries;
 using SimU_GameService.Domain.Models;
 
-namespace SimU_GameService.Application.Services.Handlers;
+namespace SimU_GameService.Application.Services.Chats.Handlers;
 
 public class GetChatHandler : IRequestHandler<GetChatQuery, Chat?>
 {

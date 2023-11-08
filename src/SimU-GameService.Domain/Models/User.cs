@@ -13,6 +13,8 @@ public class User : Entity
     public List<Friend> Friends { get; set; }
     public Location? LastKnownLocation { get; set; }
     public List<string> QuestionResponses { get; set; }
+    public bool IsLoggedIn { get; set; }
+    public DateTime LastActiveTime { get; set; }
 
     // TODO: implement models for Memories and Personality later
     // public IEnumerable<Memory> Memories { get; set; }
@@ -30,13 +32,14 @@ public class User : Entity
         string identityId,
         string firstName,
         string lastName,
-        string email
-        ) : this()
+        string email) : this()
     {
         IdentityId = identityId;
         FirstName = firstName;
         LastName = lastName;
         Email = email;
         CreatedTime = DateTime.UtcNow;
+        IsLoggedIn = false;
+        LastActiveTime = DateTime.UtcNow;
     }
 }

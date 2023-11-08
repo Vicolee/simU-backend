@@ -1,8 +1,8 @@
 using MediatR;
 using SimU_GameService.Application.Common.Abstractions;
-using SimU_GameService.Application.Services.Commands;
+using SimU_GameService.Application.Services.Chats.Commands;
 
-namespace SimU_GameService.Application.Services.Handlers;
+namespace SimU_GameService.Application.Services.Chats.Handlers;
 
 public class DeleteChatHandler : IRequestHandler<DeleteChatCommand, Unit>
 {

@@ -1,9 +1,9 @@
 using MediatR;
 using SimU_GameService.Application.Common.Abstractions;
-using SimU_GameService.Application.Services.Queries;
+using SimU_GameService.Application.Services.Chats.Queries;
 using SimU_GameService.Domain.Models;
 
-namespace SimU_GameService.Application.Services.Handlers;
+namespace SimU_GameService.Application.Services.Chats.Handlers;
 
 public class GetChatHistoryHandler : IRequestHandler<GetChatHistoryQuery, IEnumerable<Chat>>
 {
@@ -44,19 +44,19 @@ public class GetChatHistoryHandler : IRequestHandler<GetChatHistoryQuery, IEnume
             // get sender from database by ID
             var sender = await _userRepository.GetUserById(senderId)
                 ?? throw new Exception($"Sender with ID {senderId} not found.");
-    
+
             // get chats from database using list of chat ids from sender
             var chatsTasks = sender.ChatIds.Select(
                 async chatId => await _chatRepository.GetChat(chatId)
                 ?? throw new Exception($"Chat with ID {chatId} not found."));
-    
+
             // return chats where recipient is the recipient ID
             return (await Task.WhenAll(chatsTasks))
                 .Where(chat => chat.RecipientId == recipientId);
         }
-        catch (System.Exception)
+        catch (Exception)
         {
-            
+
             return new List<Chat>();
         }
     }

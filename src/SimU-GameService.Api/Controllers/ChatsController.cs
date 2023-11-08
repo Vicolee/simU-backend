@@ -1,7 +1,7 @@
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using SimU_GameService.Application.Services.Commands;
-using SimU_GameService.Application.Services.Queries;
+using SimU_GameService.Application.Services.Chats.Commands;
+using SimU_GameService.Application.Services.Chats.Queries;
 using SimU_GameService.Contracts.Responses;
 
 namespace SimU_GameService.Api.Controllers;
