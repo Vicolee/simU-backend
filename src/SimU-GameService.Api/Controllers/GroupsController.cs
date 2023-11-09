@@ -1,4 +1,6 @@
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using SimU_GameService.Application.Services.Groups.Commands;
 using SimU_GameService.Contracts.Requests;
 using SimU_GameService.Contracts.Responses;
 
@@ -8,35 +10,20 @@ namespace SimU_GameService.Api.Controllers;
 [Route("[controller]")]
 public class GroupsController : ControllerBase
 {
-    public GroupsController()
-    {
-    }
+    private readonly IMediator _mediator;
+    public GroupsController(IMediator mediator) => _mediator = mediator;
 
     [HttpPost(Name = "CreateGroup")]
-    public Task<ActionResult<CreateGroupResponse>> CreateGroup(CreateGroupRequest request)
+    public async Task<ActionResult<CreateGroupResponse>> CreateGroup(CreateGroupRequest request)
     {
-        try
-        {
-            throw new NotImplementedException();
-        }
-        catch
-        {
-            return Task.FromResult<ActionResult<CreateGroupResponse>>(
-                StatusCode(501, new { message = "This endpoint is not yet implemented." }));
-        }
+        var groupId = await _mediator.Send(new CreateGroupCommand(request.Name, request.OwnerId));
+        return new CreateGroupResponse(groupId);  
     }
 
     [HttpDelete("{groupId}", Name = "DeleteGroup")]
-    public Task<ActionResult> DeleteGroup(Guid groupId)
+    public async Task<ActionResult> DeleteGroup(Guid groupId)
     {
-        try
-        {
-            throw new NotImplementedException();
-        }
-        catch
-        {
-            return Task.FromResult<ActionResult>(
-                StatusCode(501, new { message = "This endpoint is not yet implemented." }));
-        }
+        await _mediator.Send(new DeleteGroupCommand(groupId));
+        return NoContent();
     }
 }

@@ -11,8 +11,7 @@ public class GetFriendsHandler : IRequestHandler<GetFriendsQuery, IEnumerable<Fr
 
     public GetFriendsHandler(IUserRepository userRepository) => _userRepository = userRepository;
 
-    public async Task<IEnumerable<Friend>> Handle(GetFriendsQuery request, CancellationToken cancellationToken)
-    {
-        return await _userRepository.GetFriends(request.UserId);
-    }
+    public async Task<IEnumerable<Friend>> Handle(
+        GetFriendsQuery request,
+        CancellationToken cancellationToken) => await _userRepository.GetFriends(request.UserId);
 }
