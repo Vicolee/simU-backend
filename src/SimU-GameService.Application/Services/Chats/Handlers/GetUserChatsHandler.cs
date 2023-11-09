@@ -21,7 +21,7 @@ public class GetUserChatsHandler : IRequestHandler<GetUserChatsQuery, IEnumerabl
         try
         {
             // get user from database
-            var user = await _userRepository.GetUserById(request.UserId) ?? throw new Exception("User not found.");
+            var user = await _userRepository.GetUser(request.UserId) ?? throw new Exception("User not found.");
 
             // get chats from database using list of chat ids from user
             var chats = user.ChatIds.Select(

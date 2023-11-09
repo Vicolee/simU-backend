@@ -28,7 +28,7 @@ public interface IUserRepository
     /// </summary>
     /// <param name="userId"</param>
     /// <returns></returns>
-    public Task<User?> GetUserById(Guid userId);
+    public Task<User?> GetUser(Guid userId);
 
     /// <summary>
     /// Gets a user from the repository by email.
@@ -58,4 +58,11 @@ public interface IUserRepository
     /// <param name="friendId"></param>
     /// <returns></returns>
     Task RemoveFriend(Guid userId, Guid friendId);
+
+    /// <summary>
+    /// Gets a user's friends from the repository.
+    /// </summary>
+    /// <param name="userId"></param>
+    /// <returns></returns>
+    Task<IEnumerable<Friend>> GetFriends(Guid userId);
 }

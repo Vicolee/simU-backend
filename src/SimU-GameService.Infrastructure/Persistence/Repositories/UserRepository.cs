@@ -2,7 +2,7 @@
 using SimU_GameService.Application.Common.Abstractions;
 using SimU_GameService.Domain.Models;
 
-namespace SimU_GameService.Infrastructure.Persistence;
+namespace SimU_GameService.Infrastructure.Persistence.Repositories;
 
 public class UserRepository : IUserRepository
 {
@@ -21,8 +21,7 @@ public class UserRepository : IUserRepository
         return Task.CompletedTask;
     }
 
-    // hard-coded sample questions for the entrance questionnaire.
-    // TODO: replace with a database table.
+    // TODO: replace hard-coded sample questions with a database table.
     private readonly IEnumerable<string> _questions = new List<string>()
     {
         "What is your favorite color?",
@@ -45,7 +44,7 @@ public class UserRepository : IUserRepository
             .FirstOrDefaultAsync(u => u.Email == email);
     }
 
-    public async Task<User?> GetUserById(Guid userId)
+    public async Task<User?> GetUser(Guid userId)
     {
         return await _dbContext.Users
             .FirstOrDefaultAsync(u => u.Id == userId);
@@ -75,7 +74,7 @@ public class UserRepository : IUserRepository
 
     public async Task RemoveFriend(Guid userId, Guid friendId)
     {
-        var user = await GetUserById(userId)
+        var user = await GetUser(userId)
             ?? throw new Exception($"User with ID {userId} not found.");
 
         var friend = user.Friends.FirstOrDefault(f => f.FriendId == friendId);
@@ -85,5 +84,13 @@ public class UserRepository : IUserRepository
             user.Friends.Remove(friend);
             await _dbContext.SaveChangesAsync();
         }
+    }
+
+    public async Task<IEnumerable<Friend>> GetFriends(Guid userId)
+    {
+        var user = await GetUser(userId)
+            ?? throw new Exception($"User with ID {userId} not found.");
+
+        return user.Friends.AsEnumerable();
     }
 }

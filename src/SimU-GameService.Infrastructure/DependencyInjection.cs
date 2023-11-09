@@ -8,6 +8,7 @@ using Google.Apis.Auth.OAuth2;
 using Microsoft.Extensions.Options;
 using SimU_GameService.Application.Common.Authentication;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using SimU_GameService.Infrastructure.Persistence.Repositories;
 
 namespace SimU_GameService.Infrastructure.Persistence;
 

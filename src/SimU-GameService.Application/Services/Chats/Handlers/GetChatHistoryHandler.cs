@@ -42,7 +42,7 @@ public class GetChatHistoryHandler : IRequestHandler<GetChatHistoryQuery, IEnume
         try
         {
             // get sender from database by ID
-            var sender = await _userRepository.GetUserById(senderId)
+            var sender = await _userRepository.GetUser(senderId)
                 ?? throw new Exception($"Sender with ID {senderId} not found.");
 
             // get chats from database using list of chat ids from sender

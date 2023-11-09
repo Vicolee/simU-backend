@@ -3,7 +3,6 @@ using Microsoft.AspNetCore.Mvc;
 using SimU_GameService.Application.Services.Users.Commands;
 using SimU_GameService.Application.Services.Users.Queries;
 using SimU_GameService.Contracts.Responses;
-using SimU_GameService.Domain.Models;
 
 namespace SimU_GameService.Api.Controllers;
 
@@ -61,16 +60,9 @@ public class UsersController : ControllerBase
     }
 
     [HttpGet("{userId}/friends", Name = "GetFriends")]
-    public Task<ActionResult<IEnumerable<FriendResponse>>> GetFriends(Guid userId)
+    public async Task<ActionResult<IEnumerable<FriendResponse>>> GetFriends(Guid userId)
     {
-        try
-        {
-            throw new NotImplementedException();
-        }
-        catch (NotImplementedException)
-        {
-            return Task.FromResult<ActionResult<IEnumerable<FriendResponse>>>(
-                StatusCode(501, new { message = "This endpoint is not yet implemented." }));
-        }
+        var friends = await _mediator.Send(new GetFriendsQuery(userId));
+        return Ok(friends.Select(f => new FriendResponse(f.FriendId, f.CreatedTime)));
     }
 }
