@@ -11,11 +11,5 @@ public class GetChatHandler : IRequestHandler<GetChatQuery, Chat?>
 
     public GetChatHandler(IChatRepository chatRepository) => _chatRepository = chatRepository;
 
-    public Task<Chat?> Handle(GetChatQuery request, CancellationToken cancellationToken)
-    {
-        // get chat from database
-        var chat = _chatRepository.GetChat(request.ChatId)
-                   ?? throw new Exception($"Chat with ID {request.ChatId} not found.");
-        return chat;
-    }
+    public Task<Chat?> Handle(GetChatQuery request, CancellationToken cancellationToken) => _chatRepository.GetChat(request.ChatId);
 }

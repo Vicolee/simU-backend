@@ -1,5 +1,6 @@
 using MediatR;
 using SimU_GameService.Application.Common.Abstractions;
+using SimU_GameService.Application.Common.Exceptions;
 using SimU_GameService.Application.Services.Chats.Queries;
 using SimU_GameService.Domain.Models;
 
@@ -39,25 +40,14 @@ public class GetChatHistoryHandler : IRequestHandler<GetChatHistoryQuery, IEnume
     /// <exception cref="Exception"></exception>
     private async Task<IEnumerable<Chat>> GetCorrespondence(Guid senderId, Guid recipientId)
     {
-        try
-        {
-            // get sender from database by ID
-            var sender = await _userRepository.GetUser(senderId)
-                ?? throw new Exception($"Sender with ID {senderId} not found.");
+        var sender = await _userRepository.GetUser(senderId)
+            ?? throw new NotFoundException(nameof(User), senderId);
 
-            // get chats from database using list of chat ids from sender
-            var chatsTasks = sender.ChatIds.Select(
-                async chatId => await _chatRepository.GetChat(chatId)
-                ?? throw new Exception($"Chat with ID {chatId} not found."));
+        var chatsTasks = sender.ChatIds.Select(
+            async chatId => await _chatRepository.GetChat(chatId)
+            ?? throw new NotFoundException(nameof(Chat), chatId));
 
-            // return chats where recipient is the recipient ID
-            return (await Task.WhenAll(chatsTasks))
-                .Where(chat => chat.RecipientId == recipientId);
-        }
-        catch (Exception)
-        {
-
-            return new List<Chat>();
-        }
+        return (await Task.WhenAll(chatsTasks))
+            .Where(chat => chat.RecipientId == recipientId);
     }
 }

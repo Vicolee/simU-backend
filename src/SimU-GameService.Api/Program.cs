@@ -1,13 +1,15 @@
+using SimU_GameService.Api.Filters;
 using SimU_GameService.Api.Hubs;
 using SimU_GameService.Application;
 using SimU_GameService.Infrastructure.Persistence;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-
-builder.Services.AddControllers();
 builder.Services.AddSignalR();
+builder.Services.AddControllers(options =>
+{
+    options.Filters.Add<ErrorHandlingFilterAttribute>();
+});
 
 // Dependency injection by layer
 builder.Services.AddApplication();
@@ -27,7 +29,6 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-
 app.UseAuthorization();
 
 app.MapControllers();

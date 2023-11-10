@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using SimU_GameService.Application.Common.Abstractions;
+using SimU_GameService.Application.Common.Exceptions;
 using SimU_GameService.Domain.Models;
 
 namespace SimU_GameService.Infrastructure.Persistence.Repositories;
@@ -66,7 +67,7 @@ public class UserRepository : IUserRepository
     public async Task PostResponses(Guid userId, IEnumerable<string> responses)
     {
         var user = _dbContext.Users
-            .FirstOrDefault(u => u.Id == userId) ?? throw new Exception($"User with ID {userId} not found.");
+            .FirstOrDefault(u => u.Id == userId) ?? throw new NotFoundException(nameof(User), userId);
 
         user.QuestionResponses = responses.ToList();
         await _dbContext.SaveChangesAsync();
@@ -75,7 +76,7 @@ public class UserRepository : IUserRepository
     public async Task RemoveFriend(Guid userId, Guid friendId)
     {
         var user = await GetUser(userId)
-            ?? throw new Exception($"User with ID {userId} not found.");
+            ?? throw new NotFoundException(nameof(User), userId);
 
         var friend = user.Friends.FirstOrDefault(f => f.FriendId == friendId);
 
@@ -89,7 +90,7 @@ public class UserRepository : IUserRepository
     public async Task<IEnumerable<Friend>> GetFriends(Guid userId)
     {
         var user = await GetUser(userId)
-            ?? throw new Exception($"User with ID {userId} not found.");
+            ?? throw new NotFoundException(nameof(User), userId);
 
         return user.Friends.AsEnumerable();
     }

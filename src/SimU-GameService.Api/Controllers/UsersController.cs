@@ -1,8 +1,10 @@
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using SimU_GameService.Application.Common.Exceptions;
 using SimU_GameService.Application.Services.Users.Commands;
 using SimU_GameService.Application.Services.Users.Queries;
 using SimU_GameService.Contracts.Responses;
+using SimU_GameService.Domain.Models;
 
 namespace SimU_GameService.Api.Controllers;
 
@@ -31,25 +33,24 @@ public class UsersController : ControllerBase
     [HttpGet("{userId}", Name = "GetUser")]
     public async Task<ActionResult<UserResponse>> GetUser(Guid userId)
     {
-        try
-        {
-            var user = await _mediator.Send(new GetUserQuery(userId))
-                ?? throw new Exception($"User with ID {userId} not found.");
 
-            return Ok(new UserResponse(
-                user.FirstName,
-                user.LastName,
-                user.Email,
-                user.LastKnownLocation?.X ?? default,
-                user.LastKnownLocation?.Y ?? default,
-                user.IsLoggedIn,
-                user.CreatedTime,
-                user.LastActiveTime));
-        }
-        catch (Exception ex)
-        {
-            return NotFound(new { message = ex.Message });
-        }
+        var user = await _mediator.Send(new GetUserQuery(userId))
+            ?? throw new NotFoundException(nameof(Domain.Models.User), userId);
+        return MapUserToUserResponse(user);
+
+    }
+
+    private ActionResult<UserResponse> MapUserToUserResponse(User user)
+    {
+        return Ok(new UserResponse(
+                    user.FirstName,
+                    user.LastName,
+                    user.Email,
+                    user.LastKnownLocation?.X ?? default,
+                    user.LastKnownLocation?.Y ?? default,
+                    user.IsLoggedIn,
+                    user.CreatedTime,
+                    user.LastActiveTime));
     }
 
     [HttpDelete("{userId}/friends", Name = "RemoveFriend")]

@@ -2,6 +2,7 @@ using System.Net.Http.Json;
 using SimU_GameService.Application.Common.Abstractions;
 using SimU_GameService.Domain.Models;
 using FirebaseAdmin.Auth;
+using SimU_GameService.Application.Common.Exceptions;
 namespace SimU_GameService.Application.Services;
 
 /// <summary>
@@ -99,7 +100,7 @@ public class AuthenticationService : IAuthenticationService
                 Console.WriteLine($"Status Code: {answer}");
 
                 // Retrieve user from your repository using identityId
-                var user = await _userRepository.GetUserByEmail(email) ?? throw new Exception("User not found.");
+                var user = await _userRepository.GetUserByEmail(email) ?? throw new NotFoundException(nameof(User));
                 return user.Id;
             }
             else

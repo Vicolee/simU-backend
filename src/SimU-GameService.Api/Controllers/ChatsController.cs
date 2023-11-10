@@ -1,5 +1,6 @@
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using SimU_GameService.Application.Common.Exceptions;
 using SimU_GameService.Application.Services.Chats.Commands;
 using SimU_GameService.Application.Services.Chats.Queries;
 using SimU_GameService.Contracts.Responses;
@@ -20,11 +21,8 @@ public class ChatsController : ControllerBase
     [HttpGet("{chatId}", Name = "GetChat")]
     public async Task<ActionResult<ChatResponse>> GetChat(Guid chatId)
     {
-        var result = await _mediator.Send(new GetChatQuery(chatId));
-        if (result is null)
-        {
-            return NotFound(new { message = $"Chat with ID {chatId} not found." });
-        }
+        var result = await _mediator.Send(new GetChatQuery(chatId))
+            ?? throw new NotFoundException(nameof(Domain.Models.Chat), chatId);
 
         return Ok(new ChatResponse(
             result.SenderId,
@@ -41,7 +39,7 @@ public class ChatsController : ControllerBase
         return NoContent();
     }
 
-    [HttpGet(Name = "GetChats")]
+    [HttpGet(Name = "GetUserChats")]
     public async Task<ActionResult<IEnumerable<ChatResponse>>> GetUserChats(
         [FromQuery] Guid senderId)
     {

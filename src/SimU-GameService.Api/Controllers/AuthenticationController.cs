@@ -50,14 +50,6 @@ public class AuthenticationController : ControllerBase
     [HttpPut("{userId}/logout", Name = "LogoutUser")]
     public Task<ActionResult> LogoutUser(Guid userId)
     {
-        try
-        {
-            throw new NotImplementedException();
-        }
-        catch
-        {
-            return Task.FromResult<ActionResult>(
-                StatusCode(501, new { message = "This endpoint is not yet implemented." }));
-        }
+        throw new NotImplementedException();
     }
 }
