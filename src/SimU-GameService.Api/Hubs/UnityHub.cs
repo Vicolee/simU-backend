@@ -59,12 +59,6 @@ public class UnityHub : Hub<IUnityClient>,  IUnityHub
         throw new NotImplementedException();
     }
 
-    /// <inheritdoc/>
-    public Task UpdateLocation(Location location)
-    {
-        throw new NotImplementedException();
-    }
-
     public Task UpdateLocation(int x_coord, int y_coord)
     {
         throw new NotImplementedException();

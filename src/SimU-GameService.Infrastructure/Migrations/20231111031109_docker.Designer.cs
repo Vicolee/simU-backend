@@ -14,7 +14,7 @@ namespace SimU_GameService.Infrastructure.Migrations
 {
     [DbContext(typeof(SimUDbContext))]
     [Migration("20231111031109_docker")]
-    partial class docker
+    partial class Docker
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

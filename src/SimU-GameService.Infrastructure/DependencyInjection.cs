@@ -8,6 +8,7 @@ using Google.Apis.Auth.OAuth2;
 using Microsoft.Extensions.Options;
 using SimU_GameService.Application.Common.Authentication;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using SimU_GameService.Infrastructure.Persistence.Repositories;
 
 namespace SimU_GameService.Infrastructure.Persistence;
 
@@ -21,6 +22,8 @@ public static class DependencyInjection
 
         // add repository abstractions
         services.AddScoped<IUserRepository, UserRepository>();
+        services.AddScoped<IChatRepository, ChatRepository>();
+        
 
 
         FirebaseApp.Create(new AppOptions()
@@ -31,7 +34,7 @@ public static class DependencyInjection
         // changed from AddSingleton to AddScoped and the migration worked. Check back on this
         services.AddScoped<IAuthenticationService, AuthenticationService>();
         // To Do: Make sure I added this service correctly, and figure out how to add HTTP client for this service
-        services.AddScoped<ILLMService, LargeLangModel>();
+        services.AddScoped<ILLMService, LLMService>();
         services.Configure<AuthenticationSettings>(configuration.GetSection("Authentication"));
 
         services.AddHttpClient<IAuthenticationService, AuthenticationService>((sp, httpClient) =>
@@ -40,7 +43,7 @@ public static class DependencyInjection
             httpClient.BaseAddress = new Uri(authSettings.TokenUri ?? string.Empty);
         });
 
-        services.AddHttpClient<ILLMService, LargeLangModel>( httpClient =>
+        services.AddHttpClient<ILLMService, LLMService>( httpClient =>
         {
             // TO DO: UPDATE THIS LLM SERVICE URL
             httpClient.BaseAddress = new Uri("https://LLM-service-url.com");

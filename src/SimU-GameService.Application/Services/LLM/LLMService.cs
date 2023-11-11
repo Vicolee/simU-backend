@@ -5,20 +5,20 @@ using SimU_GameService.Domain.Models;
 
 namespace SimU_GameService.Application.Services;
 
-public class LargeLangModel : ILLMService
+public class LLMService : ILLMService
 {
     private readonly IUserRepository _userRepository;
     private readonly HttpClient _httpClient;
 
-    private readonly IUnityHub _unityHub;
+    // private readonly IUnityHub _unityHub;
 
     private readonly IChatRepository _chatRepository;
 
-    public LargeLangModel(IUserRepository userRepository, HttpClient httpClient, IUnityHub unityHub, IChatRepository chatRepository)
+    public LLMService(IUserRepository userRepository, HttpClient httpClient, IChatRepository chatRepository)
     {
         _userRepository = userRepository;
         _httpClient = httpClient;
-        _unityHub = unityHub;
+        // _unityHub = unityHub;
         _chatRepository = chatRepository;
     }
 
@@ -76,10 +76,10 @@ public class LargeLangModel : ILLMService
                     //to do: append the chatid in front of every chunk
                     Console.WriteLine(chunk);
                     entireMessage += chunk;
-                    await _unityHub.SendChat(agentId, chunk);
+                    // await _unityHub.SendChat(agentId, chunk);
                 }
                 // send the user a terminating character so they know that the stream is over
-                await _unityHub.SendChat(agentId, "\n");
+                // await _unityHub.SendChat(agentId, "\n");
                 // TO DO: REVISE THIS!!
                 var agentResponse = new Chat
                 {
