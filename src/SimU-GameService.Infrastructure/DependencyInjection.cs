@@ -30,12 +30,20 @@ public static class DependencyInjection
 
         // changed from AddSingleton to AddScoped and the migration worked. Check back on this
         services.AddScoped<IAuthenticationService, AuthenticationService>();
+        // To Do: Make sure I added this service correctly, and figure out how to add HTTP client for this service
+        services.AddScoped<ILargeLangModel, LargeLangModel>();
         services.Configure<AuthenticationSettings>(configuration.GetSection("Authentication"));
 
         services.AddHttpClient<IAuthenticationService, AuthenticationService>((sp, httpClient) =>
         {
             var authSettings = sp.GetRequiredService<IOptions<AuthenticationSettings>>().Value;
             httpClient.BaseAddress = new Uri(authSettings.TokenUri ?? string.Empty);
+        });
+
+        services.AddHttpClient<ILargeLangModel, LargeLangModel>( httpClient =>
+        {
+            // TO DO: UPDATE THIS LLM SERVICE URL
+            httpClient.BaseAddress = new Uri("https://LLM-service-url.com");
         });
 
         services

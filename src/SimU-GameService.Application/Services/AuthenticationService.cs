@@ -32,7 +32,7 @@ public class AuthenticationService : IAuthenticationService
     /// <returns> The user's ID. </returns>
     public async Task<Guid> RegisterUser(string firstName, string lastName, string email, string password)
     {
-
+        // a user has already been created with that email
         if (await _userRepository.GetUserByEmail(email) != null)
         {
             return Guid.Empty;
