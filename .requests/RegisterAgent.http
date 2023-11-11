@@ -1,12 +1,12 @@
-@host=http://localhost:5087
+@host=https://simyou.azurewebsites.net
 
 
 POST {{host}}/Authentication/register HTTP/1.1
 Content-Type: application/json
 
 {
-    "firstName": "Lambda",
-    "lastName": "Chi",
+    "firstName": "George",
+    "lastName": "Jefferson",
     "isAgent": true,
-    "description": "I am an organziation"
+    "description": "I am the leader of this here cult."
 }

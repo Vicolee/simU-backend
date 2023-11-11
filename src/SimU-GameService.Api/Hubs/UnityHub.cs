@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.SignalR;
+using SimU_GameService.Application.Common.Abstractions;
 using SimU_GameService.Domain.Models;
 
 namespace SimU_GameService.Api.Hubs;

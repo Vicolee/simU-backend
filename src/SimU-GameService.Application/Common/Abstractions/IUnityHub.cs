@@ -1,6 +1,6 @@
 using SimU_GameService.Domain.Models;
 
-namespace SimU_GameService.Api.Hubs;
+namespace SimU_GameService.Application.Common.Abstractions;
 
 /// <summary>
 /// This interface specifies the methods on the server that can be invoked by the client.
