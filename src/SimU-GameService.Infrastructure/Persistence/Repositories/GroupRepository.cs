@@ -28,4 +28,9 @@ public class GroupRepository : IGroupRepository
             await _dbContext.SaveChangesAsync();
         }
     }
+
+    public async Task<Group?> GetGroup(Guid groupId)
+    {
+        return await _dbContext.Groups.FindAsync(groupId);
+    }
 }

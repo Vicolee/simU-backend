@@ -1,4 +1,8 @@
-﻿using Microsoft.AspNetCore.SignalR;
+﻿using System.Collections.Concurrent;
+using MediatR;
+using Microsoft.AspNetCore.SignalR;
+using SimU_GameService.Application.Common.Exceptions;
+using SimU_GameService.Application.Services.Groups.Commands;
 using SimU_GameService.Domain.Models;
 
 namespace SimU_GameService.Api.Hubs;
@@ -8,19 +12,36 @@ namespace SimU_GameService.Api.Hubs;
 /// </summary>
 public class UnityHub : Hub<IUnityClient>,  IUnityHub
 {
+    private readonly IMediator _mediator;
+    private static readonly ConcurrentDictionary<Guid, string> _connectionMap = new();
+
+    public UnityHub(IMediator mediator)
+    {
+        _mediator = mediator;
+    }
+
     /// <inheritdoc/>
     public override async Task OnConnectedAsync()
     {
-        // TODO: Add functionality later. For now, just call the base method.
+        // create mapping between user ID and connection ID
+        var userIdStr = (string?) Context.GetHttpContext()?.Request.Query["userId"];
+        var userId = userIdStr is null ? throw new ArgumentNullException(nameof(userIdStr)) : Guid.Parse(userIdStr);
+
+        _connectionMap[userId] = Context.ConnectionId;
         await base.OnConnectedAsync();
     }
 
     /// <inheritdoc/>
     public override async Task OnDisconnectedAsync(Exception? exception)
     {
-        // TODO: Add functionality later. For now, just call the base method.
+        // remove mapping between user ID and connection ID
+        _connectionMap.TryRemove(
+            _connectionMap.FirstOrDefault(x => x.Value == Context.ConnectionId));
+
         await base.OnDisconnectedAsync(exception);
     }
+
+    private Guid? GetUserIdFromConnectionMap() => _connectionMap.FirstOrDefault(x => x.Value == Context.ConnectionId).Key;
 
     /// <inheritdoc/>
     public Task AddUser(Guid groupId, Guid ownerId, Guid userId)
@@ -29,9 +50,24 @@ public class UnityHub : Hub<IUnityClient>,  IUnityHub
     }
 
     /// <inheritdoc/>
-    public Task RequestToJoinGroup(Guid groupId)
+    public async Task RequestToJoinGroup(Guid groupId)
     {
-        throw new NotImplementedException();
+        // get user ID from connection map
+        var userId = GetUserIdFromConnectionMap() ??
+            throw new NotFoundException($"User ID with connection ID {Context.ConnectionId}");
+        
+        // check if group exists
+        // get owner ID from group
+        var ownerId = await _mediator.Send(
+            new RequestToJoinGroupCommand(groupId));
+
+        // send add to group request to owner
+        if (!_connectionMap.ContainsKey(ownerId))
+        {
+            throw new NotFoundException($"Connection ID for group admin with ID {ownerId}");
+        }
+
+        await Clients.Client(_connectionMap[ownerId]).AddToGroupRequest(groupId, userId);
     }
 
     /// <inheritdoc/>

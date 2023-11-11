@@ -17,4 +17,11 @@ public interface IGroupRepository
     /// <param name="groupId"></param>
     /// <returns></returns>
     Task DeleteGroup(Guid groupId);
+
+    /// <summary>
+    /// Get a group from the database
+    /// </summary>
+    /// <param name="groupId"></param>
+    /// <returns></returns>
+    Task<Group?> GetGroup(Guid groupId);
 }
