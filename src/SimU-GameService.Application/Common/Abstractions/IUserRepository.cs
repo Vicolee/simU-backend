@@ -65,4 +65,12 @@ public interface IUserRepository
     /// <param name="userId"></param>
     /// <returns></returns>
     Task<IEnumerable<Friend>> GetFriends(Guid userId);
+
+    /// <summary>
+    /// Adds a friend to a user's friend list in the repository.
+    /// </summary>
+    /// <param name="requesterId"></param>
+    /// <param name="requesteeId"></param>
+    /// <returns></returns>
+    Task AddFriend(Guid userId, Guid friendId);
 }

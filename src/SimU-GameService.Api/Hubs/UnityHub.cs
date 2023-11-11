@@ -3,6 +3,7 @@ using MediatR;
 using Microsoft.AspNetCore.SignalR;
 using SimU_GameService.Application.Common.Exceptions;
 using SimU_GameService.Application.Services.Groups.Commands;
+using SimU_GameService.Application.Services.Users.Commands;
 using SimU_GameService.Domain.Models;
 
 namespace SimU_GameService.Api.Hubs;
@@ -47,7 +48,7 @@ public class UnityHub : Hub<IUnityClient>,  IUnityHub
     public async Task AddUserToGroup(Guid groupId, Guid userId)
     {
         var requesterId = GetUserIdFromConnectionMap() ??
-            throw new NotFoundException($"User ID with connection ID {Context.ConnectionId}");
+            throw new NotFoundException($"User ID mapping to connection ID {Context.ConnectionId}");
 
         await _mediator.Send(new AddUserToGroupCommand(groupId, requesterId, userId));
 
@@ -65,7 +66,7 @@ public class UnityHub : Hub<IUnityClient>,  IUnityHub
     {
         // get user ID from connection map
         var userId = GetUserIdFromConnectionMap() ??
-            throw new NotFoundException($"User ID with connection ID {Context.ConnectionId}");
+            throw new NotFoundException($"User ID mapping to connection ID {Context.ConnectionId}");
         
         // check if group exists
         // get owner ID from group
@@ -82,21 +83,59 @@ public class UnityHub : Hub<IUnityClient>,  IUnityHub
     }
 
     /// <inheritdoc/>
-    public Task RemoveUser(Guid groupId, Guid ownerId, Guid userId)
+    public async Task RemoveUserFromGroup(Guid groupId, Guid userId)
     {
-        throw new NotImplementedException();
+        // get ID of request sender from connection map
+        var requesterId = GetUserIdFromConnectionMap() ??
+            throw new NotFoundException($"User ID mapping to connection ID {Context.ConnectionId}");
+
+        await _mediator.Send(new RemoveUserFromGroupCommand(groupId, requesterId, userId));
+
+        // send notification to user
+        if (!_connectionMap.ContainsKey(userId))
+        {
+            throw new NotFoundException($"Connection ID for user", userId);
+        }
+        await Clients.Client(_connectionMap[userId])
+            .ReceiveMessage(nameof(UnityHub), $"You have been removed from a group with ID {groupId}");
     }
 
     /// <inheritdoc/>
-    public Task RespondToFriendRequest(Guid userId, bool accepted)
+    public async Task RespondToFriendRequest(Guid userId, bool accepted)
     {
-        throw new NotImplementedException();
+       var responderId = GetUserIdFromConnectionMap() ??
+            throw new NotFoundException($"User ID mapping to connection ID {Context.ConnectionId}");
+
+        // if friend request is not accepted, we only need to notify the requester
+        if (accepted)
+        {
+            await _mediator.Send(new RespondToFriendRequestCommand(responderId, userId));
+        }
+
+        // notify requester of response
+        if (!_connectionMap.ContainsKey(userId))
+        {
+            throw new NotFoundException($"Connection ID for user", userId);
+        }
+        await Clients.Client(_connectionMap[userId])
+            .ReceiveMessage(nameof(UnityHub), $"Your friend request to user with ID {responderId} has been {(accepted ? "accepted" : "rejected")}.");
     }
 
     /// <inheritdoc/>
-    public Task SendFriendRequest(Guid userId)
+    public async Task SendFriendRequest(Guid userId)
     {
-        throw new NotImplementedException();
+        var requesterId = GetUserIdFromConnectionMap() ??
+            throw new NotFoundException($"User ID mapping to connection ID {Context.ConnectionId}");
+
+        await _mediator.Send(new SendFriendRequestCommand(requesterId, userId));
+
+        // notify requestee of friend request
+        if (!_connectionMap.ContainsKey(userId))
+        {
+            throw new NotFoundException($"Connection ID for user", userId);
+        }
+        await Clients.Client(_connectionMap[userId])
+            .ReceiveMessage(nameof(UnityHub), $"You have received a friend request from {requesterId}");
     }
 
     /// <inheritdoc/>

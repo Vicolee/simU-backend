@@ -32,4 +32,12 @@ public interface IGroupRepository
     /// <param name="groupId"></param>
     /// <returns></returns>
     Task<Group?> GetGroup(Guid groupId);
+
+    /// <summary>
+    /// Remove a user with ID <paramref name="userId"/> from the group with ID <paramref name="groupId"/>
+    /// </summary>
+    /// <param name="groupId"></param>
+    /// <param name="userId"></param>
+    /// <returns></returns>
+    Task RemoveUser(Guid groupId, Guid userId);
 }

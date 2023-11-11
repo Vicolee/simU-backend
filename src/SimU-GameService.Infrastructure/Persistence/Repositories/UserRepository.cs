@@ -94,4 +94,14 @@ public class UserRepository : IUserRepository
 
         return user.Friends.AsEnumerable();
     }
+
+    public async Task AddFriend(Guid userId, Guid friendId)
+    {
+        var user = await GetUser(userId) ?? throw new NotFoundException(nameof(User), userId);
+        var friend = await GetUser(friendId) ?? throw new NotFoundException(nameof(User), friendId);
+
+        user.Friends.Add(new Friend(friendId, DateTime.UtcNow));
+        friend.Friends.Add(new Friend(userId, DateTime.UtcNow));
+        await _dbContext.SaveChangesAsync();
+    }
 }

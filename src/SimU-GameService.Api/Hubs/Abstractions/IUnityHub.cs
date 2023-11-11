@@ -48,10 +48,9 @@ public interface IUnityHub
     /// Removes a user from a group with the given <paramref name="groupId"/>
     /// </summary>
     /// <param name="groupId">The ID of the target group</param>
-    /// <param name="ownerId">The user ID of the group's owner</param>
     /// <param name="userId">The ID of the user being removed from the the group</param>
     /// <returns></returns>
-    Task RemoveUser(Guid groupId, Guid ownerId, Guid userId);
+    Task RemoveUserFromGroup(Guid groupId, Guid userId);
 
     /// <summary>
     /// Sends a <paramref name="message"/> to the user with the given <paramref name="receiverId"/>

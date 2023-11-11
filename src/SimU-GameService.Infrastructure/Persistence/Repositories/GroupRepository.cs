@@ -41,4 +41,14 @@ public class GroupRepository : IGroupRepository
     {
         return await _dbContext.Groups.FindAsync(groupId);
     }
+
+    public async Task RemoveUser(Guid groupId, Guid userId)
+    {
+        var group = await GetGroup(groupId) ?? throw new NotFoundException(nameof(Group), groupId);        
+        if (group.MemberIds.Contains(userId))
+        {
+            group.RemoveUser(userId);
+            await _dbContext.SaveChangesAsync();
+        }
+    }
 }
