@@ -12,6 +12,14 @@ public interface IGroupRepository
     Task AddGroup(Group group);
 
     /// <summary>
+    /// Add a user with ID <paramref name="userId"/> to the group with ID <paramref name="groupId"/>
+    /// </summary>
+    /// <param name="groupId"></param>
+    /// <param name="userId"></param>
+    /// <returns></returns>
+    Task AddUser(Guid groupId, Guid userId);
+
+    /// <summary>
     /// Delete a group from the database
     /// </summary>
     /// <param name="groupId"></param>

@@ -44,9 +44,20 @@ public class UnityHub : Hub<IUnityClient>,  IUnityHub
     private Guid? GetUserIdFromConnectionMap() => _connectionMap.FirstOrDefault(x => x.Value == Context.ConnectionId).Key;
 
     /// <inheritdoc/>
-    public Task AddUser(Guid groupId, Guid ownerId, Guid userId)
+    public async Task AddUserToGroup(Guid groupId, Guid userId)
     {
-        throw new NotImplementedException();
+        var requesterId = GetUserIdFromConnectionMap() ??
+            throw new NotFoundException($"User ID with connection ID {Context.ConnectionId}");
+
+        await _mediator.Send(new AddUserToGroupCommand(groupId, requesterId, userId));
+
+        // send notification to user
+        if (!_connectionMap.ContainsKey(userId))
+        {
+            throw new NotFoundException($"Connection ID for user", userId);
+        }
+        await Clients.Client(_connectionMap[userId])
+            .ReceiveMessage(nameof(UnityHub), $"You have been added to a group with ID {groupId}");
     }
 
     /// <inheritdoc/>
@@ -64,7 +75,7 @@ public class UnityHub : Hub<IUnityClient>,  IUnityHub
         // send add to group request to owner
         if (!_connectionMap.ContainsKey(ownerId))
         {
-            throw new NotFoundException($"Connection ID for group admin with ID {ownerId}");
+            throw new NotFoundException($"Connection ID for group admin", ownerId);
         }
 
         await Clients.Client(_connectionMap[ownerId]).AddToGroupRequest(groupId, userId);

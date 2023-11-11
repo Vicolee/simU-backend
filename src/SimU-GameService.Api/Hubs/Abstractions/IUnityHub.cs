@@ -40,10 +40,9 @@ public interface IUnityHub
     /// Adds a user to a group with the given <paramref name="groupId"/>
     /// </summary>
     /// <param name="groupId">The ID of the target group</param>
-    /// <param name="ownerId">The user ID of the group's owner</param>
     /// <param name="userId">The ID of the user being added to the group</param>
     /// <returns></returns>
-    Task AddUser(Guid groupId, Guid ownerId, Guid userId);
+    Task AddUserToGroup(Guid groupId, Guid userId);
 
     /// <summary>
     /// Removes a user from a group with the given <paramref name="groupId"/>

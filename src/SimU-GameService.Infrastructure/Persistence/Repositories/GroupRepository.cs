@@ -1,4 +1,5 @@
 using SimU_GameService.Application.Common.Abstractions;
+using SimU_GameService.Application.Common.Exceptions;
 using SimU_GameService.Domain.Models;
 
 namespace SimU_GameService.Infrastructure.Persistence.Repositories;
@@ -15,6 +16,13 @@ public class GroupRepository : IGroupRepository
     public async Task AddGroup(Group group)
     {
         await _dbContext.Groups.AddAsync(group);
+        await _dbContext.SaveChangesAsync();
+    }
+
+    public async Task AddUser(Guid groupId, Guid userId)
+    {
+        var group = await GetGroup(groupId) ?? throw new NotFoundException(nameof(Group), groupId);
+        group.AddUser(userId);
         await _dbContext.SaveChangesAsync();
     }
 

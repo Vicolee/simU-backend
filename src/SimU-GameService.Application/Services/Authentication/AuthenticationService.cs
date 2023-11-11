@@ -100,7 +100,7 @@ public class AuthenticationService : IAuthenticationService
                 Console.WriteLine($"Status Code: {answer}");
 
                 // Retrieve user from your repository using identityId
-                var user = await _userRepository.GetUserByEmail(email) ?? throw new NotFoundException(nameof(User));
+                var user = await _userRepository.GetUserByEmail(email) ?? throw new NotFoundException($"{nameof(User)} with email {email}");
                 return user.Id;
             }
             else
