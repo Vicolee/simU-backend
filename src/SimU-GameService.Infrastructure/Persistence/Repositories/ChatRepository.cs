@@ -10,6 +10,12 @@ public class ChatRepository : IChatRepository
 
     public ChatRepository(SimUDbContext dbContext) => _dbContext = dbContext;
 
+    public async Task AddChat(Chat chat)
+    {
+        await _dbContext.Chats.AddAsync(chat);
+        await _dbContext.SaveChangesAsync();
+    }
+
     public async Task DeleteChat(Guid chatId)
     {
         var chat = await _dbContext.Chats
@@ -20,7 +26,7 @@ public class ChatRepository : IChatRepository
             return;
         }
         _dbContext.Chats.Remove(chat);
-        _dbContext.SaveChanges();
+        await _dbContext.SaveChangesAsync();
     }
 
     public async Task<Chat?> GetChat(Guid chatId) => await _dbContext.Chats

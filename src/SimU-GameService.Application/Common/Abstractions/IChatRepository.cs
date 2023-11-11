@@ -8,6 +8,13 @@ namespace SimU_GameService.Application.Common.Abstractions;
 public interface IChatRepository
 {
     /// <summary>
+    /// Adds a chat to the repository.
+    /// </summary>
+    /// <param name="chat"></param>
+    /// <returns></returns>
+    Task AddChat(Chat chat);
+
+    /// <summary>
     /// Deletes a chat from the repository by ID.
     /// </summary>
     /// <param name="chatId"></param>

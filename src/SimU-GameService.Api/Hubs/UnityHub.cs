@@ -2,6 +2,7 @@
 using MediatR;
 using Microsoft.AspNetCore.SignalR;
 using SimU_GameService.Application.Common.Exceptions;
+using SimU_GameService.Application.Services.Chats.Commands;
 using SimU_GameService.Application.Services.Groups.Commands;
 using SimU_GameService.Application.Services.Users.Commands;
 using SimU_GameService.Domain.Models;
@@ -139,9 +140,19 @@ public class UnityHub : Hub<IUnityClient>,  IUnityHub
     }
 
     /// <inheritdoc/>
-    public Task SendMessage(Guid receiverId, string message)
+    public async Task SendChat(Guid receiverId, string message)
     {
-        throw new NotImplementedException();
+        var senderId = GetUserIdFromConnectionMap() ??
+            throw new NotFoundException($"User ID mapping to connection ID {Context.ConnectionId}");
+        await _mediator.Send(new SendChatCommand(senderId, receiverId, message));
+
+        // notify receiver of message
+        if (!_connectionMap.ContainsKey(receiverId))
+        {
+            throw new NotFoundException($"Connection ID for user", receiverId);
+        }
+        await Clients.Client(_connectionMap[receiverId])
+            .ReceiveMessage(nameof(UnityHub), $"You have received a message from {senderId}: {message}");
     }
 
     /// <inheritdoc/>

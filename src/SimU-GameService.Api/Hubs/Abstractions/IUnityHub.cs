@@ -58,5 +58,5 @@ public interface IUnityHub
     /// <param name="receiverId">The ID of the message target</param>
     /// <param name="message">The actual contents of the message</param>
     /// <returns></returns>
-    Task SendMessage(Guid receiverId, string message);
+    Task SendChat(Guid receiverId, string message);
 }
