@@ -1,5 +1,3 @@
-using SimU_GameService.Domain.Models;
-
 namespace SimU_GameService.Api.Hubs;
 
 /// <summary>

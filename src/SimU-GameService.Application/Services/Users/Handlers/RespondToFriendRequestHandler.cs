@@ -1,8 +1,6 @@
 using MediatR;
 using SimU_GameService.Application.Common.Abstractions;
-using SimU_GameService.Application.Common.Exceptions;
 using SimU_GameService.Application.Services.Users.Commands;
-using SimU_GameService.Domain.Models;
 
 namespace SimU_GameService.Application.Services.Users.Handlers;
 
