@@ -64,4 +64,24 @@ public class UnityHub : Hub<IUnityClient>,  IUnityHub
     {
         throw new NotImplementedException();
     }
+
+    public Task UpdateLocation(int x_coord, int y_coord)
+    {
+        throw new NotImplementedException();
+    }
+
+    public Task AddUserToGroup(Guid groupId, Guid userId)
+    {
+        throw new NotImplementedException();
+    }
+
+    public Task RemoveUserFromGroup(Guid groupId, Guid userId)
+    {
+        throw new NotImplementedException();
+    }
+
+    public Task SendChat(Guid receiverId, string message)
+    {
+        throw new NotImplementedException();
+    }
 }

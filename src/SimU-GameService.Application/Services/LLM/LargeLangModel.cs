@@ -5,7 +5,7 @@ using SimU_GameService.Domain.Models;
 
 namespace SimU_GameService.Application.Services;
 
-public class LargeLangModel : ILargeLangModel
+public class LargeLangModel : ILLMService
 {
     private readonly IUserRepository _userRepository;
     private readonly HttpClient _httpClient;
@@ -22,7 +22,7 @@ public class LargeLangModel : ILargeLangModel
         _chatRepository = chatRepository;
     }
 
-     // Check: Should we assume that error checking has been performed prior to this
+    // Check: Should we assume that error checking has been performed prior to this
     public async Task<string> RelayUserChat(Guid msgId, string msg, Guid userId, Guid agentId)
     {
         if (await _userRepository.GetUserById(userId) == null)
@@ -56,7 +56,7 @@ public class LargeLangModel : ILargeLangModel
         // Checking if the response status code is 200 OK
         if (statusCode != System.Net.HttpStatusCode.OK)
         {
-                return $"Error code: {statusCode}. Failed to relay msg: {msgId}, with content: {msg}, from user: {userId}, to agent: {agentId}";
+            return $"Error code: {statusCode}. Failed to relay msg: {msgId}, with content: {msg}, from user: {userId}, to agent: {agentId}";
         }
         else
         {
@@ -76,82 +76,83 @@ public class LargeLangModel : ILargeLangModel
                     //to do: append the chatid in front of every chunk
                     Console.WriteLine(chunk);
                     entireMessage += chunk;
-                    _unityHub.SendChat(userId, agentId, chunk);
+                    await _unityHub.SendChat(agentId, chunk);
                 }
                 // send the user a terminating character so they know that the stream is over
-                _unityHub.SendChat(userId, agentId, "\n");
+                await _unityHub.SendChat(agentId, "\n");
                 // TO DO: REVISE THIS!!
-                var agentResponse = new Chat {
+                var agentResponse = new Chat
+                {
                     Id = agentChatResponseId,
                     SenderID = agentId,
                     ReceiverID = userId,
                     Content = entireMessage,
                     IsGroupChat = false
                 };
-                _chatRepository.AddChat(agentResponse);
+                await _chatRepository.AddChat(agentResponse);
                 // TO DO: REVISE THIS RETURN STATEMENT
                 return entireMessage;
-        }
+            }
         }
     }
 }
 
-    // // Check: Should we assume that error checking has been performed prior to this
-    // public async Task<string> RelayUserChat(Guid msgId, string msg, Guid userId, Guid agentId)
-    // {
-    //     if (await _userRepository.GetUserById(userId) == null)
-    //     {
-    //         return $"User {userId} does not exist";
-    //     }
+// // Check: Should we assume that error checking has been performed prior to this
+// public async Task<string> RelayUserChat(Guid msgId, string msg, Guid userId, Guid agentId)
+// {
+//     if (await _userRepository.GetUserById(userId) == null)
+//     {
+//         return $"User {userId} does not exist";
+//     }
 
-    //     if (await _userRepository.GetUserById(agentId) == null)
-    //     {
-    //         return $"Agent {agentId} does not exist";
-    //     }
+//     if (await _userRepository.GetUserById(agentId) == null)
+//     {
+//         return $"Agent {agentId} does not exist";
+//     }
 
-    //     try
-    //     {
-    //         var request = new
-    //         {
-    //             msgId,
-    //             msg,
-    //             userId,
-    //             agentId
-    //         };
+//     try
+//     {
+//         var request = new
+//         {
+//             msgId,
+//             msg,
+//             userId,
+//             agentId
+//         };
 
-    //         // The route for this LLM API call is set in the Dependency Injection file
-    //         var response = await _httpClient.PostAsJsonAsync("", request);
+//         // The route for this LLM API call is set in the Dependency Injection file
+//         var response = await _httpClient.PostAsJsonAsync("", request);
 
-    //         // TO DO: CHECK THIS WHILE DEBUGGING WE MIGHT NOT WANT TO CHECK ACCORDING TO 200 OK STATUS!!!
-    //         var statusCode = response.StatusCode;
+//         // TO DO: CHECK THIS WHILE DEBUGGING WE MIGHT NOT WANT TO CHECK ACCORDING TO 200 OK STATUS!!!
+//         var statusCode = response.StatusCode;
 
-    //         // Checking if the response status code is 200 OK
-    //         if (statusCode != System.Net.HttpStatusCode.OK)
-    //         {
-    //              return $"Error code: {statusCode}. Failed to relay msg: {msgId}, with content: {msg}, from user: {userId}, to agent: {agentId}";
-    //         }
-    //         else
-    //         {
-    //             // TO DO: CHOOSE A RESPONSE FORMAT WITH LLM GUYS
-    //             var responseContent = await response.Content.ReadAsStringAsync();
-    //             return responseContent;
-    //         }
-    //     }
-    //     catch (Exception e)
-    //     {
-    //         return e.Message;
-    //     }
-    // }
-    // [HttpPost("llm/response")]
-    // public async Task<string> RelayAgentResponse(Guid msgId, string msg, Guid userId, Guid agentId)
-    // {
-    //     if (await _userRepository.GetUserById(userId) == null)
-    //     {
-    //         return $"User {userId} does not exist";
-    //     }
+//         // Checking if the response status code is 200 OK
+//         if (statusCode != System.Net.HttpStatusCode.OK)
+//         {
+//              return $"Error code: {statusCode}. Failed to relay msg: {msgId}, with content: {msg}, from user: {userId}, to agent: {agentId}";
+//         }
+//         else
+//         {
+//             // TO DO: CHOOSE A RESPONSE FORMAT WITH LLM GUYS
+//             var responseContent = await response.Content.ReadAsStringAsync();
+//             return responseContent;
+//         }
+//     }
+//     catch (Exception e)
+//     {
+//         return e.Message;
+//     }
+// }
+// [HttpPost("llm/response")]
+// public async Task<string> RelayAgentResponse(Guid msgId, string msg, Guid userId, Guid agentId)
+// {
+//     if (await _userRepository.GetUserById(userId) == null)
+//     {
+//         return $"User {userId} does not exist";
+//     }
 
-    //     if (await _userRepository.GetUserById(agentId) == null)
-    //     {
-    //         return $"Agent {agentId} does not exist";
-    //     }
-    // }
+//     if (await _userRepository.GetUserById(agentId) == null)
+//     {
+//         return $"Agent {agentId} does not exist";
+//     }
+// }

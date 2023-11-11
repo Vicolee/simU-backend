@@ -1,5 +1,3 @@
-using SimU_GameService.Domain.Models;
-
 namespace SimU_GameService.Application.Common.Abstractions;
 
 /// <summary>
@@ -8,11 +6,12 @@ namespace SimU_GameService.Application.Common.Abstractions;
 public interface IUnityHub
 {
     /// <summary>
-    /// Updates the location of the user to the given <paramref name="location"/>
+    /// Updates the location of the user to the given <paramref name="x_coord"/> and <paramref name="y_coord"/>
     /// </summary>
-    /// <param name="location">User's new location</param>
+    /// <param name="x_coord"></param>
+    /// <param name="y_coord"></param>
     /// <returns></returns>
-    Task UpdateLocation(Location location);
+    Task UpdateLocation(int x_coord, int y_coord);
 
     /// <summary>
     /// Sends a friend request to the user with the given <paramref name="userId"/>
@@ -40,19 +39,17 @@ public interface IUnityHub
     /// Adds a user to a group with the given <paramref name="groupId"/>
     /// </summary>
     /// <param name="groupId">The ID of the target group</param>
-    /// <param name="ownerId">The user ID of the group's owner</param>
     /// <param name="userId">The ID of the user being added to the group</param>
     /// <returns></returns>
-    Task AddUser(Guid groupId, Guid ownerId, Guid userId);
+    Task AddUserToGroup(Guid groupId, Guid userId);
 
     /// <summary>
     /// Removes a user from a group with the given <paramref name="groupId"/>
     /// </summary>
     /// <param name="groupId">The ID of the target group</param>
-    /// <param name="ownerId">The user ID of the group's owner</param>
     /// <param name="userId">The ID of the user being removed from the the group</param>
     /// <returns></returns>
-    Task RemoveUser(Guid groupId, Guid ownerId, Guid userId);
+    Task RemoveUserFromGroup(Guid groupId, Guid userId);
 
     /// <summary>
     /// Sends a <paramref name="message"/> to the user with the given <paramref name="receiverId"/>
@@ -60,5 +57,5 @@ public interface IUnityHub
     /// <param name="receiverId">The ID of the message target</param>
     /// <param name="message">The actual contents of the message</param>
     /// <returns></returns>
-    Task SendMessage(Guid receiverId, string message);
+    Task SendChat(Guid receiverId, string message);
 }
