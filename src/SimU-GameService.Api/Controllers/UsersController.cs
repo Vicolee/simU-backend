@@ -46,8 +46,8 @@ public class UsersController : ControllerBase
                     user.FirstName,
                     user.LastName,
                     user.Email,
-                    user.LastKnownLocation?.X ?? default,
-                    user.LastKnownLocation?.Y ?? default,
+                    user.Location?.X ?? default,
+                    user.Location?.Y ?? default,
                     user.IsLoggedIn,
                     user.CreatedTime,
                     user.LastActiveTime));

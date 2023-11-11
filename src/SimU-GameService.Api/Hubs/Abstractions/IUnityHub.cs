@@ -8,11 +8,12 @@ namespace SimU_GameService.Api.Hubs;
 public interface IUnityHub
 {
     /// <summary>
-    /// Updates the location of the user to the given <paramref name="location"/>
+    /// Updates the location of the user to the given <paramref name="x_coord"/> and <paramref name="y_coord"/>
     /// </summary>
-    /// <param name="location">User's new location</param>
+    /// <param name="x_coord"></param>
+    /// <param name="y_coord"></param>
     /// <returns></returns>
-    Task UpdateLocation(Location location);
+    Task UpdateLocation(int x_coord, int y_coord);
 
     /// <summary>
     /// Sends a friend request to the user with the given <paramref name="userId"/>

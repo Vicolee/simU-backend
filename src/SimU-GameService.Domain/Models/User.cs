@@ -11,7 +11,7 @@ public class User : Entity
     public DateTime CreatedTime { get; set; }
     public List<Guid> ChatIds { get; set; }
     public List<Friend> Friends { get; set; }
-    public Location? LastKnownLocation { get; set; }
+    public Location? Location { get; set; }
     public List<string> QuestionResponses { get; set; }
     public bool IsLoggedIn { get; set; }
     public DateTime LastActiveTime { get; set; }
@@ -25,7 +25,7 @@ public class User : Entity
         ChatIds = new();
         Friends = new();
         QuestionResponses = new();
-        LastKnownLocation = null;
+        Location = null;
     }
 
     public User(
@@ -41,5 +41,15 @@ public class User : Entity
         CreatedTime = DateTime.UtcNow;
         IsLoggedIn = false;
         LastActiveTime = DateTime.UtcNow;
+    }
+
+    public void UpdateLocation(int xCoord, int yCoord)
+    {
+        Location = new Location
+        {
+            LocationId = Guid.NewGuid(),
+            X = xCoord,
+            Y = yCoord
+        };
     }
 }

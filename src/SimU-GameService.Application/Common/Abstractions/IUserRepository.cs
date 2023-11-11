@@ -73,4 +73,13 @@ public interface IUserRepository
     /// <param name="requesteeId"></param>
     /// <returns></returns>
     Task AddFriend(Guid userId, Guid friendId);
+
+    /// <summary>
+    /// Updates a user's location in the repository.
+    /// </summary>
+    /// <param name="userId"></param>
+    /// <param name="xCoord"></param>
+    /// <param name="yCoord"></param>
+    /// <returns></returns>
+    Task UpdateLocation(Guid userId, int xCoord, int yCoord);
 }

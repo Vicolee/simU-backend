@@ -53,8 +53,7 @@ public class UserRepository : IUserRepository
 
     public async Task RemoveUser(Guid userId)
     {
-        var user = await _dbContext.Users
-            .FirstOrDefaultAsync(u => u.Id == userId);
+        var user = await GetUser(userId);
 
         if (user is null)
         {
@@ -102,6 +101,14 @@ public class UserRepository : IUserRepository
 
         user.Friends.Add(new Friend(friendId, DateTime.UtcNow));
         friend.Friends.Add(new Friend(userId, DateTime.UtcNow));
+        await _dbContext.SaveChangesAsync();
+    }
+
+    public async Task UpdateLocation(Guid userId, int xCoord, int yCoord)
+    {
+        var user = await GetUser(userId) ?? throw new NotFoundException(nameof(User), userId);
+        
+        user.UpdateLocation(xCoord, yCoord);
         await _dbContext.SaveChangesAsync();
     }
 }

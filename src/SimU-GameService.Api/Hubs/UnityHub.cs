@@ -156,8 +156,14 @@ public class UnityHub : Hub<IUnityClient>,  IUnityHub
     }
 
     /// <inheritdoc/>
-    public Task UpdateLocation(Location location)
+    public async Task UpdateLocation(int x_coord, int y_coord)
     {
-        throw new NotImplementedException();
+        var senderId = GetUserIdFromConnectionMap() ??
+            throw new NotFoundException($"User ID mapping to connection ID {Context.ConnectionId}");
+
+        await _mediator.Send(new UpdateLocationCommand(senderId, x_coord, y_coord));
+
+        // broadcast location update to all users
+        await Clients.All.ReceiveMessage(nameof(UnityHub), $"User {senderId} has moved to ({x_coord}, {y_coord})");
     }
 }
