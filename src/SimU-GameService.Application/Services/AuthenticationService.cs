@@ -1,11 +1,7 @@
-﻿using System.Runtime.InteropServices;
-using System.Runtime.CompilerServices;
-using System;
-using System.Net.Http.Json;
+﻿using System.Net.Http.Json;
 using SimU_GameService.Application.Common.Abstractions;
 using SimU_GameService.Domain.Models;
 using FirebaseAdmin.Auth;
-using SimU_GameService.Application.Common.Authentication;
 
 namespace SimU_GameService.Application.Services;
 

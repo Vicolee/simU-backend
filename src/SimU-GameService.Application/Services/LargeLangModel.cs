@@ -1,12 +1,6 @@
-using System.Runtime.InteropServices;
-using System.Runtime.CompilerServices;
-using System;
-using System.IO;
-using System.Threading.Tasks;
 using System.Net.Http.Json;
 using SimU_GameService.Application.Common.Abstractions;
 using SimU_GameService.Domain.Models;
-using SimU_GameService.Application.Common.Authentication;
 
 
 namespace SimU_GameService.Application.Services;
@@ -82,10 +76,10 @@ public class LargeLangModel : ILargeLangModel
                     //to do: append the chatid in front of every chunk
                     Console.WriteLine(chunk);
                     entireMessage += chunk;
-                    _unityHub.SendMessage(userId, agentId, chunk);
+                    _unityHub.SendChat(userId, agentId, chunk);
                 }
                 // send the user a terminating character so they know that the stream is over
-                _unityHub.SendMessage(userId, agentId, "\n");
+                _unityHub.SendChat(userId, agentId, "\n");
                 // TO DO: REVISE THIS!!
                 var agentResponse = new Chat {
                     Id = agentChatResponseId,
@@ -160,9 +154,4 @@ public class LargeLangModel : ILargeLangModel
     //     {
     //         return $"Agent {agentId} does not exist";
     //     }
-
-        
-
-
     // }
-}

@@ -1,5 +1,3 @@
-using SimU_GameService.Domain.Primitives;
-
 namespace SimU_GameService.Domain.Models;
 
 public class Chat
