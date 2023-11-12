@@ -23,7 +23,7 @@ public static class DependencyInjection
         // add repository abstractions
         services.AddScoped<IUserRepository, UserRepository>();
         services.AddScoped<IChatRepository, ChatRepository>();
-        
+        services.AddScoped<IGroupRepository, GroupRepository>();
 
 
         FirebaseApp.Create(new AppOptions()

@@ -1,8 +1,9 @@
-﻿using System.Net.Http.Json;
+using System.Net.Http.Json;
 using SimU_GameService.Application.Common.Abstractions;
 using SimU_GameService.Domain.Models;
 using FirebaseAdmin.Auth;
 
+using SimU_GameService.Application.Common.Exceptions;
 namespace SimU_GameService.Application.Services;
 
 /// <summary>
@@ -134,7 +135,7 @@ public async Task<Guid> RegisterAgent(string firstName, string lastName, Boolean
                 Console.WriteLine($"Status Code: {answer}");
 
                 // Retrieve user from your repository using identityId
-                var user = await _userRepository.GetUserByEmail(email) ?? throw new Exception("User not found.");
+                var user = await _userRepository.GetUserByEmail(email) ?? throw new NotFoundException($"{nameof(User)} with email {email}");
                 return user.Id;
             }
             else

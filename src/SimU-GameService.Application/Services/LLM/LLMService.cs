@@ -25,12 +25,12 @@ public class LLMService : ILLMService
     // Check: Should we assume that error checking has been performed prior to this
     public async Task<string> RelayUserChat(Guid msgId, string msg, Guid userId, Guid agentId)
     {
-        if (await _userRepository.GetUserById(userId) == null)
+        if (await _userRepository.GetUser(userId) == null)
         {
             return $"User {userId} does not exist";
         }
 
-        if (await _userRepository.GetUserById(agentId) == null)
+        if (await _userRepository.GetUser(agentId) == null)
         {
             return $"Agent {agentId} does not exist";
         }
@@ -84,8 +84,8 @@ public class LLMService : ILLMService
                 var agentResponse = new Chat
                 {
                     Id = agentChatResponseId,
-                    SenderID = agentId,
-                    ReceiverID = userId,
+                    SenderId = agentId,
+                    RecipientId = userId,
                     Content = entireMessage,
                     IsGroupChat = false
                 };

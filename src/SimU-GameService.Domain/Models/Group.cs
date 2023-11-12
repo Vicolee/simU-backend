@@ -5,18 +5,22 @@ namespace SimU_GameService.Domain.Models;
 public class Group : Entity
 {
     public string? Name { get; set; }
+    public Guid OwnerId { get; set; }
     public DateTime CreatedTime { get; set; }
-    private readonly List<Guid> _memberIds;
+    private readonly List<Guid> _memberIds = new();
 
     public Group() : base()
     {
-        _memberIds = new();
     }
 
-    public Group(string name) : this()
+    public Group(string name, Guid ownerId) : this()
     {
         Name = name;
+        OwnerId = ownerId;
         CreatedTime = DateTime.Now;
+
+        // add owner to list of members
+        _memberIds.Add(ownerId);
     }
 
     public void AddUser(Guid userId)
