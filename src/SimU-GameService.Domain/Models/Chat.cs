@@ -1,23 +1,23 @@
-using SimU_GameService.Domain.Primitives;
-
 namespace SimU_GameService.Domain.Models;
 
-public class Chat : Entity
+public class Chat
 {
-    public Guid SenderID { get; private set; }
-    public Guid ReceiverID { get; private set; }
-    public string? Content { get; private set; }
-    public bool IsGroupChat { get; private set; }
-    public DateTime CreatedTime { get; private set; }
+    public Guid Id {get; set;}
+    public Guid SenderId { get; set; }
+    public Guid RecipientId { get; set; }
+    public string Content { get; set; } = string.Empty;
+    public bool IsGroupChat { get; set; }
+    public DateTime CreatedTime { get; set; }
 
-    public Chat() : base()
+    public Chat()
     {
     }
 
-    public Chat(Guid senderID, Guid receiverID, string content, bool isGroupChat) : this()
+    public Chat(Guid senderId, Guid receiverId, string content, bool isGroupChat, Guid? id = null) : this()
     {
-        SenderID = senderID;
-        ReceiverID = receiverID;
+        Id = id ?? Guid.NewGuid();
+        SenderId = senderId;
+        RecipientId = receiverId;
         Content = content;
         IsGroupChat = isGroupChat;
         CreatedTime = DateTime.Now;

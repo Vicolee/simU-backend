@@ -4,6 +4,12 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="FirebaseAdmin" Version="2.4.0" />
+    <PackageReference Include="MediatR" Version="12.1.1" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Services/Authentication/" />
+    <Folder Include="Services/Social/Commands/" />
+    <Folder Include="Services/User/" />
   </ItemGroup>
   <PropertyGroup>
     <TargetFramework>net7.0</TargetFramework>

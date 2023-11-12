@@ -12,8 +12,10 @@ public class SimUDbContext : DbContext
     public DbSet<User> Users { get; set; }
     public DbSet<Chat> Chats { get; set; }
     public DbSet<Group> Groups { get; set; }
+    public DbSet<Friend> Friends { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        modelBuilder.ApplyConfigurationsFromAssembly(typeof(SimUDbContext).Assembly);
     }
 }

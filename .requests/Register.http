@@ -1,12 +1,15 @@
-@host=http://localhost:5087
+@host=https://simyou.azurewebsites.net
+# @host=http://localhost:8080
 
 
 POST {{host}}/Authentication/register HTTP/1.1
 Content-Type: application/json
 
 {
-    "firstName": "Test",
-    "lastName": "User",
-    "email": "TestYetAnotherTestUser@gmail.com",
-    "password": "MY_VERY_STRONG_PASSWORD"
+    "firstName": "John",
+    "lastName": "Doe",
+    "email": "TestJohnDoe@gmail.com",
+    "password": "MY_VERY_STRONG_PASSWORD",
+    "isAgent": false,
+    "description": "string"
 }

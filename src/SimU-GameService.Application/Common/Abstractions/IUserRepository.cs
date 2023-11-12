@@ -28,7 +28,7 @@ public interface IUserRepository
     /// </summary>
     /// <param name="userId"</param>
     /// <returns></returns>
-    public Task<User?> GetUserById(Guid userId);
+    public Task<User?> GetUser(Guid userId);
 
     /// <summary>
     /// Gets a user from the repository by email.
@@ -36,4 +36,50 @@ public interface IUserRepository
     /// <param name="email"></param>
     /// <returns></returns>
     public Task<User?> GetUserByEmail(string email);
+
+    /// <summary>
+    /// Gets the entrance questionnaire prompts from the repository.
+    /// </summary>
+    /// <returns></returns>
+    public Task<IEnumerable<string>> GetQuestions();
+
+    /// <summary>
+    /// Posts the entrance questionnaire responses for a user to the repository.
+    /// </summary>
+    /// <param name="userId"></param>
+    /// <param name="responses"></param>
+    /// <returns></returns>
+    Task PostResponses(Guid userId, IEnumerable<string> responses);
+
+    /// <summary>
+    /// Removes a friend from a user's friend list in the repository.
+    /// </summary>
+    /// <param name="userId"></param>
+    /// <param name="friendId"></param>
+    /// <returns></returns>
+    Task RemoveFriend(Guid userId, Guid friendId);
+
+    /// <summary>
+    /// Gets a user's friends from the repository.
+    /// </summary>
+    /// <param name="userId"></param>
+    /// <returns></returns>
+    Task<IEnumerable<Friend>> GetFriends(Guid userId);
+
+    /// <summary>
+    /// Adds a friend to a user's friend list in the repository.
+    /// </summary>
+    /// <param name="requesterId"></param>
+    /// <param name="requesteeId"></param>
+    /// <returns></returns>
+    Task AddFriend(Guid userId, Guid friendId);
+
+    /// <summary>
+    /// Updates a user's location in the repository.
+    /// </summary>
+    /// <param name="userId"></param>
+    /// <param name="xCoord"></param>
+    /// <param name="yCoord"></param>
+    /// <returns></returns>
+    Task UpdateLocation(Guid userId, int xCoord, int yCoord);
 }
