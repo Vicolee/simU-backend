@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.SignalR;
 using SimU_GameService.Api.Filters;
 using SimU_GameService.Api.Hubs;
 using SimU_GameService.Application;
@@ -5,7 +6,10 @@ using SimU_GameService.Infrastructure.Persistence;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddSignalR();
+builder.Services.AddSignalR(options =>
+{
+    options.AddFilter<ErrorHandlingHubFilter>();
+});
 builder.Services.AddControllers(options =>
 {
     options.Filters.Add<ErrorHandlingFilterAttribute>();
