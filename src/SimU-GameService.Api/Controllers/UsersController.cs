@@ -36,19 +36,21 @@ public class UsersController : ControllerBase
 
         var user = await _mediator.Send(new GetUserQuery(userId))
             ?? throw new NotFoundException(nameof(Domain.Models.User), userId);
-        return MapUserToUserResponse(user);
-
+        Console.WriteLine("here is the user's location id: ", user.Location);
+        var location = user.Location != null ? await _mediator.Send(new GetUserLocationQuery(user.Location.LocationId)) : null;
+        return MapUserToUserResponse(user, location ?? new Location());
     }
 
-    private ActionResult<UserResponse> MapUserToUserResponse(User user)
+    private ActionResult<UserResponse> MapUserToUserResponse(User user, Location location)
     {
+        Console.WriteLine("here is the user's location: x: ", location.X, " y: ", location.Y);
         return Ok(new UserResponse(
                     user.FirstName,
                     user.LastName,
                     user.Email,
                     user.Description,
-                    user.Location?.X ?? default,
-                    user.Location?.Y ?? default,
+                    location?.X ?? default,
+                    location?.Y ?? default,
                     user.CreatedTime));
     }
 

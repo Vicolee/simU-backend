@@ -118,6 +118,6 @@ public class UserRepository : IUserRepository
 
         user.UpdateLocation(xCoord, yCoord);
         await _dbContext.SaveChangesAsync();
-    }   
+    }
 
 }
