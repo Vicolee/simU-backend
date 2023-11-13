@@ -11,20 +11,16 @@ public class User : Entity
     public bool IsAgent { get; set; } = false;
 	public string? Description { get; set; }
     public DateTime CreatedTime { get; set; }
-    public List<Guid> ChatIds { get; set; }
-    public List<Friend> Friends { get; set; }
     public Location? Location { get; set; }
-    public List<string> QuestionResponses { get; set; }
-
-    // TODO: implement models for Memories and Personality later
-    // public IEnumerable<Memory> Memories { get; set; }
-
+    public List<Friend> Friends { get; set; }
+    public List<QuestionResponse> QuestionResponses { get; set; }
+    public Guid UserId { get; }
 
     public User() : base()
     {
-        ChatIds = new();
         Friends = new();
         QuestionResponses = new();
+        UserId = Id;
     }
 
     public User(
@@ -49,7 +45,6 @@ public class User : Entity
     {
         Location = new Location
         {
-            LocationId = Guid.NewGuid(),
             X = xCoord,
             Y = yCoord
         };

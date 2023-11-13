@@ -24,6 +24,6 @@ public class CreateGroupHandler : IRequestHandler<CreateGroupCommand, Guid>
 
         var group = new Group(request.Name, request.OwnerId);
         await _groupRepository.AddGroup(group);
-        return group.Id;
+        return group.GroupId;
     }
 }

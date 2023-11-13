@@ -27,4 +27,19 @@ public interface IChatRepository
     /// <param name="chatId"></param>
     /// <returns></returns>
     Task<Chat?> GetChat(Guid chatId);
+
+    /// <summary>
+    /// Get all chats sent or received by a user.
+    /// </summary>
+    /// <param name="userId"></param>
+    /// <returns></returns>
+    Task<IEnumerable<Chat>> GetChatsByUserId(Guid userId);
+
+    /// <summary>
+    /// Gets all chat messages sent by a user to another user.
+    /// </summary>
+    /// <param name="senderId"></param>
+    /// <param name="recipientId"></param>
+    /// <returns></returns>
+    Task<IEnumerable<Chat>> GetChatsBySenderAndReceiverIds(Guid senderId, Guid recipientId);
 }

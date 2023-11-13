@@ -1,0 +1,3 @@
+@host=http://localhost:5087
+
+GET {{host}}/Users/questions HTTP/1.1

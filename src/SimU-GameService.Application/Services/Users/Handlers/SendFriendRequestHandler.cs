@@ -20,6 +20,12 @@ public class SendFriendRequest : IRequestHandler<SendFriendRequestCommand, Unit>
         // basically, we just need to check if the requester and requestee exist before we can send the request
         var requester = await _userRepository.GetUser(request.RequesterId) ?? throw new NotFoundException(nameof(User), request.RequesterId);
         var requestee = await _userRepository.GetUser(request.RequesteeId) ?? throw new NotFoundException(nameof(User), request.RequesteeId);
+
+        // check if the requestee is already a friend of the requester
+        if (requester.Friends.Any(x => x.FriendId == request.RequesteeId))
+        {
+            throw new BadRequestException($"User {request.RequesteeId} is already a friend of user {request.RequesterId}");
+        }
         return Unit.Value;
     }
 }

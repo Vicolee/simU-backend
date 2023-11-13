@@ -19,9 +19,6 @@ public class GetUserChatsHandler : IRequestHandler<GetUserChatsQuery, IEnumerabl
 
     public async Task<IEnumerable<Chat>> Handle(GetUserChatsQuery request, CancellationToken cancellationToken)
     {
-        var user = await _userRepository.GetUser(request.UserId) ?? throw new NotFoundException(nameof(User), request.UserId);
-        var chats = user.ChatIds.Select(async chatId => await _chatRepository.GetChat(chatId) ??
-            throw new NotFoundException(nameof(Chat), chatId));
-        return await Task.WhenAll(chats);
+        return await _chatRepository.GetChatsByUserId(request.UserId);
     }
 }

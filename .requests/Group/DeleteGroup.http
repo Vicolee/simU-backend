@@ -1,0 +1,4 @@
+@host=http://localhost:5087
+@groupId=83062715-3d22-4f34-9861-0bb027ddf356
+
+DELETE {{host}}/Groups/{{groupId}}

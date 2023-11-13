@@ -56,7 +56,7 @@ public class AuthenticationService : IAuthenticationService
             );
 
             await _userRepository.AddUser(user);
-            return user.Id;
+            return user.UserId;
 
         }
         catch (Exception e)
@@ -86,7 +86,7 @@ public async Task<Guid> RegisterAgent(string firstName, string lastName, Boolean
         );
 
         await _userRepository.AddUser(user);
-        return user.Id;
+        return user.UserId;
 
     }
     catch (Exception e)
@@ -136,7 +136,7 @@ public async Task<Guid> RegisterAgent(string firstName, string lastName, Boolean
 
                 // Retrieve user from your repository using identityId
                 var user = await _userRepository.GetUserByEmail(email) ?? throw new NotFoundException($"{nameof(User)} with email {email}");
-                return user.Id;
+                return user.UserId;
             }
             else
             {
