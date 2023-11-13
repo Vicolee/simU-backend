@@ -20,6 +20,7 @@ public class User : Entity
     {
         Friends = new();
         QuestionResponses = new();
+        Location = new();
         UserId = Id;
     }
 
