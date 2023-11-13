@@ -20,7 +20,11 @@ public class User : Entity
     {
         Friends = new();
         QuestionResponses = new();
-        Location = new();
+        Location = new Location {
+            LocationId = Guid.NewGuid(),
+            X = 0,
+            Y = 0,
+        };
         UserId = Id;
     }
 

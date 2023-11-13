@@ -51,6 +51,13 @@ public class UserRepository : IUserRepository
             .FirstOrDefaultAsync(u => u.UserId == userId);
     }
 
+    public async Task<Location?> GetLocation(Guid locationId)   
+    {
+        var user = await _dbContext.Users
+            .FirstOrDefaultAsync(u => u.Location != null && u.Location.LocationId == locationId);
+        return user?.Location;
+    }
+
     public async Task RemoveUser(Guid userId)
     {
         var user = await GetUser(userId);
