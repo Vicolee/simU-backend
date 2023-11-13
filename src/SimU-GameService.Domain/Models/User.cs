@@ -45,6 +45,7 @@ public class User : Entity
     {
         Location = new Location
         {
+            LocationId = Guid.NewGuid(),
             X = xCoord,
             Y = yCoord
         };
