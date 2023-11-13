@@ -68,7 +68,7 @@ public class UnityHub : Hub<IUnityClient>,  IUnityHub
         // get user ID from connection map
         var userId = GetUserIdFromConnectionMap() ??
             throw new NotFoundException($"User ID mapping to connection ID {Context.ConnectionId}");
-        
+ 
         // check if group exists
         // get owner ID from group
         var ownerId = await _mediator.Send(

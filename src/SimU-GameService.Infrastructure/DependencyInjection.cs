@@ -45,8 +45,8 @@ public static class DependencyInjection
 
         services.AddHttpClient<ILLMService, LLMService>( httpClient =>
         {
-            // TO DO: UPDATE THIS LLM SERVICE URL
-            httpClient.BaseAddress = new Uri("https://LLM-service-url.com");
+            httpClient.BaseAddress = new Uri("https://sim-you-lll-service.victoriousrock-3d13ba09.eastus2.azurecontainerapps.io/api/agents/prompt");
+            httpClient.Timeout = TimeSpan.FromMinutes(2);
         });
 
         services
