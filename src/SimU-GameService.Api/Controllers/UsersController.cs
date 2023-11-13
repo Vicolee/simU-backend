@@ -46,6 +46,7 @@ public class UsersController : ControllerBase
                     user.FirstName,
                     user.LastName,
                     user.Email,
+                    user.Description,
                     user.Location?.X ?? default,
                     user.Location?.Y ?? default,
                     user.CreatedTime));

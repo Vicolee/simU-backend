@@ -1,0 +1,4 @@
+@host=http://localhost:5087
+@chatId=cb8e1fcd-00f0-498d-b9a3-da00e3e05b61
+
+DELETE {{host}}/Chats/{{chatId}} HTTP/1.1

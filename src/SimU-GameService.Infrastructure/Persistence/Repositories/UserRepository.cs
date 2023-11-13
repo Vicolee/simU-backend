@@ -48,7 +48,7 @@ public class UserRepository : IUserRepository
     public async Task<User?> GetUser(Guid userId)
     {
         return await _dbContext.Users
-            .FirstOrDefaultAsync(u => u.Id == userId);
+            .FirstOrDefaultAsync(u => u.UserId == userId);
     }
 
     public async Task RemoveUser(Guid userId)
@@ -71,7 +71,7 @@ public class UserRepository : IUserRepository
         }
 
         var user = _dbContext.Users
-            .FirstOrDefault(u => u.Id == userId) ?? throw new NotFoundException(nameof(User), userId);
+            .FirstOrDefault(u => u.UserId == userId) ?? throw new NotFoundException(nameof(User), userId);
 
         user.QuestionResponses = responses
             .Select((response, index) => new QuestionResponse(_questions.ElementAt(index), response))

@@ -1,0 +1,5 @@
+@host=http://localhost:5087
+@userId=cb8e1fcd-00f0-498d-b9a3-da00e3e05b61
+@friendId=de133727-d2c6-4d84-bfc0-f18b7ae6e41d
+
+DELETE {{host}}/Users/{{userId}}/friends?friendId={{friendId}} HTTP/1.1
