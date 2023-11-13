@@ -8,13 +8,13 @@ public class Agent : Entity
 	public string? FirstName { get; set; }
 	public string? LastName { get; set; }
 	public string? Description { get; set; }
-	public List<Guid> ChatIds { get; set; }
+    public Guid AgentId { get; }
 	public DateTime CreatedTime { get; set; }
 
 
 	public Agent() : base()
 	{
-		ChatIds = new();
+		AgentId = Id;
 	}
 
 	public Agent(Guid userID, string firstName, string lastName, string description) : this()

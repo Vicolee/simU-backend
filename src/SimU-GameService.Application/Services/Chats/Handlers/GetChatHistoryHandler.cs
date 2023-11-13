@@ -40,14 +40,6 @@ public class GetChatHistoryHandler : IRequestHandler<GetChatHistoryQuery, IEnume
     /// <exception cref="Exception"></exception>
     private async Task<IEnumerable<Chat>> GetCorrespondence(Guid senderId, Guid recipientId)
     {
-        var sender = await _userRepository.GetUser(senderId)
-            ?? throw new NotFoundException(nameof(User), senderId);
-
-        var chatsTasks = sender.ChatIds.Select(
-            async chatId => await _chatRepository.GetChat(chatId)
-            ?? throw new NotFoundException(nameof(Chat), chatId));
-
-        return (await Task.WhenAll(chatsTasks))
-            .Where(chat => chat.RecipientId == recipientId);
+        return await _chatRepository.GetChatsBySenderAndReceiverIds(senderId, recipientId);
     }
 }

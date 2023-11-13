@@ -65,10 +65,18 @@ public class UserRepository : IUserRepository
 
     public async Task PostResponses(Guid userId, IEnumerable<string> responses)
     {
+        if (responses.Count() != _questions.Count())
+        {
+            throw new ArgumentException("The number of responses must match the number of questions.");
+        }
+
         var user = _dbContext.Users
             .FirstOrDefault(u => u.Id == userId) ?? throw new NotFoundException(nameof(User), userId);
 
-        user.QuestionResponses = responses.ToList();
+        user.QuestionResponses = responses
+            .Select((response, index) => new QuestionResponse(_questions.ElementAt(index), response))
+            .ToList();
+
         await _dbContext.SaveChangesAsync();
     }
 
@@ -107,7 +115,7 @@ public class UserRepository : IUserRepository
     public async Task UpdateLocation(Guid userId, int xCoord, int yCoord)
     {
         var user = await GetUser(userId) ?? throw new NotFoundException(nameof(User), userId);
-        
+
         user.UpdateLocation(xCoord, yCoord);
         await _dbContext.SaveChangesAsync();
     }
