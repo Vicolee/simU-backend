@@ -44,7 +44,7 @@ namespace SimU_GameService.Infrastructure.Migrations
 
                     b.HasKey("AgentId");
 
-                    b.ToTable("Agents");
+                    b.ToTable("Agents", (string)null);
                 });
 
             modelBuilder.Entity("SimU_GameService.Domain.Models.Chat", b =>
@@ -70,7 +70,7 @@ namespace SimU_GameService.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Chats");
+                    b.ToTable("Chats", (string)null);
                 });
 
             modelBuilder.Entity("SimU_GameService.Domain.Models.Group", b =>
@@ -93,7 +93,7 @@ namespace SimU_GameService.Infrastructure.Migrations
 
                     b.HasKey("GroupId");
 
-                    b.ToTable("Groups");
+                    b.ToTable("Groups", (string)null);
                 });
 
             modelBuilder.Entity("SimU_GameService.Domain.Models.Location", b =>
@@ -110,7 +110,7 @@ namespace SimU_GameService.Infrastructure.Migrations
 
                     b.HasKey("LocationId");
 
-                    b.ToTable("Location");
+                    b.ToTable("Location", (string)null);
                 });
 
             modelBuilder.Entity("SimU_GameService.Domain.Models.User", b =>
@@ -146,7 +146,7 @@ namespace SimU_GameService.Infrastructure.Migrations
 
                     b.HasIndex("LocationId");
 
-                    b.ToTable("Users");
+                    b.ToTable("Users", (string)null);
                 });
 
             modelBuilder.Entity("SimU_GameService.Domain.Models.User", b =>
@@ -155,7 +155,7 @@ namespace SimU_GameService.Infrastructure.Migrations
                         .WithMany()
                         .HasForeignKey("LocationId");
 
-                    b.OwnsMany("SimU_GameService.Domain.Models.Friend", "Friends", b1 =>
+                    b.OwnsMany("SimU_GameService.Domain.Models.User.Friends#SimU_GameService.Domain.Models.Friend", "Friends", b1 =>
                         {
                             b1.Property<Guid>("UserId")
                                 .HasColumnType("uuid");
@@ -168,13 +168,13 @@ namespace SimU_GameService.Infrastructure.Migrations
 
                             b1.HasKey("UserId", "FriendId");
 
-                            b1.ToTable("Friend");
+                            b1.ToTable("Friend", (string)null);
 
                             b1.WithOwner()
                                 .HasForeignKey("UserId");
                         });
 
-                    b.OwnsMany("SimU_GameService.Domain.Models.QuestionResponse", "QuestionResponses", b1 =>
+                    b.OwnsMany("SimU_GameService.Domain.Models.User.QuestionResponses#SimU_GameService.Domain.Models.QuestionResponse", "QuestionResponses", b1 =>
                         {
                             b1.Property<Guid>("UserId")
                                 .HasColumnType("uuid");
@@ -195,7 +195,7 @@ namespace SimU_GameService.Infrastructure.Migrations
 
                             b1.HasKey("UserId", "Id");
 
-                            b1.ToTable("QuestionResponse");
+                            b1.ToTable("QuestionResponse", (string)null);
 
                             b1.WithOwner()
                                 .HasForeignKey("UserId");
