@@ -18,7 +18,7 @@ public class Group : Entity
     {
         Name = name;
         OwnerId = ownerId;
-        CreatedTime = DateTime.Now;
+        CreatedTime = DateTime.UtcNow;
 
         // add owner to list of members
         _memberIds.Add(ownerId);

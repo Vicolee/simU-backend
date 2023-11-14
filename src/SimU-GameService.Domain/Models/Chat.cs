@@ -13,13 +13,13 @@ public class Chat
     {
     }
 
-    public Chat(Guid senderId, Guid receiverId, string content, bool isGroupChat, Guid? id = null) : this()
+    public Chat(Guid senderId, Guid receiverId, string content, bool isGroupChat, Guid? id = null, DateTime? createdTime = null) : this()
     {
         Id = id ?? Guid.NewGuid();
         SenderId = senderId;
         RecipientId = receiverId;
         Content = content;
         IsGroupChat = isGroupChat;
-        CreatedTime = DateTime.Now;
+        CreatedTime = createdTime ?? DateTime.UtcNow;
     }
 }
