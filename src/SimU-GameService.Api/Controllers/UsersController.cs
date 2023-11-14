@@ -36,10 +36,13 @@ public class UsersController : ControllerBase
 
         var user = await _mediator.Send(new GetUserQuery(userId))
             ?? throw new NotFoundException(nameof(Domain.Models.User), userId);
+        // Console.WriteLine("here is the user's location id: ", user.Location?.LocationId);
+        // var location = user.Location != null ? await _mediator.Send(new GetLocationQuery(user.Location.LocationId)) : null;
         return MapUserToUserResponse(user);
-
+        // return MapUserToUserResponse(user, location ?? new Location());
     }
 
+    // private ActionResult<UserResponse> MapUserToUserResponse(User user, Location location)
     private ActionResult<UserResponse> MapUserToUserResponse(User user)
     {
         return Ok(new UserResponse(
@@ -65,4 +68,6 @@ public class UsersController : ControllerBase
         var friends = await _mediator.Send(new GetFriendsQuery(userId));
         return Ok(friends.Select(f => new FriendResponse(f.FriendId, f.CreatedTime)));
     }
+
+
 }

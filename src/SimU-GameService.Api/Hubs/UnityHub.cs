@@ -68,7 +68,7 @@ public class UnityHub : Hub<IUnityClient>,  IUnityHub
         // get user ID from connection map
         var userId = GetUserIdFromConnectionMap() ??
             throw new NotFoundException($"User ID mapping to connection ID {Context.ConnectionId}");
-        
+ 
         // check if group exists
         // get owner ID from group
         var ownerId = await _mediator.Send(
@@ -144,13 +144,13 @@ public class UnityHub : Hub<IUnityClient>,  IUnityHub
     {
         var senderId = GetUserIdFromConnectionMap() ??
             throw new NotFoundException($"User ID mapping to connection ID {Context.ConnectionId}");
-        await _mediator.Send(new SendChatCommand(senderId, receiverId, message));
+        var chatResponse = await _mediator.Send(new SendChatCommand(senderId, receiverId, message));
 
-        // notify receiver of message if they are online
-        if (_connectionMap.ContainsKey(receiverId))
+        // notify receiver of message
+        if (_connectionMap.ContainsKey(chatResponse.RecipientId))
         {
-            await Clients.Client(_connectionMap[receiverId])
-                .ReceiveMessage(senderId.ToString(), message);
+            await Clients.Client(_connectionMap[chatResponse.RecipientId])
+                .ReceiveMessage(nameof(UnityHub), $"You have received a message from {chatResponse.SenderId}: {chatResponse.Content}");
         }
     }
 

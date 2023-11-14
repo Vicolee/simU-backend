@@ -82,4 +82,5 @@ public interface IUserRepository
     /// <param name="yCoord"></param>
     /// <returns></returns>
     Task UpdateLocation(Guid userId, int xCoord, int yCoord);
+    Task<Location?> GetLocation(Guid locationId); 
 }
