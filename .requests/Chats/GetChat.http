@@ -1,4 +1,4 @@
 @host=http://localhost:5087
-@chatId=cb8e1fcd-00f0-498d-b9a3-da00e3e05b61
+@chatId=2bf35502-ec91-4959-ac13-c6ac87dc08c2
 
 GET {{host}}/Chats/{{chatId}} HTTP/1.1

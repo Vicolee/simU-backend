@@ -146,13 +146,12 @@ public class UnityHub : Hub<IUnityClient>,  IUnityHub
             throw new NotFoundException($"User ID mapping to connection ID {Context.ConnectionId}");
         await _mediator.Send(new SendChatCommand(senderId, receiverId, message));
 
-        // notify receiver of message
-        if (!_connectionMap.ContainsKey(receiverId))
+        // notify receiver of message if they are online
+        if (_connectionMap.ContainsKey(receiverId))
         {
-            throw new NotFoundException($"Connection ID for user", receiverId);
+            await Clients.Client(_connectionMap[receiverId])
+                .ReceiveMessage(senderId.ToString(), message);
         }
-        await Clients.Client(_connectionMap[receiverId])
-            .ReceiveMessage(nameof(UnityHub), $"You have received a message from {senderId}: {message}");
     }
 
     /// <inheritdoc/>
