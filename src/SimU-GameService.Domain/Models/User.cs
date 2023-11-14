@@ -1,3 +1,4 @@
+using System.ComponentModel.DataAnnotations.Schema;
 using SimU_GameService.Domain.Primitives;
 
 namespace SimU_GameService.Domain.Models;
@@ -14,7 +15,9 @@ public class User : Entity
     public Location? Location { get; set; }
     public List<Friend> Friends { get; set; }
     public List<QuestionResponse> QuestionResponses { get; set; }
-    public Guid UserId { get; }
+
+    [Column("UserId")]
+    public Guid UserId { get; private set; }
 
     public User() : base()
     {
