@@ -150,7 +150,7 @@ public class UnityHub : Hub<IUnityClient>,  IUnityHub
         if (_connectionMap.ContainsKey(chatResponse.RecipientId))
         {
             await Clients.Client(_connectionMap[chatResponse.RecipientId])
-                .ReceiveMessage(nameof(UnityHub), $"You have received a message from {chatResponse.SenderId}: {chatResponse.Content}");
+                .ReceiveMessage(chatResponse.SenderId.ToString(), chatResponse.Content);
         }
     }
 

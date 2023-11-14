@@ -68,14 +68,14 @@ public class LLMService : ILLMService
         }
         else
         {
-
             var agentResponse = new Chat
             {
-                Id = responseID,
                 SenderId = agentId,
                 RecipientId = userId,
                 Content = content,
-                IsGroupChat = false
+                IsGroupChat = false,
+                Id = responseID,
+                CreatedTime = DateTime.UtcNow
             };
 
             return agentResponse;

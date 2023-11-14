@@ -40,7 +40,7 @@ public class SendChatHandler : IRequestHandler<SendChatCommand, Chat>
 
         var receiver = (Entity?) receiverAsUser ?? receiverAsGroup;
 
-        var chat = new Chat(request.SenderId, request.ReceiverId, request.Content, receiver is Group);
+        var chat = new Chat(request.SenderId, request.ReceiverId, request.Content, receiver is Group, null, DateTime.UtcNow);
         await _chatRepository.AddChat(chat);
         if (receiverAsUser != null && receiverAsUser.IsAgent)
         {
