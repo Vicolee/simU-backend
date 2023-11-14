@@ -147,12 +147,11 @@ public class UnityHub : Hub<IUnityClient>,  IUnityHub
         var chatResponse = await _mediator.Send(new SendChatCommand(senderId, receiverId, message));
 
         // notify receiver of message
-        if (!_connectionMap.ContainsKey(chatResponse.RecipientId))
+        if (_connectionMap.ContainsKey(chatResponse.RecipientId))
         {
-            throw new NotFoundException($"Connection ID for user", chatResponse.RecipientId);
+            await Clients.Client(_connectionMap[chatResponse.RecipientId])
+                .ReceiveMessage(nameof(UnityHub), $"You have received a message from {chatResponse.SenderId}: {chatResponse.Content}");
         }
-        await Clients.Client(_connectionMap[chatResponse.RecipientId])
-            .ReceiveMessage(nameof(UnityHub), $"You have received a message from {chatResponse.SenderId}: {chatResponse.Content}");
     }
 
     /// <inheritdoc/>
