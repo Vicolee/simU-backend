@@ -25,6 +25,7 @@ public class ChatsController : ControllerBase
             ?? throw new NotFoundException(nameof(Domain.Models.Chat), chatId);
 
         return Ok(new ChatResponse(
+            result.Id,
             result.SenderId,
             result.RecipientId,
             result.Content,
@@ -51,6 +52,7 @@ public class ChatsController : ControllerBase
         }
 
         var response = chats.Select(chat => new ChatResponse(
+            chat.Id,
             chat.SenderId,
             chat.RecipientId,
             chat.Content,
@@ -76,6 +78,7 @@ public class ChatsController : ControllerBase
         }
 
         return Ok(chats.Select(chat => new ChatResponse(
+            chat.Id,
             chat.SenderId,
             chat.RecipientId,
             chat.Content,

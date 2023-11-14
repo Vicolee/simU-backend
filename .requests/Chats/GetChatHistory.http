@@ -1,5 +1,5 @@
 @host=http://localhost:5087
-@userA_Id=cb8e1fcd-00f0-498d-b9a3-da00e3e05b61
-@userB_Id=de133727-d2c6-4d84-bfc0-f18b7ae6e41d
+@userA_Id=8ab1d23e-94f0-42bc-a58e-0a09f41cb4b8
+@userB_Id=6e8f927c-e59d-4ccb-9b94-da5a45c9bc3a
 
 GET {{host}}/Chats/history?userA_Id={{userA_Id}}&userB_Id={{userB_Id}}
