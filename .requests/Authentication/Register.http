@@ -1,4 +1,4 @@
-@host=http://localhost:5087
+@host=http://165.22.188.118
 
 POST {{host}}/Authentication/register HTTP/1.1
 Content-Type: application/json

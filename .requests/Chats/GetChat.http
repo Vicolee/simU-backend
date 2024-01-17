@@ -1,4 +1,4 @@
-@host=http://localhost:5087
+@host=http://165.22.188.118
 @chatId=2bf35502-ec91-4959-ac13-c6ac87dc08c2
 
 GET {{host}}/Chats/{{chatId}} HTTP/1.1

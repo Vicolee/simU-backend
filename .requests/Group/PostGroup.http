@@ -1,5 +1,5 @@
-@host=http://localhost:5087
-@userId=cb8e1fcd-00f0-498d-b9a3-da00e3e05b61
+@host=http://165.22.188.118
+@userId=8ab1d23e-94f0-42bc-a58e-0a09f41cb4b8
 
 POST {{host}}/Groups HTTP/1.1
 Content-Type: application/json
