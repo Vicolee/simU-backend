@@ -15,13 +15,13 @@ msg () {
 # switch to repository root
 cd $HOME/$SERVER
 
+msg "Pulling latest code from GitHub"
+git pull
+
 msg "Terminating current server instance"
 sudo systemctl stop $SERVER
 
-msg "Pulling code from GitHub"
-git pull
-
-msg "Building application binary"
+msg "Building new binary"
 
 cd src
 dotnet restore
@@ -35,6 +35,7 @@ sudo systemctl start $SERVER
 
 duration=$SECONDS
 
+echo "\n------------------------------------\n"
 echo "Deployment completed in $(($duration % 60)) seconds."
 echo "Press Enter to exit."
 read
