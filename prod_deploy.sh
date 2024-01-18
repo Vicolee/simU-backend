@@ -9,7 +9,7 @@ DASHES="------------------------------------"
     
 # function to display messages consistently
 msg () {
-    echo -e "\n$1..."
+    echo -e "\n$1...."
 }
 
 # switch to repository root
