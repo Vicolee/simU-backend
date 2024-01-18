@@ -35,7 +35,7 @@ sudo systemctl start $SERVER
 
 duration=$SECONDS
 
-echo -e "\n------------------------------------"
+echo -e "\n$DASHES"
 echo -e "Deployment completed in $(($duration % 60)) seconds.\n"
 echo "Press Enter to exit."
 read
