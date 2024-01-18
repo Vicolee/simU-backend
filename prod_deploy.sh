@@ -9,7 +9,7 @@ DASHES="------------------------------------"
     
 # function to display messages consistently
 msg () {
-    echo -e "\n$1...."
+    echo -e "\n$1..."
 }
 
 # switch to repository root
@@ -35,7 +35,6 @@ sudo systemctl start $SERVER
 
 duration=$SECONDS
 
-echo
-msg "Deployment completed in $(($duration % 60)) seconds."
-msg "Press Enter to exit"
+echo "Deployment completed in $(($duration % 60)) seconds."
+echo "Press Enter to exit."
 read
