@@ -5,5 +5,5 @@
 
 REPO_PATH="/home/lekina/SimU-GameService"
 
-sshcmd="ssh -t lekina@api.simugameservice.lekina.me"
+sshcmd="ssh -tt lekina@api.simugameservice.lekina.me"
 $sshcmd screen -S "deployment" $REPO_PATH/prod_deploy.sh
