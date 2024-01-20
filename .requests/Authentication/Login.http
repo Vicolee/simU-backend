@@ -1,5 +1,4 @@
-@host=http://165.22.188.118
-
+@host=http://localhost:8080
 
 POST {{host}}/Authentication/login HTTP/1.1
 Content-Type: application/json
