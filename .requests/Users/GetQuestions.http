@@ -1,3 +1,0 @@
-@host=http://localhost:8080
-
-GET {{host}}/Users/questions HTTP/1.1

@@ -1,5 +1,0 @@
-@host=http://165.22.188.118
-@userA_Id=8ab1d23e-94f0-42bc-a58e-0a09f41cb4b8
-@userB_Id=6e8f927c-e59d-4ccb-9b94-da5a45c9bc3a
-
-GET {{host}}/Chats/history?userA_Id={{userA_Id}}&userB_Id={{userB_Id}}
