@@ -3,7 +3,7 @@
 public record class RegisterRequest(
     string FirstName,
     string LastName,
-    string Password="",
-    string Email="",
-    bool IsAgent = false,
-    string Description = "");
+    string? Password = default,
+    string? Email = default,
+    string? Description = default,
+    bool IsAgent = false);

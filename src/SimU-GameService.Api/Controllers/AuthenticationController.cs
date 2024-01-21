@@ -5,6 +5,8 @@ using SimU_GameService.Contracts.Responses;
 
 namespace SimU_GameService.Api.Controllers;
 
+// TODO: adopt the CQRS pattern using MediatR to send commands and queries to the Application layer
+
 [ApiController]
 [Route("[controller]")]
 public class AuthenticationController : ControllerBase
@@ -19,34 +21,36 @@ public class AuthenticationController : ControllerBase
     [HttpPost("register", Name = "RegisterUser")]
     public async Task<ActionResult<AuthenticationResponse>> RegisterUser([FromBody] RegisterRequest request)
     {
-        Boolean isAgent = request.IsAgent;
+        // handle agent registration
+        bool isAgent = request.IsAgent;
+        if (isAgent)
+        {
+            Guid agentId = await _authenticationService.RegisterAgent(request.FirstName,
+                request.LastName,
+                request.IsAgent,
+                request.Description ?? string.Empty);
 
-        // Creates an LLM, so email and password to set to empty string
-        if (isAgent) {
-            Guid userId = await _authenticationService.RegisterAgent(
-            request.FirstName,
-            request.LastName,
-            request.IsAgent,
-            request.Description);
-            if (userId == Guid.Empty)
+            if (agentId == Guid.Empty)
             {
-                return NotFound(new AuthenticationResponse(userId, "Failed to register agent."));
-            } else {
-                return Ok(new AuthenticationResponse(userId, "Agent registered."));
+                // TODO: return a more appropriate error code
+                return NotFound(new AuthenticationResponse(agentId, "Failed to register agent."));
             }
-        } else {
-            Guid userId = await _authenticationService.RegisterUser(
+            return Ok(new AuthenticationResponse(agentId, "Agent registered."));
+        }
+
+        // handle user registration
+        Guid userId = await _authenticationService.RegisterUser(
             request.FirstName,
             request.LastName,
-            request.Email,
-            request.Password);
-            if (userId == Guid.Empty)
-            {
-                return NotFound(new AuthenticationResponse(userId, "User already registered."));
-            } else {
-                return Ok(new AuthenticationResponse(userId, "User registered."));
+            request.Email ?? string.Empty,
+            request.Password ?? string.Empty);
+
+        if (userId == Guid.Empty)
+        {
+            // TODO: return a more appropriate error code
+            return NotFound(new AuthenticationResponse(userId, "User already registered."));
         }
-        }
+        return Ok(new AuthenticationResponse(userId, "User registered."));
     }
 
     [HttpPost("login", Name = "LoginUser")]
@@ -67,6 +71,7 @@ public class AuthenticationController : ControllerBase
     [HttpPut("{userId}/logout", Name = "LogoutUser")]
     public Task<ActionResult> LogoutUser(Guid userId)
     {
+        // TODO: implement
         throw new NotImplementedException();
     }
 }

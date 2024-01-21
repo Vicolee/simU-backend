@@ -1,4 +1,0 @@
-@host=http://165.22.188.118
-@userId=8ab1d23e-94f0-42bc-a58e-0a09f41cb4b8
-
-GET {{host}}/Users/{{userId}} HTTP/1.1

@@ -7,7 +7,6 @@ namespace SimU_GameService.Api.Hubs;
 public interface IUnityClient
 {
     // TODO: Add client methods to be invoked by the server here.
-    // Here is an example:
 
     /// <summary>
     /// Handles a message received from another client through the server.
