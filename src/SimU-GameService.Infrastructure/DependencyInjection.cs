@@ -30,10 +30,8 @@ public static class DependencyInjection
         {
             Credential = GoogleCredential.FromFile("firebase.json")
         });
-
-        // changed from AddSingleton to AddScoped and the migration worked. Check back on this
+        
         services.AddScoped<IAuthenticationService, AuthenticationService>();
-        // To Do: Make sure I added this service correctly, and figure out how to add HTTP client for this service
         services.AddScoped<ILLMService, LLMService>();
         services.Configure<AuthenticationSettings>(configuration.GetSection("Authentication"));
 
@@ -45,7 +43,10 @@ public static class DependencyInjection
 
         services.AddHttpClient<ILLMService, LLMService>( httpClient =>
         {
-            httpClient.BaseAddress = new Uri("https://sim-you-lll-service.victoriousrock-3d13ba09.eastus2.azurecontainerapps.io/api/agents/prompt");
+            // TODO: figure out how to get this from appsettings.json
+            // overall, figure out how to tidy up the LLM service and its infrastructure
+            httpClient.BaseAddress = new Uri(
+                "https://sim-you-lll-service.victoriousrock-3d13ba09.eastus2.azurecontainerapps.io/api/agents/prompt");
             httpClient.Timeout = TimeSpan.FromMinutes(2);
         });
 

@@ -6,6 +6,8 @@ using FirebaseAdmin.Auth;
 using SimU_GameService.Application.Common.Exceptions;
 namespace SimU_GameService.Application.Services;
 
+// TODO: break this up into smaller services for each endpoint using the CQRS pattern
+
 /// <summary>
 /// Handles authentication logic in the Application layer.
 /// </summary>
@@ -52,7 +54,7 @@ public class AuthenticationService : IAuthenticationService
                 lastName,
                 email,
                 false,
-                ""
+                string.Empty
             );
 
             await _userRepository.AddUser(user);
@@ -63,41 +65,40 @@ public class AuthenticationService : IAuthenticationService
         {
             if (e.InnerException != null)
             {
-                Console.WriteLine($"Inner Exception: {e .InnerException.Message}");
+                Console.WriteLine($"Inner Exception: {e.InnerException.Message}");
             }
             throw new Exception("Failed to register user: " + e.Message);
         }
     }
 
 
-public async Task<Guid> RegisterAgent(string firstName, string lastName, Boolean isAgent, string description)
-{
-
-    try
+    public async Task<Guid> RegisterAgent(string firstName, string lastName, bool isAgent, string description)
     {
-        // sets identityID to empty string and email to empty string
-        var user = new User(
-            "",
-            firstName,
-            lastName,
-            "",
-            isAgent,
-            description
-        );
-
-        await _userRepository.AddUser(user);
-        return user.UserId;
-
-    }
-    catch (Exception e)
-    {
-        if (e.InnerException != null)
+        try
         {
-            Console.WriteLine($"Inner Exception: {e .InnerException.Message}");
+            // sets identityID to empty string and email to empty string
+            var user = new User(
+                string.Empty,
+                firstName,
+                lastName,
+                string.Empty,
+                isAgent,
+                description
+            );
+
+            await _userRepository.AddUser(user);
+            return user.UserId;
+
         }
-        throw new Exception("Failed to register agent: " + e.Message);
+        catch (Exception e)
+        {
+            if (e.InnerException != null)
+            {
+                Console.WriteLine($"Inner Exception: {e.InnerException.Message}");
+            }
+            throw new Exception("Failed to register agent: " + e.Message);
+        }
     }
-}
 
 
     /// <summary>
@@ -118,7 +119,7 @@ public async Task<Guid> RegisterAgent(string firstName, string lastName, Boolean
                 returnSecureToken = true
             };
 
-            var response = await _httpClient.PostAsJsonAsync("", request);
+            var response = await _httpClient.PostAsJsonAsync(string.Empty, request);
             // authToken for later JWT authentication
             // var authToken = await response.Content.ReadFromJsonAsync<AuthToken>();
 

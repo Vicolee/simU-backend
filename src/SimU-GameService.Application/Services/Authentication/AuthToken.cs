@@ -2,6 +2,8 @@ using System.Text.Json.Serialization;
 
 namespace SimU_GameService.Application.Common.Authentication;
 
+// TODO: move to Infrastructure layer?
+
 public class AuthToken
 {
     [JsonPropertyName("kind")]
