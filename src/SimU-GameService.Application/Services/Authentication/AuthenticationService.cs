@@ -27,7 +27,7 @@ public class AuthenticationService : IAuthenticationService
     /// <param name="email"></param>
     /// <param name="password"></param>
     /// <returns> The user's ID. </returns>
-    public async Task<Guid> RegisterUser(string firstName, string lastName, string email, string password)
+    public async Task<Guid> RegisterUser(string username, string email, string password)
     {
         // a user has already been created with that email
         if (await _userRepository.GetUserByEmail(email) != null)
@@ -48,15 +48,14 @@ public class AuthenticationService : IAuthenticationService
             // sets isAgent to false and description to empty string
             var user = new User(
                 identityId,
-                firstName,
-                lastName,
+                username,
                 email,
                 false,
-                ""
+                true
             );
 
             await _userRepository.AddUser(user);
-            return user.UserId;
+            return user.CharacterId;
 
         }
         catch (Exception e)
@@ -70,22 +69,22 @@ public class AuthenticationService : IAuthenticationService
     }
 
 
-public async Task<Guid> RegisterAgent(string firstName, string lastName, Boolean isAgent, string description)
+public async Task<Guid> RegisterAgent(string username, Guid createdByUser, int collabDurationHours, string description)
 {
 
     try
     {
         // sets identityID to empty string and email to empty string
-        var user = new User(
-            "",
-            firstName,
-            lastName,
-            "",
-            isAgent,
+        var agent = new Agent(
+            true,
+            username,
+            createdByUser,
+            collabDurationHours,
             description
         );
 
-        await _userRepository.AddUser(user);
+        // UPDATE THIS
+        await _userRepository.AddUser(agent);
         return user.UserId;
 
     }

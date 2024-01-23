@@ -30,6 +30,7 @@ public class SendChatHandler : IRequestHandler<SendChatCommand, Chat>
 
         // attempt to retrieve the receiver as a User or Group
         var receiverAsUser = await _userRepository.GetUser(request.ReceiverId);
+        // var receiverAsAgent = receiverAsUser != null ? null : await _agentRepository.GetAgent(request.ReceiverId);
         var receiverAsGroup = receiverAsUser != null ? null : await _groupRepository.GetGroup(request.ReceiverId);
 
         // throw an exception if receiver is neither a User nor a Group

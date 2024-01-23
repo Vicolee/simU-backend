@@ -1,3 +1,3 @@
-namespace SimU_GameService.Domain.Models;
+// namespace SimU_GameService.Domain.Models;
 
-public record Friend(Guid FriendId, DateTime CreatedTime);
+// public record Friend(Guid FriendId, DateTime CreatedTime);

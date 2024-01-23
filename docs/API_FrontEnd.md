@@ -1,0 +1,715 @@
+# Front-End to GameService API
+
+## Table of Contents
+
+- [Notes](#notes)
+- [Authentication Endpoints](#authentication-endpoints)
+- [World Endpoints](#world-endpoints)
+- [User Endpoints](#user-endpoints)
+- [Group Endpoints](#group-endpoints)
+- [Chat Endpoints](#chat-endpoints)
+
+## Notes
+
+- We will use a combination of REST API and SignalR requests to fulfill the API contract. SignalR is solely used for instances where we might need to send/broadcast information to other clients in the game.
+- You might notice that the SignalR requests do not include the sender's ID. We will resolve the sender's identity using the connection ID to the server's SignalR hub.
+- This document will probably evolve (gradually). In case of connection errors, please refer to this document as the initial source of truth.
+
+## Authentication Endpoints
+
+### RegisterUser
+
+#### Description
+
+- This endpoint registers (and logs in) a user with the game server.
+
+#### Request
+
+- `POST /authentication/register/user`
+
+  ```json
+  {
+    "username": "string",
+    "password": "string",
+    "email": "string"
+  }
+  ```
+
+#### Response
+
+- `200 OK`
+
+  ```json
+  {
+    "id": "string",
+    "authToken": "string"
+  }
+  ```
+
+### LoginUser
+
+#### Description
+
+- This endpoint logs in a user with the game server.
+
+#### Request
+
+- `POST /authentication/login`
+
+  ```json
+  {
+    "email" : "string",
+    "password" : "string"
+  }
+  ```
+
+#### Response
+
+- `200 OK`
+
+  ```json
+  {
+    "id": "string",
+    "authToken": "string"
+  }
+  ```
+
+### LogoutUser
+
+#### Description
+
+- This endpoint logs out the user from the game.
+
+#### Request
+
+- `PUT /authentication/{userId}/logout`
+
+#### Response
+
+- `204 No Content`
+
+## World Endpoints
+
+### CreateWorld
+
+#### Description
+
+Creates a new world for the user.
+
+#### Request
+
+- `POST /worlds/create`
+```json
+  {
+    "worldName": "string",
+    "userCreatorId": "user Id as string",
+    "description": "string"
+  }
+  ```
+
+#### Response
+
+- `200 OK`
+ ```json
+  {
+    "id": "string",
+    "privateCode": "string (5 digits that we randomly generate - use while loop to check that the 5 digits haven't been used for another world.)"
+  }
+  ```
+
+### AddWorldToList
+
+#### Description
+
+Adds another user's preexisting world to your "Worlds homepage screen" so that you can later connect to it
+
+#### Request
+
+- `GET /worlds/add/{privateCode}`
+```json
+  {
+    "privateCode": "5XW2R" (5 characters),
+    "userId": "user Id as string"
+  }
+  ```
+
+#### Response
+
+- `200 OK`
+ ```json
+  {
+    "worldId": "string",
+    "worldName": "string",
+    "description": "string"
+  }
+  ```
+
+#### Response
+
+- `200 OK`
+
+### GetWorldInfo (call this simultaneously with InitializeUserGameObjects and InitializeAgentGameObjects)
+
+#### Description
+
+#### Request
+
+- `GET /worlds/{worldId}`
+
+#### Response
+
+- `200 OK`
+```json
+  {
+    "worldId": "string",
+    "worldName": "string",
+    "ownerId": "string",
+  }
+  ```
+
+### InitializeUserGameObjects() (TO LEKINA: THIS SHOULD BE SIGNALR)
+
+#### Description
+
+This endpoint returns a list of all users that belong to the server, along with their online/offline status. Typically, this function will be called when a user has just joined the server.
+
+#### Request
+- `GET /worlds/{worldId}/users`
+
+#### Response
+- `200 OK`
+
+```json
+{
+  "userId1": { "locationX": 22, "locationY": 24, "characterSprite": "null", "isOnline": "True" },
+  "userId2": { "locationX": 50, "locationY": 63, "characterSprite": "null", "isOnline": "False" }
+}
+```
+
+### InitializeAgentGameObjects() (TO LEKINA: THIS SHOULD BE SIGNALR)
+
+#### Description
+
+This endpoint returns a list of all agents that are currently on the server. Typically, this function will be called when a user has just joined the server. **Note to Lekina: We must be careful about whether to include offline players whose AI trained personalities are now playing on the server**
+
+#### Request
+- `GET /worlds/{worldId}/agents`
+
+#### Response
+- `200 OK`
+
+```json
+{
+  "agentId1": { "locationX": 33, "locationY": 4, "characterSprite: null" },
+  "agentId2": { "locationX": 21, "locationY": 28, "characterSprite: null" }
+}
+```
+
+### DeleteWorld
+
+#### Description
+
+Deletes a user's world if they are the creator of it.
+
+#### Request
+
+- `DELETE /worlds/remove/{worldId}`
+```json
+  {
+    "worldId": "string",
+    "userId": "user Id as string",
+    "userPass": "string"
+  }
+  ```
+
+#### Response
+
+- `200 OK`
+
+### GetUserList
+
+#### Description
+
+This endpoint returns agent information for the Players list screen.
+
+#### Request
+
+- `GET /worlds/{worldId}/users/list`
+
+#### Response
+
+- `200 OK`
+```json
+    {
+    "users": [
+	{ "username1": ["spriteHeadshot URL", "isOnline (boolean)", "isOwner (boolean)"] },
+        { "username2": ["spriteHeadshot URL", "isOnline (boolean)", "isOwner (boolean)"] },
+        { "username3": ["spriteHeadshot URL", "isOnline (boolean)", "isOwner (boolean)"] },
+    ]
+    }
+```
+
+### GetAgentListIncubating
+
+#### Description
+
+This endpoint returns agent information for the "Incubating" list screen.
+
+#### Request
+
+- `GET /worlds/{worldId}/agents/list/incubating`
+
+#### Response
+
+- `200 OK`
+```json
+    {
+    "incubating": [
+	{ "userId1": ["username1", "spriteHeadshot URL", "TotalIncubationTime", "IncubationTimeLeft"] },
+        { "userId2": ["username2", "spriteHeadshot URL", "TotalIncubationTime", "IncubationTimeLeft"] },
+        { "userId3": ["username3", "spriteHeadshot URL", "TotalIncubationTime", "IncubationTimeLeft"] }
+    ]
+    }
+```
+
+### GetAgentListHatched
+
+#### Description
+
+This endpoint returns agent information for the "Hatched" list screen.
+
+#### Request
+
+- `GET /worlds/{worldId}/agents/list/hatched`
+
+#### Response
+
+- `200 OK`
+```json
+    {
+    "hatched": [
+	{ "userId1": "username1", "spriteHeadshot URL" },
+        { "userId2": "username2", "spriteHeadshot URL" },
+        { "userId3": "username3", "spriteHeadshot URL" }
+    ]
+    }
+```
+
+### KickUser
+
+#### Description
+
+This endpoint is used to kick a player from a world (important: only the owner of the world has the privilege to kick someone).
+
+#### Request
+
+- `DELETE /worlds/{worldId}/users/{userId}`
+```json
+    {
+    "ownerId": "userToRemoveId"
+    }
+```
+
+#### Response
+
+- `200 OK`
+
+## User Endpoints
+
+### GetUserWorlds
+
+#### Description
+Returns the list of worlds that a user belongs to - for display on home screen.
+
+#### Request
+
+- `GET /users/{userId}/worlds`
+
+#### Response
+- `200 OK`
+```json
+  {
+    "worlds": [
+	{ "worldId1": ["worldName1", "description", [ "playerId1", "playerId2", "playerId3" ]] },
+        { "worldId2": ["worldName2", "description", [ "playerId1", "playerId2", "playerId3"]] },
+        { "worldId3": ["worldName3", "description", [ "playerId1 sprite", "playerId2 sprite", "playerId3 sprite"]] }
+    ]
+  }
+  ```
+  - Note: When sending the playerId's to the front-end, the Game service will randomly pick up to 3 playerIds' sprites to send.
+
+### RemoveUserWorld
+
+#### Description
+
+Removes a world from a user's list of worlds that they belong to.
+
+#### Request
+
+- `DELETE /users/{userId}/worlds/{worldId}`
+#### Response
+- `200 OK`
+
+  ```json
+  [
+    "World with id {worldId} removed from user's list"
+  ]
+  ```
+
+### UpdateUserSprite
+
+#### Description
+
+Updates a user's sprite - **TO DO: TALK TO EVAN TO FIGURE OUT IF WE ARE GOING TO PROVIDE A LINK OR A DESCRIPTION TO SEND TO THE AI TEAM GUYS. TALK TO FRONT-END/MOCK UP GUYS ABOUT THIS: MAYBE JUST HAVE SELECTABLE BUTTONS FOR APPEARNCE OR THEY CAN INPUT TEXT SUMMARY OF APPEARANCE.**
+
+#### Request
+
+- `POST /users/{userId}/sprite/`
+```json
+  [
+    "userId": "summary of how they want avatar to look" OR "photo they upload"
+  ]
+```
+#### Response
+- `200 OK`
+
+### GetUserQuestions
+
+#### Description
+
+- This endpoint returns the user entrance questionnaire to the client.
+
+#### Request
+
+- `GET /users/questions`
+
+#### Response
+
+- `200 OK`
+
+  ```json
+  [
+    "string"
+  ]
+  ```
+
+### PostUserResponses
+
+#### Description
+
+This endpoint records the clients responses from the entrance questionnaire.
+
+#### Request
+
+- `POST /users/{userId}/responses`
+
+  ```json
+  [
+    "string"
+  ]
+  ```
+
+#### Response
+
+- `204 No Content`
+
+### UpdateLocation
+
+#### Description
+
+This method updates the user’s location in the map whenever a user changes location in the game.
+
+#### Function prototype
+
+```csharp
+Task UpdateLocation(Location location);
+public record Location(int X_coordinate, int Y_coordinate);
+```
+
+#### Request
+
+```csharp
+Location location = new Location(0, 0);
+HubConnection.SendAsync("UpdateLocation", location)
+```
+
+#### Response
+
+The `UpdateLocation` callback on the server will broadcast the user’s new location to all other clients using the client-side `UpdateLocation` callback as shown below:
+
+```csharp
+await Clients.All.SendAsync("UpdateLocation", userId, location);
+```
+
+### GetUser
+
+#### Description
+
+This endpoint returns user information for the given `userId`.
+
+#### Request
+
+- `GET /users/{userId}`
+
+#### Response
+
+- `200 OK`
+
+  ```json
+  {
+    "username": "string",
+    "email": "string",
+    "lastKnownX": 0,
+    "lastKnownY": 0,
+    "isOnline": true,
+    "createdTime": "2023-11-04T22:54:19.911Z",
+    "lastActiveTime": "2023-11-04T22:54:19.911Z"
+  }
+  ```
+
+## Agent Endpoints
+
+### CreateAgent
+
+#### Description
+
+- This endpoint creates an AI Agent with the game server.
+
+#### Request
+
+- `POST /agents/create`
+
+  ```json
+  {
+    "username": "string",
+    "createdByUser": "user ID as string",
+    "collaborationDurationInHours": 24,
+    "description": "string",
+  }
+  ```
+
+#### Response
+
+- `200 OK`
+
+  ```json
+  {
+    "id": "string",
+    "ALAN TO REVIEW THIS": "string"
+  }
+  ```
+
+### GetAgent
+
+#### Description
+
+This endpoint returns agent information for the given `agentId`.
+
+#### Request
+
+- `GET /agents/{agentId}`
+
+#### Response
+
+- `200 OK`
+
+  ```json
+  {
+    "username": "string",
+    "isHatched": "False",
+    "createdByUser": "string",
+    "createdTime": "2023-11-04T22:54:19.911Z",
+    "summary": "string",
+    "description": "string",
+    "spriteHeadshot": "URL",
+    "isHatched": "True/False",
+    "IncubationTimeLeft": "5 hours",
+    "TotalIncubationTime": "24 hours",
+  }
+  ```
+
+### GetIncubationQuestions
+
+#### Description
+
+- This endpoint returns the questions to train the agent.
+
+#### Request
+
+- `GET /agents/questions`
+
+#### Response
+
+- `200 OK`
+
+  ```json
+  {
+    "question1": "string",
+    "question2": "string",
+    "question3": "string"
+  }
+  ```
+
+### GetIncubationResponses
+
+#### Description
+
+- This endpoint returns the responses to agent questions so far.
+
+#### Request
+
+- `GET /agents/responses/{agentId}`
+
+#### Response
+
+- `200 OK`
+
+  ```json
+  {
+    { "question1": ["response", "responderID", "January 21st, 5 pm"] },
+    { "question1": ["response", "responderID", "January 18th, 2 pm"] },
+    { "question2": ["response", "responderID", "January 19th, 3 am"] },
+    { "question3": ["response", "responderID", "January 20th, 1 pm"] },
+  }
+  ```
+
+### PostAgentResponse
+
+#### Description
+
+- This endpoint is used to upload a response to an agent question.
+
+#### Request
+
+- `POST /agents/responses/{agentId}`
+```json
+  {
+    "questionNumber": 1,
+    "userId": "the ID of user who responded",
+    "response": "string",
+  }
+```
+
+#### Response
+
+- `200 OK`
+
+### GetAgentSummary
+
+#### Description
+
+- This endpoint grabs the GPT summary generated for an AI agent.
+
+#### Request
+
+- `GET /agents/summary/{agentId}`
+
+#### Response
+
+- `200 OK`
+
+  ```json
+  {
+    "agentId": "summary"
+  }
+  ```
+
+## Chat Endpoints
+
+### SendMessage
+
+#### Description
+
+This endpoint sends a message to a user/group through the server.
+
+#### Function prototype
+
+```csharp
+Task SendMessage(Guid receiverId, string message);
+```
+
+#### Request
+
+```csharp
+Guid receiverId = Guid.NewGuid();
+string message = "Example message"
+HubConnection.SendAsync("SendMessage", receiverId, message)
+```
+
+#### Response
+
+- The `SendMessage` callback on the server will forward the message to the `User` or `Group` matching the `receiverId`.
+
+### DeleteChat
+
+#### Description
+
+This endpoint allows a user to delete a message sent to a user/group through the server.
+
+#### Request
+
+- `DELETE /chats/{chatId}`
+
+#### Response
+
+- `204 No Content`
+
+### GetChatHistory
+
+#### Description
+
+This endpoint gets the chat history between the current client and another user/group with `receiverId`.
+
+#### Request
+
+- `GET /chats/history`
+
+  ```json
+  {
+    "senderId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+    "recipientId": "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+  }
+  ```
+
+#### Response
+
+- `200 OK`
+
+  ```json
+  [
+    {
+      "Id": "5fw92f53-5717-4562-b3fc-2c963f66afa6",
+      "senderId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+      "receiverId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+      "content": "string",
+      "isGroupChat": true,
+      "createdTime": "2023-11-04T23:07:50.727Z"
+    }
+  ]
+  ```
+
+### GetUserChats
+
+#### Description
+
+Gets the IDs of all the chats sent by the user with ID `userId`.
+
+#### Request
+
+- `GET /chats?senderId={senderIdValue}`
+
+#### Response
+
+- `200 OK`
+
+  ```json
+  [
+    {
+      "senderId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+      "receiverId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+      "content": "string",
+      "isGroupChat": true,
+      "createdTime": "2023-11-04T23:10:06.106Z"
+    }
+  ]
+  ```

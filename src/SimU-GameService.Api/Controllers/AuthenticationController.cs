@@ -16,16 +16,34 @@ public class AuthenticationController : ControllerBase
         _authenticationService = authenticationService;
     }
 
-    [HttpPost("register", Name = "RegisterUser")]
-    public async Task<ActionResult<AuthenticationResponse>> RegisterUser([FromBody] RegisterRequest request)
+    [HttpPost("register/user", Name = "RegisterUser")]
+    public async Task<ActionResult<AuthenticationResponse>> RegisterUser([FromBody] RegisterRequestUser request)
+    {
+
+        Guid userId = await _authenticationService.RegisterUser(
+        request.Username,
+        request.Email,
+        request.Password);
+        if (userId == Guid.Empty)
+        {
+            return NotFound(new AuthenticationResponse(userId, "User already registered."));
+        } else {
+            return Ok(new AuthenticationResponse(userId, "User registered."));
+        }
+        }
+    }
+
+    [HttpPost("register/agent", Name = "RegisterAgent")]
+    public async Task<ActionResult<AuthenticationResponse>> RegisterAgent([FromBody] RegisterRequestAgent request)
     {
         Boolean isAgent = request.IsAgent;
 
         // Creates an LLM, so email and password to set to empty string
         if (isAgent) {
             Guid userId = await _authenticationService.RegisterAgent(
-            request.FirstName,
-            request.LastName,
+            request.Username,
+            request.CreatedByUser,
+            request.CollabDurationHours,
             request.IsAgent,
             request.Description);
             if (userId == Guid.Empty)
@@ -35,17 +53,7 @@ public class AuthenticationController : ControllerBase
                 return Ok(new AuthenticationResponse(userId, "Agent registered."));
             }
         } else {
-            Guid userId = await _authenticationService.RegisterUser(
-            request.FirstName,
-            request.LastName,
-            request.Email,
-            request.Password);
-            if (userId == Guid.Empty)
-            {
-                return NotFound(new AuthenticationResponse(userId, "User already registered."));
-            } else {
-                return Ok(new AuthenticationResponse(userId, "User registered."));
-        }
+            return NotFound(new AuthenticationResponse(Guid.Empty, "User is not an agent."));
         }
     }
 

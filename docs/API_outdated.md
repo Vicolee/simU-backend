@@ -24,12 +24,11 @@
 
 #### Request
 
-- `POST /authentication/register`
+- `POST /authentication/register/user`
 
   ```json
   {
-    "firstName": "string",
-    "lastName": "string",
+    "username": "string",
     "password": "string",
     "email": "string"
   }
@@ -43,6 +42,36 @@
   {
     "id": "string",
     "authToken": "string"
+  }
+  ```
+
+### RegisterAgent
+
+#### Description
+
+- This endpoint creates an AI Agent with the game server.
+
+#### Request
+
+- `POST /authentication/register/agent`
+
+  ```json
+  {
+    "username": "string",
+    "createdByUser": "user ID as string",
+    "collaborationDurationInHours": 24,
+    "description": "string",
+  }
+  ```
+
+#### Response
+
+- `200 OK`
+
+  ```json
+  {
+    "id": "string",
+    "ALAN TO REVIEW THIS": "string"
   }
   ```
 
@@ -89,6 +118,28 @@
 - `204 No Content`
 
 ## User Endpoints
+
+### GetUserWorlds
+
+#### Description
+Returns the list of worlds that a user belongs to - for display on home screen.
+
+#### Request
+
+- `GET /users/{userId}/worlds`
+
+#### Response
+- `200 OK`
+```json
+  {
+    "worlds": [
+	{ "worldId1": ["worldName1", "description", [ "playerId1", "playerId2", "playerId3" ]] },
+        { "worldId2": ["worldName2", "description", [ "playerId1", "playerId2", "playerId3"]] },
+        { "worldId3": ["worldName3", "description", [ "playerId1", "playerId2", "playerId3"]] }
+    ]
+  }
+  ```
+  - Note: When sending the playerId's to the front-end, the Game service will randomly pick up to 3 playerIds to send.
 
 ### GetQuestions
 
@@ -185,25 +236,6 @@ This endpoint returns user information for the given `userId`.
   }
   ```
 
-### InitalizeUserGameObjects()
-
-#### Description
-
-This endpoint returns a list of all users that are currently connected to the server. Typically, this function will be called when a user has just joined the server.
-
-#### Request
-- `GET /users`
-
-#### Response
-- `200 OK`
-
-```json
-{
-  "userId1": { "locationX" = x, "locationY" = y, "characterSprite: null" },
-  "userId2": { "locationX" = x, "locationY" = y, "characterSprite: null" }
-}
-```
-
 ### SendFriendRequest
 
 #### Description
@@ -286,6 +318,9 @@ This endpoint returns the list of friends that a certain user with ID `userId` h
     }
   ]
   ```
+
+## Agent Endpoints
+null
 
 ## Group Endpoints
 
@@ -500,3 +535,142 @@ Gets the IDs of all the chats sent by the user with ID `userId`.
     }
   ]
   ```
+
+## World Endpoints
+
+### CreateWorld
+
+#### Description
+
+Creates a new world for the user.
+
+#### Request
+
+- `POST /worlds/create`
+```json
+  {
+    "worldName": "string",
+    "userCreatorId": "user Id as string",
+    "description": "string"
+  }
+  ```
+
+#### Response
+
+- `200 OK`
+ ```json
+  {
+    "id": "string",
+    "privateCode": "string (5 digits that we randomly generate - use while loop to check that the 5 digits haven't been used for another world.)"
+  }
+  ```
+
+### AddWorld
+
+#### Description
+
+Joins another user's preexisting world.
+
+#### Request
+
+- `GET /worlds/add/{privateCode}`
+```json
+  {
+    "privateCode": "5XW2R" (5 characters),
+    "userId": "user Id as string"
+  }
+  ```
+
+#### Response
+
+- `200 OK`
+ ```json
+  {
+    "worldId": "string",
+    "worldName": "string",
+    "description": "string"
+  }
+  ```
+
+### DeleteWorld
+
+#### Description
+
+Deletes a user's world if they are the creator of it.
+
+#### Request
+
+- `DELETE /worlds/remove/{worldId}`
+```json
+  {
+    "worldId": "string",
+    "userId": "user Id as string",
+    "userPass": "string"
+  }
+  ```
+
+#### Response
+
+- `200 OK`
+
+
+
+
+
+### ConnectToWorld (call this simultaneously with InitializeUserGameObjects and InitializeAgentGameObjects)
+
+#### Description
+
+#### Request
+
+- `GET /worlds/{worldId}`
+
+#### Response
+
+- `200 OK`
+```json
+  {
+    "worldId": "string",
+    "worldName": "string",
+    "ownerId": "string",
+  }
+  ```
+
+### InitializeUserGameObjects()
+
+#### Description
+
+This endpoint returns a list of all users that are currently connected to the server. Typically, this function will be called when a user has just joined the server.
+
+#### Request
+- `GET /worlds/{worldId}/users`
+
+#### Response
+- `200 OK`
+
+```json
+{
+  "userId1": { "locationX" = x, "locationY" = y, "characterSprite" = "null" },
+  "userId2": { "locationX" = x, "locationY" = y, "characterSprite" = "null" }
+}
+```
+
+### InitializeAgentGameObjects()
+
+#### Description
+
+This endpoint returns a list of all agents that are currently on the server. Typically, this function will be called when a user has just joined the server. **Note to Lekina: We must be careful about whether to include offline players whose AI trained personalities are now playing on the server**
+
+#### Request
+- `GET /worlds/{worldId}/agents`
+
+#### Response
+- `200 OK`
+
+```json
+{
+  "agentId1": { "locationX" = x, "locationY" = y, "characterSprite: null" },
+  "agentId2": { "locationX" = x, "locationY" = y, "characterSprite: null" }
+}
+```
+
