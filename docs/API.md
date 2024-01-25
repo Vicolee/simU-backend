@@ -192,9 +192,11 @@ This endpoint returns user information for the given `userId`.
 This endpoint returns a list of all users that are currently connected to the server. Typically, this function will be called when a user has just joined the server.
 
 #### Request
+
 - `GET /users`
 
 #### Response
+
 - `200 OK`
 
 ```json
