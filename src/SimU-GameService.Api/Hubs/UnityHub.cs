@@ -54,11 +54,11 @@ public class UnityHub : Hub<IUnityClient>,  IUnityHub
         await _mediator.Send(new AddUserToGroupCommand(groupId, requesterId, userId));
 
         // send notification to user
-        if (!_connectionMap.ContainsKey(userId))
+        if (!_connectionMap.TryGetValue(userId, out string? connectionId))
         {
             throw new NotFoundException($"Connection ID for user", userId);
         }
-        await Clients.Client(_connectionMap[userId])
+        await Clients.Client(connectionId)
             .ReceiveMessage(nameof(UnityHub), $"You have been added to a group with ID {groupId}");
     }
 
@@ -75,12 +75,12 @@ public class UnityHub : Hub<IUnityClient>,  IUnityHub
             new RequestToJoinGroupCommand(groupId));
 
         // send add to group request to owner
-        if (!_connectionMap.ContainsKey(ownerId))
+        if (!_connectionMap.TryGetValue(ownerId, out string? connectionId))
         {
             throw new NotFoundException($"Connection ID for group admin", ownerId);
         }
 
-        await Clients.Client(_connectionMap[ownerId]).AddToGroupRequest(groupId, userId);
+        await Clients.Client(connectionId).AddToGroupRequest(groupId, userId);
     }
 
     /// <inheritdoc/>
@@ -93,11 +93,11 @@ public class UnityHub : Hub<IUnityClient>,  IUnityHub
         await _mediator.Send(new RemoveUserFromGroupCommand(groupId, requesterId, userId));
 
         // send notification to user
-        if (!_connectionMap.ContainsKey(userId))
+        if (!_connectionMap.TryGetValue(userId, out string? connectionId))
         {
             throw new NotFoundException($"Connection ID for user", userId);
         }
-        await Clients.Client(_connectionMap[userId])
+        await Clients.Client(connectionId)
             .ReceiveMessage(nameof(UnityHub), $"You have been removed from a group with ID {groupId}");
     }
 
@@ -114,11 +114,11 @@ public class UnityHub : Hub<IUnityClient>,  IUnityHub
         }
 
         // notify requester of response
-        if (!_connectionMap.ContainsKey(userId))
+        if (!_connectionMap.TryGetValue(userId, out string? connectionId))
         {
             throw new NotFoundException($"Connection ID for user", userId);
         }
-        await Clients.Client(_connectionMap[userId])
+        await Clients.Client(connectionId)
             .ReceiveMessage(nameof(UnityHub), $"Your friend request to user with ID {responderId} has been {(accepted ? "accepted" : "rejected")}.");
     }
 
@@ -131,11 +131,11 @@ public class UnityHub : Hub<IUnityClient>,  IUnityHub
         await _mediator.Send(new SendFriendRequestCommand(requesterId, userId));
 
         // notify requestee of friend request
-        if (!_connectionMap.ContainsKey(userId))
+        if (!_connectionMap.TryGetValue(userId, out string? connectionId))
         {
             throw new NotFoundException($"Connection ID for user", userId);
         }
-        await Clients.Client(_connectionMap[userId])
+        await Clients.Client(connectionId)
             .ReceiveMessage(nameof(UnityHub), $"You have received a friend request from {requesterId}");
     }
 
@@ -147,10 +147,10 @@ public class UnityHub : Hub<IUnityClient>,  IUnityHub
         var chatResponse = await _mediator.Send(new SendChatCommand(senderId, receiverId, message));
 
         // notify receiver of message
-        if (_connectionMap.ContainsKey(chatResponse.RecipientId))
+        // TODO: figure out how to implement group notifications
+        if (_connectionMap.TryGetValue(receiverId, out string? connectionId))
         {
-            await Clients.Client(_connectionMap[chatResponse.RecipientId])
-                .ReceiveMessage(chatResponse.SenderId.ToString(), chatResponse.Content);
+            await Clients.Client(connectionId).ReceiveMessage(senderId.ToString(), message);
         }
     }
 

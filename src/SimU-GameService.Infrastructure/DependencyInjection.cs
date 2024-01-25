@@ -2,13 +2,13 @@
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using SimU_GameService.Application.Common.Abstractions;
-using SimU_GameService.Application.Services;
 using FirebaseAdmin;
 using Google.Apis.Auth.OAuth2;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using SimU_GameService.Infrastructure.Persistence.Repositories;
 using SimU_GameService.Infrastructure.Authentication;
 using SimU_GameService.Application.Common.Exceptions;
+using SimU_GameService.Agents;
 
 namespace SimU_GameService.Infrastructure.Persistence;
 
@@ -25,13 +25,13 @@ public static class DependencyInjection
         services.AddScoped<IChatRepository, ChatRepository>();
         services.AddScoped<IGroupRepository, GroupRepository>();
 
-        // AI service
-        services.AddScoped<ILLMService, LLMService>();
-        services.AddHttpClient<ILLMService, LLMService>((sp, httpClient) =>
+        // AI agent service
+        services.AddScoped<IAgentService, AgentService>();
+        services.AddHttpClient<IAgentService, AgentService>((sp, httpClient) =>
         {
             var configuration = sp.GetRequiredService<IConfiguration>();
-            var baseUri = configuration["LLMService:BaseUri"]
-                ?? throw new NotFoundException("LLMService:BaseUri not specified in appsettings.json");
+            var baseUri = configuration["AgentService:BaseUri"]
+                ?? throw new NotFoundException("AgentService:BaseUri not specified in appsettings.json");
             httpClient.BaseAddress = new Uri(baseUri);
         });
 

@@ -7,23 +7,22 @@ using SimU_GameService.Domain.Primitives;
 
 namespace SimU_GameService.Application.Services.Chats.Handlers;
 
-public class SendChatHandler : IRequestHandler<SendChatCommand, Chat>
+public class SendChatHandler : IRequestHandler<SendChatCommand, Unit>
 {
     private readonly IChatRepository _chatRepository;
     private readonly IUserRepository _userRepository;
     private readonly IGroupRepository _groupRepository;
+    private readonly IAgentService _agentService;
 
-    private readonly ILLMService _llmService;
-
-    public SendChatHandler(IChatRepository chatRepository, IUserRepository userRepository, IGroupRepository groupRepository, ILLMService llmService)
+    public SendChatHandler(IChatRepository chatRepository, IUserRepository userRepository, IGroupRepository groupRepository, IAgentService agentService)
     {
         _chatRepository = chatRepository;
         _userRepository = userRepository;
         _groupRepository = groupRepository;
-        _llmService = llmService;
+        _agentService = agentService;
     }
 
-    public async Task<Chat> Handle(SendChatCommand request, CancellationToken cancellationToken)
+    public async Task<Unit> Handle(SendChatCommand request, CancellationToken cancellationToken)
     {
         var sender = await _userRepository.GetUser(request.SenderId)
             ?? throw new NotFoundException(nameof(User), request.SenderId);
@@ -40,16 +39,16 @@ public class SendChatHandler : IRequestHandler<SendChatCommand, Chat>
 
         var receiver = (Entity?) receiverAsUser ?? receiverAsGroup;
 
-        var chat = new Chat(request.SenderId, request.ReceiverId, request.Content, receiver is Group, null, DateTime.UtcNow);
+        var chat = new Chat(
+            request.SenderId, request.ReceiverId, request.Content, receiver is Group, null, DateTime.UtcNow);
         await _chatRepository.AddChat(chat);
+
         if (receiverAsUser != null && receiverAsUser.IsAgent)
         {
-            // the receiver of the chat is an LLM agent, so we send the chat to the agent and await its response
-            var chatResponse = await _llmService.RelayUserChat(chat.Id, chat.Content, chat.SenderId, chat.RecipientId);
+            // send the chat to the LLM agent and save its response
+            var chatResponse = await _agentService.RelayUserChat(chat.Id, chat.Content, chat.SenderId, chat.RecipientId);
             await _chatRepository.AddChat(chatResponse);
-            return chatResponse;
-        } else {
-            return chat;
         }
+        return Unit.Value;
     }
 }
