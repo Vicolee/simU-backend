@@ -1,4 +1,5 @@
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SimU_GameService.Application.Common.Exceptions;
 using SimU_GameService.Application.Services.Users.Commands;
@@ -49,7 +50,8 @@ public class UsersController : ControllerBase
                     user.Location?.Y ?? default,
                     user.CreatedTime));
     }
-
+    
+    [Authorize]
     [HttpDelete("{userId}/friends", Name = "RemoveFriend")]
     public async Task<ActionResult> RemoveFriend(Guid userId, Guid friendId)
     {
