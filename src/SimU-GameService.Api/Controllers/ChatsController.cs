@@ -1,4 +1,5 @@
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SimU_GameService.Application.Common.Exceptions;
 using SimU_GameService.Application.Services.Chats.Commands;
@@ -33,6 +34,7 @@ public class ChatsController : ControllerBase
             result.CreatedTime));
     }
 
+    [Authorize]
     [HttpDelete("{chatId}", Name = "DeleteChat")]
     public async Task<ActionResult> DeleteChat(Guid chatId)
     {

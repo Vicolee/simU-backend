@@ -19,6 +19,7 @@ namespace SimU_GameService.Api.Filters
             {
                 NotImplementedException => HttpStatusCode.NotImplemented,
                 NotFoundException => HttpStatusCode.NotFound,
+                BadRequestException => HttpStatusCode.BadRequest,
                 _ => HttpStatusCode.InternalServerError
             };
 

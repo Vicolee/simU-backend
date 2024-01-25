@@ -5,10 +5,10 @@ using SimU_GameService.Application.Common.Abstractions;
 using SimU_GameService.Application.Services;
 using FirebaseAdmin;
 using Google.Apis.Auth.OAuth2;
-using Microsoft.Extensions.Options;
-using SimU_GameService.Application.Common.Authentication;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using SimU_GameService.Infrastructure.Persistence.Repositories;
+using SimU_GameService.Infrastructure.Authentication;
+using SimU_GameService.Application.Common.Exceptions;
 
 namespace SimU_GameService.Infrastructure.Persistence;
 
@@ -25,29 +25,29 @@ public static class DependencyInjection
         services.AddScoped<IChatRepository, ChatRepository>();
         services.AddScoped<IGroupRepository, GroupRepository>();
 
+        // AI service
+        services.AddScoped<ILLMService, LLMService>();
+        services.AddHttpClient<ILLMService, LLMService>((sp, httpClient) =>
+        {
+            var configuration = sp.GetRequiredService<IConfiguration>();
+            var baseUri = configuration["LLMService:BaseUri"]
+                ?? throw new NotFoundException("LLMService:BaseUri not specified in appsettings.json");
+            httpClient.BaseAddress = new Uri(baseUri);
+        });
 
+        // authentication
         FirebaseApp.Create(new AppOptions()
         {
             Credential = GoogleCredential.FromFile("firebase.json")
         });
-        
-        services.AddScoped<IAuthenticationService, AuthenticationService>();
-        services.AddScoped<ILLMService, LLMService>();
-        services.Configure<AuthenticationSettings>(configuration.GetSection("Authentication"));
 
+        services.AddScoped<IAuthenticationService, AuthenticationService>();
         services.AddHttpClient<IAuthenticationService, AuthenticationService>((sp, httpClient) =>
         {
-            var authSettings = sp.GetRequiredService<IOptions<AuthenticationSettings>>().Value;
-            httpClient.BaseAddress = new Uri(authSettings.TokenUri ?? string.Empty);
-        });
-
-        services.AddHttpClient<ILLMService, LLMService>( httpClient =>
-        {
-            // TODO: figure out how to get this from appsettings.json
-            // overall, figure out how to tidy up the LLM service and its infrastructure
-            httpClient.BaseAddress = new Uri(
-                "https://sim-you-lll-service.victoriousrock-3d13ba09.eastus2.azurecontainerapps.io/api/agents/prompt");
-            httpClient.Timeout = TimeSpan.FromMinutes(2);
+            var configuration = sp.GetRequiredService<IConfiguration>();
+            var tokenUri = configuration["Authentication:TokenUri"]
+                ?? throw new NotFoundException("Authentication:TokenUri not specified in appsettings.json");
+            httpClient.BaseAddress = new Uri(tokenUri);
         });
 
         services

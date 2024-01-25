@@ -1,77 +1,54 @@
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using SimU_GameService.Application.Common.Abstractions;
+using SimU_GameService.Application.Common.Exceptions;
+using SimU_GameService.Application.Services.Authentication.Commands;
 using SimU_GameService.Contracts.Requests;
 using SimU_GameService.Contracts.Responses;
 
 namespace SimU_GameService.Api.Controllers;
 
-// TODO: adopt the CQRS pattern using MediatR to send commands and queries to the Application layer
-
 [ApiController]
 [Route("[controller]")]
 public class AuthenticationController : ControllerBase
 {
-    private readonly IAuthenticationService _authenticationService;
+    private readonly IMediator _mediator;
 
-    public AuthenticationController(IAuthenticationService authenticationService)
-    {
-        _authenticationService = authenticationService;
-    }
-
+    public AuthenticationController(IMediator mediator) => _mediator = mediator;
+    
     [HttpPost("register", Name = "RegisterUser")]
-    public async Task<ActionResult<AuthenticationResponse>> RegisterUser([FromBody] RegisterRequest request)
+    public async Task<ActionResult<RegisterResponse>> RegisterUser([FromBody] RegisterRequest request)
     {
         // handle agent registration
         bool isAgent = request.IsAgent;
         if (isAgent)
         {
-            Guid agentId = await _authenticationService.RegisterAgent(request.FirstName,
+            Guid agentId = await _mediator.Send(new RegisterAgentCommand(
+                request.FirstName,
                 request.LastName,
-                request.IsAgent,
-                request.Description ?? string.Empty);
+                request.Description
+                ?? throw new BadRequestException("Agent description is required.")));
 
-            if (agentId == Guid.Empty)
-            {
-                // TODO: return a more appropriate error code
-                return NotFound(new AuthenticationResponse(agentId, "Failed to register agent."));
-            }
-            return Ok(new AuthenticationResponse(agentId, "Agent registered."));
+            return Ok(new RegisterResponse(agentId, "Agent registered."));
         }
 
         // handle user registration
-        Guid userId = await _authenticationService.RegisterUser(
+        Guid userId = await _mediator.Send(new RegisterUserCommand(
             request.FirstName,
             request.LastName,
-            request.Email ?? string.Empty,
-            request.Password ?? string.Empty);
+            request.Email ?? throw new BadRequestException("Email is required."),
+            request.Password ?? throw new BadRequestException("Password is required.")))
+            ?? throw new BadRequestException("User with given email already exists.");
 
-        if (userId == Guid.Empty)
-        {
-            // TODO: return a more appropriate error code
-            return NotFound(new AuthenticationResponse(userId, "User already registered."));
-        }
-        return Ok(new AuthenticationResponse(userId, "User registered."));
+        return Ok(new RegisterResponse(userId, "User registered."));
     }
 
     [HttpPost("login", Name = "LoginUser")]
-    public async Task<ActionResult<AuthenticationResponse>> LoginUser(LoginRequest request)
+    public async Task<ActionResult<RegisterResponse>> LoginUser(LoginRequest request)
     {
-        var userId = await _authenticationService.LoginUser(
-            request.Email,
-            request.Password);
+        var authToken = await _mediator.Send(
+            new LoginUserCommand(request.Email, request.Password))
+            ?? throw new BadRequestException("Invalid email or password.");
 
-        if (userId == Guid.Empty)
-        {
-            return NotFound(new AuthenticationResponse(userId, "User not found."));
-        }
-
-        return Ok(new AuthenticationResponse(userId, "User logged in."));
-    }
-
-    [HttpPut("{userId}/logout", Name = "LogoutUser")]
-    public Task<ActionResult> LogoutUser(Guid userId)
-    {
-        // TODO: implement
-        throw new NotImplementedException();
+        return Ok(new LoginResponse(authToken));
     }
 }

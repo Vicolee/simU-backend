@@ -1,4 +1,5 @@
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SimU_GameService.Application.Services.Groups.Commands;
 using SimU_GameService.Contracts.Requests;
@@ -6,6 +7,7 @@ using SimU_GameService.Contracts.Responses;
 
 namespace SimU_GameService.Api.Controllers;
 
+[Authorize]
 [ApiController]
 [Route("[controller]")]
 public class GroupsController : ControllerBase

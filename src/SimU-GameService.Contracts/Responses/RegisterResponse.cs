@@ -1,5 +1,5 @@
 ﻿namespace SimU_GameService.Contracts.Responses;
 
-public record class AuthenticationResponse(
+public record class RegisterResponse(
     Guid UserId,
-    string ResponseString);
+    string Message);
