@@ -11,10 +11,10 @@ namespace SimU_GameService.Domain.Models
         public Guid OwnerId { get; set; }
         public string? Description { get; set; }
         public DateTime CreatedTime { get; set; }
-        public List<User> UsersInWorld { get; set; }
-        public List<Agent> AgentsInWorld { get; set; }
+        public List<Guid> UsersInWorld { get; set; }
+        public List<Guid> AgentsInWorld { get; set; }
 
-        [Column("CharacterId")] // TO DO: REVIEW WITH LEKINA WHY WE NEED CHARACTER_ID IF WE INHERIT IT FROM ENTITY
+        [Column("WorldId")] // TO DO: REVIEW WITH LEKINA WHY WE NEED CHARACTER_ID IF WE INHERIT IT FROM ENTITY
         public Guid WorldId { get; private set; }
         public string? PrivateCode { get; set; }
 

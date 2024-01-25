@@ -5,13 +5,11 @@ namespace SimU_GameService.Domain.Models;
 
 public class Agent : Character
 {
-    public bool IsAgent { get; set; } = true; // if we delete this IsAgent boolean, make sure to update code in SendChatHandler.cs
+    // public bool IsAgent { get; set; } = true; // if we delete this IsAgent boolean, make sure to update code in SendChatHandler.cs
     public Guid CreatedByUser { get; set; }
-    public int collabDurationHours { get; set; }
+    public DateTime CollabStartTime { get; set; }
     public DateTime CollabEndTime { get; set;}
     public string? Description { get; set; }
-    public string? Summary { get; set; }
-
     public bool isHatched { get; set; } = false;
     public List<QuestionResponse> QuestionResponses { get; set; }
 
@@ -21,27 +19,20 @@ public class Agent : Character
     }
 
     public Agent(
-        bool isAgent,
         string username,
         Guid createdByUser,
-        int collabDurationHours,
-        string description,
-        string summary,
-        bool isHatched
+        float collabDurationHours,
+        string description
         ) : this()
     {
-        IsAgent = isAgent;
         Username = username;
         CreatedByUser = createdByUser;
-        this.collabDurationHours = collabDurationHours;
+        CollabStartTime = DateTime.UtcNow;
         Description = description;
-        Summary = summary;
-        CalculateCollabEndTime();
-        this.isHatched = isHatched;
+        CalculateCollabEndTime(collabDurationHours);
     }
 
-    // referenced the code for CalculateCollabEndTime() from chatGPT
-    private void CalculateCollabEndTime()
+    private void CalculateCollabEndTime(float collabDurationHours)
     {
         CollabEndTime = CreatedTime.AddHours(collabDurationHours);
     }

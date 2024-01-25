@@ -7,35 +7,35 @@ namespace SimU_GameService.Application.Common.Abstractions;
 /// We define the methods that we want to use in the Application layer here.
 /// These methods are implemented in the Infrastructure layer.
 /// </summary>
-public interface IUserRepository
+public interface IAgentRepository
 {
     /// <summary>
-    /// Adds a user to the repository.
+    /// Adds an agent to the repository.
     /// </summary>
-    /// <param name="user"></param>
+    /// <param name="agent"></param>
     /// <returns></returns>
-    public Task AddUser(User user);
+    public Task AddAgent(Agent agent);
 
     /// <summary>
-    /// Removes a user from the repository.
+    /// Removes a agent from the repository.
     /// </summary>
-    /// <param name="userId"></param>
+    /// <param name="agentId"></param>
     /// <returns></returns>
-    public Task RemoveUser(Guid userId);
+    public Task RemoveAgent(Guid agentId);
 
     /// <summary>
-    /// Gets a user from the repository by ID.
+    /// Gets an agent from the repository by ID.
     /// </summary>
-    /// <param name="userId"</param>
+    /// <param name="agentId"</param>
     /// <returns></returns>
-    public Task<User?> GetUser(Guid userId);
+    public Task<Agent?> GetAgent(Guid agentId);
 
     /// <summary>
-    /// Gets a user from the repository by email.
+    /// Gets an agent's summary from the repository by ID.
     /// </summary>
-    /// <param name="email"></param>
+    /// <param name="agentId"</param>
     /// <returns></returns>
-    public Task<User?> GetUserByEmail(string email);
+    public Task<string?> GetSummary(Guid agentId);
 
     /// <summary>
     /// Gets the entrance questionnaire prompts from the repository.
@@ -46,7 +46,7 @@ public interface IUserRepository
     /// <summary>
     /// Posts the entrance questionnaire responses for a user to the repository.
     /// </summary>
-    /// <param name="userId"></param>
+    /// <param name="agentId"></param>
     /// <param name="responses"></param>
     /// <returns></returns>
     Task PostResponses(Guid userId, IEnumerable<string> responses);
@@ -58,6 +58,6 @@ public interface IUserRepository
     /// <param name="xCoord"></param>
     /// <param name="yCoord"></param>
     /// <returns></returns>
-    Task UpdateLocation(Guid userId, int xCoord, int yCoord);
-    Task<Location?> GetLocation(Guid locationId); 
+    Task UpdateLocation(Agent agent, int xCoord, int yCoord);
+    Task<Location?> GetLocation(Guid locationId);
 }

@@ -8,7 +8,8 @@ namespace SimU_GameService.Domain.Models
     public class Character : Entity
     {
         public string? Username { get; set; }
-        public string? Description { get; set; }
+        // public string? Description { get; set; } do we want all characters to have description? I feel like just agents.
+        public string? Summary { get; set; }
         public DateTime CreatedTime { get; set; }
         public Location? Location { get; set; }
         public string? Sprite { get; set;}
@@ -30,13 +31,13 @@ namespace SimU_GameService.Domain.Models
 
         protected Character(
             string username,
-            string description,
             string sprite,
+            string summary,
             string spriteHeadshot
         ) : this()
         {
             Username = username;
-            Description = description;
+            Summary = summary;
             CreatedTime = DateTime.UtcNow;
             Sprite = sprite;
             SpriteHeadshot = spriteHeadshot;

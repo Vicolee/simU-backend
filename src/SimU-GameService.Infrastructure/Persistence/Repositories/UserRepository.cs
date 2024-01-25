@@ -48,10 +48,10 @@ public class UserRepository : IUserRepository
     public async Task<User?> GetUser(Guid userId)
     {
         return await _dbContext.Users
-            .FirstOrDefaultAsync(u => u.UserId == userId);
+            .FirstOrDefaultAsync(u => u.Id == userId);
     }
 
-    public async Task<Location?> GetLocation(Guid locationId)   
+    public async Task<Location?> GetLocation(Guid locationId)
     {
         var user = await _dbContext.Users
             .FirstOrDefaultAsync(u => u.Location != null && u.Location.LocationId == locationId);

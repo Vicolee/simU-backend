@@ -47,7 +47,6 @@ public class AuthenticationService : IAuthenticationService
             string identityId = userRecord.Result.Uid;
             // sets isAgent to false and description to empty string
             var user = new User(
-                identityId,
                 username,
                 email,
                 false,
@@ -69,34 +68,34 @@ public class AuthenticationService : IAuthenticationService
     }
 
 
-public async Task<Guid> RegisterAgent(string username, Guid createdByUser, int collabDurationHours, string description)
-{
+// public async Task<Guid> RegisterAgent(string username, Guid createdByUser, int collabDurationHours, string description)
+// {
 
-    try
-    {
-        // sets identityID to empty string and email to empty string
-        var agent = new Agent(
-            true,
-            username,
-            createdByUser,
-            collabDurationHours,
-            description
-        );
+//     try
+//     {
+//         // sets identityID to empty string and email to empty string
+//         var agent = new Agent(
+//             true,
+//             username,
+//             createdByUser,
+//             collabDurationHours,
+//             description
+//         );
 
-        // UPDATE THIS
-        await _userRepository.AddUser(agent);
-        return user.UserId;
+//         // UPDATE THIS
+//         await _userRepository.AddUser(agent);
+//         return user.UserId;
 
-    }
-    catch (Exception e)
-    {
-        if (e.InnerException != null)
-        {
-            Console.WriteLine($"Inner Exception: {e .InnerException.Message}");
-        }
-        throw new Exception("Failed to register agent: " + e.Message);
-    }
-}
+//     }
+//     catch (Exception e)
+//     {
+//         if (e.InnerException != null)
+//         {
+//             Console.WriteLine($"Inner Exception: {e .InnerException.Message}");
+//         }
+//         throw new Exception("Failed to register agent: " + e.Message);
+//     }
+// }
 
 
     /// <summary>

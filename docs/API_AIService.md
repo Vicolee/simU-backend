@@ -37,9 +37,9 @@
   }
   ```
 
-### UserToUserChatNotify
+### RelayEndOfConversation
 
-#### Description
+#### Description - UPDATE THIS: CONVERSATION ID - each chat message is assigned one. DO THIS FOR USER TO USER CONVERSATIONS AND USER TO AGENT CONVERSATIONS. THE MESSAGE WE SEND AI SERVICE WILL NOT INCLUDE THE CONTENT OF CONVERSATION - JUST INCLUDE A CONVERSATION ID FOR THEM TO QUERY OUR DATABASE.
 
 - The GameService sends an alert to the AI service that a user sent another user a chat. This does not require a response from the GPT service, but the AI Service needs to be notified so that they can track the message in their vector database. Talk to the AI Service about if GameService should pass the chat directly to them or just send them the chat ID of the new message that was saved in the back-end database.
 
@@ -65,7 +65,7 @@
 
 - The GameService receives either a picture of the real person's face or a description of what the user wants their sprite's appearance to look like. If it's a picture, it will be sent to the AI Service to be described by GPT into words. Then the description will be sent along to DALL-E to generate a full body sprite and a headashot of the sprite, which will then be sent back to the GameService, saved by it, and sent along to the Front-End.
 
-#### Request
+#### Request -- might not even need the userId
 
 -`GenerateSprite(userId, description, photo);`
 
@@ -104,7 +104,35 @@
   {
     "characterId": "GUID of user/agent",
 
-    "responses": [ {"question 1 content": "response" }, {"question 2 content": "response" }, {"question 3 content": "response" } ]
+    "responses": [ {"question 1 content": ["response1 to q1", "response2 to q1"] }, {"question 2 content": ["response1 to q2", "response2 to q2" ] } ]
+  }
+  ```
+
+#### Response
+
+- `200 OK`
+  ```json
+  {
+    "characterId": "GUID of user/agent",
+    "generatedSummary": "summary"
+  }
+  ```
+
+### GenerateWorldThumbnail
+
+#### Description
+
+- FILL IN - can just send the worldID, description of the world, and the creators ID
+
+#### Request
+
+-`GenerateWorldThumbnail(worldId, description, creatorId);`
+
+  ```json
+  {
+    "worldId": "GUID of World",
+    "description": "string",
+    "creatorId": "GUID of user"
   }
   ```
 
@@ -119,4 +147,4 @@
   ```
 
 
-
+### GetConversationOpener - 
