@@ -22,13 +22,14 @@ public class User : Character
     }
 
     public User(
-        Guid 
+        Guid identityId,
         string username,
         string email,
         bool isAgent,
         bool isOnline
         ) : this()
     {
+        IdentityId = identityId;
         Username = username;
         Email = email;
         IsAgent = isAgent;

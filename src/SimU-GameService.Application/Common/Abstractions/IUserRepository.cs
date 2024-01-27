@@ -38,20 +38,6 @@ public interface IUserRepository
     public Task<User?> GetUserByEmail(string email);
 
     /// <summary>
-    /// Gets the entrance questionnaire prompts from the repository.
-    /// </summary>
-    /// <returns></returns>
-    public Task<IEnumerable<string>> GetQuestions();
-
-    /// <summary>
-    /// Posts the entrance questionnaire responses for a user to the repository.
-    /// </summary>
-    /// <param name="userId"></param>
-    /// <param name="responses"></param>
-    /// <returns></returns>
-    Task PostResponses(Guid userId, IEnumerable<string> responses);
-
-    /// <summary>
     /// Updates a user's location in the repository.
     /// </summary>
     /// <param name="userId"></param>
@@ -59,5 +45,5 @@ public interface IUserRepository
     /// <param name="yCoord"></param>
     /// <returns></returns>
     Task UpdateLocation(Guid userId, int xCoord, int yCoord);
-    Task<Location?> GetLocation(Guid locationId); 
+    Task<Location?> GetLocation(Guid locationId);
 }

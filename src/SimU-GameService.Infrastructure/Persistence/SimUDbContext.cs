@@ -13,6 +13,9 @@ public class SimUDbContext : DbContext
     public DbSet<Agent> Agents { get; set; }
     public DbSet<Chat> Chats { get; set; }
     public DbSet<Group> Groups { get; set; }
+    public DbSet<World> Worlds { get; set; }
+    public DbSet<Question> Questions { get; set; }
+    public DbSet<QuestionResponse> QuestionResponses { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

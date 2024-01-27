@@ -6,6 +6,7 @@
 - [Authentication Endpoints](#authentication-endpoints)
 - [World Endpoints](#world-endpoints)
 - [User Endpoints](#user-endpoints)
+- [Agent Endpoints](#agent-endpoints)
 - [Group Endpoints](#group-endpoints)
 - [Chat Endpoints](#chat-endpoints)
 
@@ -316,6 +317,32 @@ This endpoint is used to kick a player from a world (important: only the owner o
 
 ## User Endpoints
 
+### GetUser
+
+#### Description
+
+This endpoint returns user information for the given `userId`.
+
+#### Request
+
+- `GET /users/{userId}`
+
+#### Response
+
+- `200 OK`
+
+  ```json
+  {
+    "username": "string",
+    "email": "string",
+    "lastKnownX": 0,
+    "lastKnownY": 0,
+    "isOnline": true,
+    "createdTime": "2023-11-04T22:54:19.911Z",
+    "lastActiveTime": "2023-11-04T22:54:19.911Z"
+  }
+  ```
+
 ### GetUserWorlds
 
 #### Description
@@ -373,46 +400,6 @@ Updates a user's sprite - **TO DO: TALK TO EVAN TO FIGURE OUT IF WE ARE GOING TO
 #### Response
 - `200 OK`
 
-### GetUserQuestions
-
-#### Description
-
-- This endpoint returns the user entrance questionnaire to the client.
-
-#### Request
-
-- `GET /users/questions`
-
-#### Response
-
-- `200 OK`
-
-  ```json
-  [
-    "string"
-  ]
-  ```
-
-### PostUserResponses
-
-#### Description
-
-This endpoint records the clients responses from the entrance questionnaire.
-
-#### Request
-
-- `POST /users/{userId}/responses`
-
-  ```json
-  [
-    "string"
-  ]
-  ```
-
-#### Response
-
-- `204 No Content`
-
 ### UpdateLocation
 
 #### Description
@@ -440,32 +427,6 @@ The `UpdateLocation` callback on the server will broadcast the user’s new loca
 ```csharp
 await Clients.All.SendAsync("UpdateLocation", userId, location);
 ```
-
-### GetUser
-
-#### Description
-
-This endpoint returns user information for the given `userId`.
-
-#### Request
-
-- `GET /users/{userId}`
-
-#### Response
-
-- `200 OK`
-
-  ```json
-  {
-    "username": "string",
-    "email": "string",
-    "lastKnownX": 0,
-    "lastKnownY": 0,
-    "isOnline": true,
-    "createdTime": "2023-11-04T22:54:19.911Z",
-    "lastActiveTime": "2023-11-04T22:54:19.911Z"
-  }
-  ```
 
 ## Agent Endpoints
 
@@ -527,72 +488,6 @@ This endpoint returns agent information for the given `agentId`.
     "TotalIncubationTime": "24 hours",
   }
   ```
-
-### GetIncubationQuestions
-
-#### Description
-
-- This endpoint returns the questions to train the agent.
-
-#### Request
-
-- `GET /agents/questions`
-
-#### Response
-
-- `200 OK`
-
-  ```json
-  {
-    "question1": "string",
-    "question2": "string",
-    "question3": "string"
-  }
-  ```
-
-### GetIncubationResponses
-
-#### Description
-
-- This endpoint returns the responses to agent questions so far.
-
-#### Request
-
-- `GET /agents/responses/{agentId}`
-
-#### Response
-
-- `200 OK`
-
-  ```json
-  {
-    { "question1": ["response", "responderID", "January 21st, 5 pm"] },
-    { "question1": ["response", "responderID", "January 18th, 2 pm"] },
-    { "question2": ["response", "responderID", "January 19th, 3 am"] },
-    { "question3": ["response", "responderID", "January 20th, 1 pm"] },
-  }
-  ```
-
-### PostAgentResponse
-
-#### Description
-
-- This endpoint is used to upload a response to an agent question.
-
-#### Request
-
-- `POST /agents/responses/{agentId}`
-```json
-  {
-    "questionNumber": 1,
-    "userId": "the ID of user who responded",
-    "response": "string",
-  }
-```
-
-#### Response
-
-- `200 OK`
 
 ### GetAgentSummary
 
@@ -713,3 +608,119 @@ Gets the IDs of all the chats sent by the user with ID `userId`.
     }
   ]
   ```
+
+## Question Endpoints
+
+### GetUserQuestions
+
+#### Description
+
+- This endpoint returns the questions a user responds to when initially creating their own character.
+
+#### Request
+
+- `GET /questions/users`
+
+#### Response
+
+- `200 OK`
+
+  ```json
+    {
+    "questionId": "string",
+    "questionId": "string",
+    "questionId": "string"
+    }
+  ```
+
+### GetAgentQuestions
+
+#### Description
+
+- This endpoint returns the questions for training an agent.
+
+#### Request
+
+- `GET /questions/agents`
+
+#### Response
+
+- `200 OK`
+
+  ```json
+  {
+    "questionId": "string",
+    "questionId": "string",
+    "questionId": "string"
+  }
+  ```
+
+### PostResponse
+
+#### Description
+
+This endpoint records the clients responses to either questions about themselves (user) or questions about an incubating agent.
+
+#### Request
+
+- `POST /questions/response/`
+
+  ```json
+  {
+    "responderId": ["targetCharacterId", "questionId", "response"]
+  }
+  ```
+- **ResponderID** is the ID of the user who is answering a question (either about themselves or an incubating agent).
+- **TargetCharacterID** is the ID of the user or agent who is having questions answered about them. If a user is answering questions about themselves, the **ResponderID** and **TargetCharacterID** is the same.
+- **Response** is the response to the question
+
+#### Response
+
+- `204 No Content`
+
+### GetAllResponses
+
+#### Description
+
+- This endpoint returns all the questions and their corresponding responses about a specific user or agent.
+
+#### Request
+
+- `GET /questions/responses/{characterId}`
+
+#### Response
+
+- `200 OK`
+
+```json
+    {
+    { "TargetCharacterId": "target_guid_here", "ResponderId": "responder_guid_here", "QuestionId": "question_guid_here", "Response": "Response 1" },
+    { "TargetCharacterId": "target_guid_here", "ResponderId": "responder_guid_here", "QuestionId": "question_guid_here", "Response": "Response 2" },
+    { "TargetCharacterId": "target_guid_here", "ResponderId": "responder_guid_here", "QuestionId": "question_guid_here", "Response": "Response 3" },
+    { "TargetCharacterId": "target_guid_here", "ResponderId": "responder_guid_here", "QuestionId": "question_guid_here", "Response": "Response 4" },
+    { "TargetCharacterId": "target_guid_here", "ResponderId": 5"responder_guid_here", "QuestionId": "question_guid_here", "Response": "Response 5" }
+    }
+```
+- Note: There can be multiple responses for one question.
+
+### GetResponse
+
+#### Description
+
+- This endpoint returns the responses for a specific question regarding a specific user or agent.
+
+#### Request
+
+- `GET /questions/responses/{targetCharacterId}/{questionId}`
+
+#### Response
+
+- `200 OK`
+
+```json
+    {
+    { "TargetCharacterId": "same_target_guid_here", "ResponderId": "responder_guid_here", "QuestionId": "same_question_ID", "Response": "Response 1" },
+    { "TargetCharacterId": "same_target_guid_here", "ResponderId": "diff_responder_guid_here", "QuestionId": "same_question_ID", "Response": "Response 2" },
+    }
+```
+- Note: There can be multiple responses for one question.

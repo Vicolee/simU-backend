@@ -58,6 +58,6 @@ public interface IAgentRepository
     /// <param name="xCoord"></param>
     /// <param name="yCoord"></param>
     /// <returns></returns>
-    Task UpdateLocation(Agent agent, int xCoord, int yCoord);
+    Task UpdateLocation(Guid agentId, int xCoord, int yCoord);
     Task<Location?> GetLocation(Guid locationId);
 }

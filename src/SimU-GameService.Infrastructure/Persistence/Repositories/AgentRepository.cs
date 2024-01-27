@@ -45,6 +45,12 @@ public class AgentRepository : IAgentRepository
             .FirstOrDefaultAsync(a => a.Id == agentId);
     }
 
+    public async Task<string?> GetSummary(Guid agentId)
+    {
+        var agent = await _dbContext.Agents
+            .FirstOrDefaultAsync(a => a.Id == agentId);
+        return agent?.Summary;
+    }
     public async Task<Location?> GetLocation(Guid locationId)
     {
         var agent = await _dbContext.Agents
@@ -71,53 +77,21 @@ public class AgentRepository : IAgentRepository
             throw new ArgumentException("The number of responses must match the number of questions.");
         }
 
-        var user = _dbContext.Users
-            .FirstOrDefault(u => u.UserId == userId) ?? throw new NotFoundException(nameof(User), userId);
+        var agent = _dbContext.Agents
+            .FirstOrDefault(a => a.Id == agentId) ?? throw new NotFoundException(nameof(Agent), agentId);
 
-        user.QuestionResponses = responses
+        agent.QuestionResponses = responses
             .Select((response, index) => new QuestionResponse(_questions.ElementAt(index), response))
             .ToList();
 
         await _dbContext.SaveChangesAsync();
     }
 
-    public async Task RemoveFriend(Guid userId, Guid friendId)
+    public async Task UpdateLocation(Guid agentId, int xCoord, int yCoord)
     {
-        var user = await GetUser(userId)
-            ?? throw new NotFoundException(nameof(User), userId);
+        var agent = await GetAgent(agentId) ?? throw new NotFoundException(nameof(Agent), agentId);
 
-        var friend = user.Friends.FirstOrDefault(f => f.FriendId == friendId);
-
-        if (friend is not null)
-        {
-            user.Friends.Remove(friend);
-            await _dbContext.SaveChangesAsync();
-        }
-    }
-
-    public async Task<IEnumerable<Friend>> GetFriends(Guid userId)
-    {
-        var user = await GetUser(userId)
-            ?? throw new NotFoundException(nameof(User), userId);
-
-        return user.Friends.AsEnumerable();
-    }
-
-    public async Task AddFriend(Guid userId, Guid friendId)
-    {
-        var user = await GetUser(userId) ?? throw new NotFoundException(nameof(User), userId);
-        var friend = await GetUser(friendId) ?? throw new NotFoundException(nameof(User), friendId);
-
-        user.Friends.Add(new Friend(friendId, DateTime.UtcNow));
-        friend.Friends.Add(new Friend(userId, DateTime.UtcNow));
-        await _dbContext.SaveChangesAsync();
-    }
-
-    public async Task UpdateLocation(Guid userId, int xCoord, int yCoord)
-    {
-        var user = await GetUser(userId) ?? throw new NotFoundException(nameof(User), userId);
-
-        user.UpdateLocation(xCoord, yCoord);
+        agent.UpdateLocation(xCoord, yCoord);
         await _dbContext.SaveChangesAsync();
     }
 
