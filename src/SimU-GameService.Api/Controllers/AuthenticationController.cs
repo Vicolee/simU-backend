@@ -18,26 +18,7 @@ public class AuthenticationController : ControllerBase
     [HttpPost("register", Name = "RegisterUser")]
     public async Task<ActionResult<AuthenticationResponse>> RegisterUser(RegisterRequest request)
     {
-        // handle agent registration
-        bool isAgent = request.IsAgent;
-        if (isAgent)
-        {
-            Guid agentId = await _mediator.Send(new RegisterAgentCommand(
-                request.FirstName,
-                request.LastName,
-                request.Description
-                ?? throw new BadRequestException("Agent description is required.")));
-
-            return Ok(new AuthenticationResponse(agentId, string.Empty));
-        }
-
-        // handle user registration
-        await _mediator.Send(new RegisterUserCommand(
-            request.FirstName,
-            request.LastName,
-            request.Email ?? throw new BadRequestException("Email is required."),
-            request.Password ?? throw new BadRequestException("Password is required.")));
-
+        await _mediator.Send(new RegisterUserCommand(request.Username, request.Email, request.Password));
         var idTokenPair = await _mediator.Send(new LoginUserCommand(request.Email, request.Password));
         return Ok(new AuthenticationResponse(idTokenPair.Item1, idTokenPair.Item2));
     }

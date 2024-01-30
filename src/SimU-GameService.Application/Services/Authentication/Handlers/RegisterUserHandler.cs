@@ -29,8 +29,7 @@ public class RegisterUserHandler : IRequestHandler<RegisterUserCommand, Unit>
 
         var user = new User(
             identityId,
-            request.FirstName,
-            request.LastName,
+            request.Username,
             request.Email,
             false,
             string.Empty
