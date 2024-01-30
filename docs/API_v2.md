@@ -124,7 +124,7 @@ Returns an object containing all the information regarding the world with given 
 
 #### Description
 
-Returns a list of all users that are active in the specified world (both online and offline players). Typically called when a user joins the world. TODO: resolve how we are gonna store and send character sprites to the frontend.
+Returns a list of all users that are active in the specified world (both online and offline players). Typically called when a user joins the world.
 
 #### Request
 
@@ -243,7 +243,7 @@ Returns a list of the IDs of currently incubating agents.
 }
 ```
 
-### GetAgentListHatched
+### GetHatchedAgent
 
 #### Description
 
