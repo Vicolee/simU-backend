@@ -9,6 +9,7 @@
 - [Agent Endpoints](#agent-endpoints)
 - [Group Endpoints](#group-endpoints)
 - [Chat Endpoints](#chat-endpoints)
+- [Question Endpoints](#question-endpoints)
 
 ## Notes
 
@@ -724,3 +725,24 @@ This endpoint records the clients responses to either questions about themselves
     }
 ```
 - Note: There can be multiple responses for one question.
+
+### AddQuestion
+
+#### Description
+
+- This endpoint can be used to add a question into the database.
+
+#### Request
+
+- `POST /questions/`
+```json
+  {
+    "questionText": "string",
+    "questionType": "User/Agent/Both",
+    "questionNum" // unclear if we need this field, but would be used to tell the front-end in which order to present each question on the screen.
+  }
+```
+
+#### Response
+
+- `200 OK`
