@@ -71,6 +71,20 @@ Logs in an existing user with the game server.
 }
 ```
 
+### LogoutUser - IMPORTANT: NEED AN ENDPOINT FOR THE FRONTEND TO NOTIFY US WHEN A USER LOGS OUT OF AN APPLICATION
+
+#### Description
+
+Endpoint for the front-end to notify the backend that the user has closed the app, so that the back-end can change the users status from online to offline.
+
+#### Request
+
+`PUT /authentication/{userId}/logout`
+
+#### Response
+
+- `204 No Content`
+
 ## World Endpoints
 
 ### CreateWorld
