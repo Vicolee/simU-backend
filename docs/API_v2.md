@@ -735,3 +735,37 @@ Returns the responses for a specific question regarding a specific user or agent
 ```
 
 - Note: There can be multiple responses for one question.
+
+## Additional endpoints/suggestions
+
+### LogoutUser
+
+#### Description
+
+Allows the front-end to notify the backend that the user has exited the app, so that the back-end can change the users status from online to offline.
+
+#### Request
+
+`PUT /authentication/logout/{userId}`
+
+#### Response
+
+`No Content`
+
+### BroadcastUserLogOut
+
+#### Description
+
+Notify all users in the same world as user X that user X has logged off the server.
+
+### BroadcastUserLogin
+
+#### Description
+
+Notify all users in the same world as user X that user X has logged into the server.
+
+### IsUserIsWorldCreator
+
+#### Description
+
+Checks if the user with given `id` is the owner of the world with the given `worldId`.
