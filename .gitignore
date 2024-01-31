@@ -475,7 +475,3 @@ $RECYCLE.BIN/
 
 # Windows shortcuts
 *.lnk
-
-## custom additions
-secrets/
-requests/

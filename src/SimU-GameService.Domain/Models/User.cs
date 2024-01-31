@@ -5,9 +5,9 @@ namespace SimU_GameService.Domain.Models;
 
 public class User : Entity
 {
+    public Guid UserId { get; private set; }
     public string? IdentityId { get; set; }
-    public string? FirstName { get; set; }
-    public string? LastName { get; set; }
+    public string? Username { get; set; }
     public string? Email { get; set; }
     public bool IsAgent { get; set; } = false;
 	public string? Description { get; set; }
@@ -15,9 +15,6 @@ public class User : Entity
     public Location? Location { get; set; }
     public List<Friend> Friends { get; set; }
     public List<QuestionResponse> QuestionResponses { get; set; }
-
-    [Column("UserId")]
-    public Guid UserId { get; private set; }
 
     public User() : base()
     {
@@ -33,16 +30,14 @@ public class User : Entity
 
     public User(
         string identityId,
-        string firstName,
-        string lastName,
+        string username,
         string email,
         bool isAgent,
         string description
         ) : this()
     {
         IdentityId = identityId;
-        FirstName = firstName;
-        LastName = lastName;
+        Username = username;
         Email = email;
         IsAgent = isAgent;
         Description = description;

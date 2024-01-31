@@ -1,3 +1,3 @@
 namespace SimU_GameService.Contracts.Responses;
 
-public record CreateGroupResponse(Guid Id);
+public record CreateWorldResponse(Guid Id);

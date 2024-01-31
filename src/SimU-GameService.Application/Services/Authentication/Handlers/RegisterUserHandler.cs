@@ -1,11 +1,12 @@
 using MediatR;
 using SimU_GameService.Application.Common.Abstractions;
+using SimU_GameService.Application.Common.Exceptions;
 using SimU_GameService.Application.Services.Authentication.Commands;
 using SimU_GameService.Domain.Models;
 
 namespace SimU_GameService.Application.Services.Authentication.Handlers;
 
-public class RegisterUserHandler : IRequestHandler<RegisterUserCommand, Guid?>
+public class RegisterUserHandler : IRequestHandler<RegisterUserCommand, Unit>
 {
     private readonly IUserRepository _userRepository;
     private readonly IAuthenticationService _authenticationService;
@@ -16,11 +17,11 @@ public class RegisterUserHandler : IRequestHandler<RegisterUserCommand, Guid?>
         _authenticationService = authenticationService;
     }
 
-    public async Task<Guid?> Handle(RegisterUserCommand request, CancellationToken cancellationToken)
+    public async Task<Unit> Handle(RegisterUserCommand request, CancellationToken cancellationToken)
     {
         if (await _userRepository.GetUserByEmail(request.Email) != null)
         {
-            return null;
+            throw new BadRequestException("User with given email already exists.");
         }
 
         string identityId = await _authenticationService.RegisterUser(
@@ -28,14 +29,13 @@ public class RegisterUserHandler : IRequestHandler<RegisterUserCommand, Guid?>
 
         var user = new User(
             identityId,
-            request.FirstName,
-            request.LastName,
+            request.Username,
             request.Email,
             false,
             string.Empty
         );
 
         await _userRepository.AddUser(user);
-        return user.UserId;
+        return Unit.Value;
     }
 }

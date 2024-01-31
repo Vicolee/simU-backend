@@ -15,8 +15,7 @@ public class RegisterAgentHandler : IRequestHandler<RegisterAgentCommand, Guid>
     {
         var agent = new User(
             string.Empty,
-            request.FirstName,
-            request.LastName,
+            request.Username,
             string.Empty,
             true,
             request.Description ?? string.Empty

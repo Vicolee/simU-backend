@@ -42,8 +42,7 @@ public class UsersController : ControllerBase
     private ActionResult<UserResponse> MapUserToUserResponse(User user)
     {
         return Ok(new UserResponse(
-                    user.FirstName,
-                    user.LastName,
+                    user.Username,
                     user.Email,
                     user.Description,
                     user.Location?.X ?? default,
