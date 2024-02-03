@@ -117,6 +117,7 @@ Returns an object containing all the information regarding the world with given 
     "creatorId": "00000000-0000-0000-0000-000000000000",
     "name": "string",
     "description": "string",
+    "thumbnailURL": "string"
 }
 ```
 
@@ -330,7 +331,14 @@ Returns the list of worlds that a user belongs to.
     {
         "id": "00000000-0000-0000-0000-000000000000",
         "name": "string",
-        "description": "string"
+        "description": "string",
+        "thumbnailURL": "string"
+    },
+    {
+        "id": "00000000-0000-0000-0000-000000000000",
+        "name": "string",
+        "description": "string",
+        "thumbnailURL": "string"
     }
 ]
 ```
