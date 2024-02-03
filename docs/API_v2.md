@@ -207,11 +207,17 @@ Returns a list of all agents (not offline players) that are currently on the spe
 
 #### Description
 
-Deletes a world. Not that only the world's creator can delete it.
+Deletes a world. Note that only the world's creator can delete it.
 
 #### Request
 
 `DELETE /worlds/{id}`
+
+```json
+{
+    "ownerId": "00000-00000-00000-00000-00000"
+}
+```
 
 #### Response
 
