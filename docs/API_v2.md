@@ -71,6 +71,20 @@ Logs in an existing user with the game server.
 }
 ```
 
+### LogoutUser
+
+#### Description
+
+Logs out the user from the game.
+
+#### Request
+
+- `PUT /authentication/{id}/logout`
+
+#### Response
+
+- `204 No Content`
+
 ## World Endpoints
 
 ### CreateWorld
@@ -117,6 +131,25 @@ Returns an object containing all the information regarding the world with given 
     "creatorId": "00000000-0000-0000-0000-000000000000",
     "name": "string",
     "description": "string",
+    "thumbnail_URL" : "string"
+}
+```
+
+### GetWorldCreator
+
+#### Description
+
+Returns the `id` of the world's creator.
+
+#### Request
+
+`GET /worlds/{id}/creator`
+
+#### Response
+
+```json
+{
+    "id": "00000000-0000-0000-0000-000000000000"
 }
 ```
 
@@ -330,12 +363,13 @@ Returns the list of worlds that a user belongs to.
     {
         "id": "00000000-0000-0000-0000-000000000000",
         "name": "string",
-        "description": "string"
+        "description": "string",
+        "thumbnail_URL" : "string"
     }
 ]
 ```
 
-### AddWorldToUser
+### AddUserWorld
 
 #### Description
 
@@ -349,7 +383,7 @@ Adds an existing world to the user's list of worlds. Use case: for display in th
 
 `No Content`
 
-### RemoveWorldFromUser
+### RemoveUserWorld
 
 #### Description
 
@@ -363,7 +397,7 @@ Removes a world from the list of worlds that a user belongs to.
 
 `No Content`
 
-### UpdateUserSprite
+### UpdateSprite
 
 #### Description
 
@@ -492,7 +526,7 @@ Grabs the GPT summary generated for an AI agent.
 
 ## Chat Endpoints
 
-### SendMessage
+### SendChat
 
 #### Description
 
@@ -501,7 +535,7 @@ Sends a message to a user/group through the server.
 #### Function prototype
 
 ```csharp
-Task SendMessage(Guid receiverId, string message);
+Task SendChat(Guid receiverId, string message);
 ```
 
 #### Request
@@ -509,12 +543,12 @@ Task SendMessage(Guid receiverId, string message);
 ```csharp
 Guid receiverId = Guid.NewGuid();
 string message = "Example message"
-HubConnection.SendAsync("SendMessage", receiverId, message)
+HubConnection.SendAsync("SendChat", receiverId, message)
 ```
 
 #### Response
 
-The `SendMessage` callback on the server will forward the message to the `User` or `Group` matching the `receiverId`.
+The `SendChat` callback on the server will forward the message to the `User` or `Group` matching the `receiverId`.
 
 ### DeleteChat
 
@@ -752,6 +786,8 @@ Allows the front-end to notify the backend that the user has exited the app, so 
 
 `No Content`
 
+*Note*: `BroadcastUserLogOut` and `BroadcastUserLogin` below are not endpoints but rather service functions that will be implemented using SignalR.
+
 ### BroadcastUserLogOut
 
 #### Description
@@ -763,9 +799,3 @@ Notify all users in the same world as user X that user X has logged off the serv
 #### Description
 
 Notify all users in the same world as user X that user X has logged into the server.
-
-### IsUserIsWorldCreator
-
-#### Description
-
-Checks if the user with given `id` is the owner of the world with the given `worldId`.

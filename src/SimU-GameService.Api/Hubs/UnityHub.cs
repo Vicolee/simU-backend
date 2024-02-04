@@ -1,6 +1,7 @@
 using System.Collections.Concurrent;
 using MediatR;
 using Microsoft.AspNetCore.SignalR;
+using SignalRSwaggerGen.Attributes;
 using SimU_GameService.Api.Hubs.Abstractions;
 using SimU_GameService.Application.Common.Exceptions;
 using SimU_GameService.Application.Services.Chats.Commands;
@@ -12,6 +13,7 @@ namespace SimU_GameService.Api.Hubs;
 /// <summary>
 /// This class defines the methods on the server that can be invoked by the SignalR Unity client.
 /// </summary>
+[SignalRHub]
 public class UnityHub : Hub<IUnityClient>,  IUnityHub
 {
     private readonly IMediator _mediator;
