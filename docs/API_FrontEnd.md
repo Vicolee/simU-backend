@@ -76,15 +76,15 @@
   }
   ```
 
-### LogoutUser
+### LogoutUser - IMPORTANT: NEED AN ENDPOINT FOR THE FRONTEND TO NOTIFY US WHEN A USER LOGS OUT OF AN APPLICATION
 
 #### Description
 
-- This endpoint logs out the user from the game.
+Endpoint for the front-end to notify the backend that the user has closed the app, so that the back-end can change the users status from online to offline.
 
 #### Request
 
-- `PUT /authentication/{userId}/logout`
+`PUT /authentication/{userId}/logout`
 
 #### Response
 
@@ -315,6 +315,45 @@ This endpoint is used to kick a player from a world (important: only the owner o
 #### Response
 
 - `200 OK`
+
+### BroadcastUserLogin - IMPORTANT: LEKINA TO IMPLEMENT WITH SIGNAL R - THIS IS A GAME SERVICE TO FRONT END MESSAGE.
+
+#### Description
+
+When the back-end receives notice that a new user has logged into the server, the back-end will send out a SingalR message to all other users about the login and the respective user's info.
+
+#### Response
+`SIGNAL R MESSAGE - TO DO: SET MESSAGE`
+
+```json
+    {
+        "id": "00000000-0000-0000-0000-000000000000",
+        "username": "string",
+        "location": {
+            "x_coord": "int",
+            "y_coord": "int"
+        },
+        "isOnline": false,
+        "isCreator": false,
+        "sprite_URL": "string",
+        "sprite_headshot_URL" : "string"
+    }
+```
+
+### BroadcastUserLogOut - IMPORTANT: LEKINA TO IMPLEMENT WITH SIGNAL R - THIS IS A GAME SERVICE TO FRONT END MESSAGE.
+
+#### Description
+
+When the back-end receives notice from the front-end that an online user has logged off the server, the back-end will send out a SingalR message to all other users about the log-out.
+
+#### Response
+`SIGNAL R MESSAGE - TO DO: SET MESSAGE`
+
+```json
+    {
+        "userId": "00000-00000-00000-00000-00000"
+    }
+```
 
 ## User Endpoints
 

@@ -7,6 +7,7 @@
 - [User Endpoints](#user-endpoints)
 - [Group Endpoints](#group-endpoints)
 - [Chat Endpoints](#chat-endpoints)
+- [Question Endpoints](#question-endpoints)
 
 ## Notes
 

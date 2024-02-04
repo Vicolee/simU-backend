@@ -1,16 +1,16 @@
 using MediatR;
 using SimU_GameService.Application.Common.Abstractions;
 using SimU_GameService.Application.Common.Exceptions;
-using SimU_GameService.Application.Services.Questions.Queries;
+using SimU_GameService.Application.Services.Questions.Commands;
 using SimU_GameService.Domain.Models;
 
 namespace SimU_GameService.Application.Services.Questions.Handlers;
 
-public class GetIncubationQuestionsHandler : IRequestHandler<GetIncubationQuestionsQuery, IEnumerable<Question?>>
+public class AddQuestionHandler : IRequestHandler<AddQuestionCommand, Unit>
 {
     private readonly IQuestionRepository _questionRepository;
 
-    public GetIncubationQuestionsHandler(IQuestionRepository questionRepository)
+    public AddQuestionHandler(IQuestionRepository questionRepository)
     {
         _questionRepository = questionRepository;
     }
@@ -22,8 +22,11 @@ public class GetIncubationQuestionsHandler : IRequestHandler<GetIncubationQuesti
     /// <param name="request"></param>
     /// <param name="cancellationToken"></param>
     /// <returns></returns>
-    public async Task<IEnumerable<Question?>> Handle(GetIncubationQuestionsQuery request, CancellationToken cancellationToken)
+    public async Task<Unit> Handle(AddQuestionCommand request, CancellationToken cancellationToken)
     {
-        return await _questionRepository.GetIncubationQuestions();
+        var question = new Question(request.QuestionText, request.Type) ?? throw new BadRequestException("Invalid question: Either did not provide a question and/or the question's type.");
+        await _questionRepository.AddQuestion(question);
+
+        return Unit.Value;
     }
 }
