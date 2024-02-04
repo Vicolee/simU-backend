@@ -81,7 +81,7 @@ public class UserRepository : IUserRepository
             .FirstOrDefault(u => u.UserId == userId) ?? throw new NotFoundException(nameof(User), userId);
 
         user.QuestionResponses = responses
-            .Select((response, index) => new QuestionResponse(_questions.ElementAt(index), response))
+            .Select((response, index) => new QuestionResponsePair(_questions.ElementAt(index), response))
             .ToList();
 
         await _dbContext.SaveChangesAsync();

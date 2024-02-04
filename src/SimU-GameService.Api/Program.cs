@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.SignalR;
+using Microsoft.OpenApi.Models;
 using SimU_GameService.Api.Filters;
 using SimU_GameService.Api.Hubs;
 using SimU_GameService.Application;
@@ -21,7 +22,15 @@ builder.Services.AddInfrastructure(builder.Configuration);
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerGen(options =>
+{
+    options.SwaggerDoc("v1", new OpenApiInfo 
+        {    
+            Title = "SimU-GameService API",
+            Version = "v2" 
+        });
+    options.AddSignalRSwaggerGen();
+});
 
 var app = builder.Build();
 

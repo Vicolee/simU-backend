@@ -14,13 +14,19 @@ public class WorldsController : ControllerBase
     public WorldsController(IMediator mediator) => _mediator = mediator;
 
     [HttpPost(Name = "CreateWorld")]
-    public ActionResult<CreateWorldResponse> CreateWorld(CreateWorldRequest request)
+    public ActionResult<IdResponse> CreateWorld(CreateWorldRequest request)
     {
         throw new NotImplementedException();
     }
 
     [HttpGet("{id}", Name = "GetWorld")]
-    public ActionResult<GetWorldResponse> GetWorld(Guid id)
+    public ActionResult<WorldResponse> GetWorld(Guid id)
+    {
+        throw new NotImplementedException();
+    }
+
+    [HttpGet("{id}/creator", Name = "GetWorldCreator")]
+    public Task<ActionResult<WorldUserResponse>> GetWorldCreator(Guid id)
     {
         throw new NotImplementedException();
     }

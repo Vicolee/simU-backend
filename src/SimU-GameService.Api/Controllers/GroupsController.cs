@@ -16,10 +16,10 @@ public class GroupsController : ControllerBase
     public GroupsController(IMediator mediator) => _mediator = mediator;
 
     [HttpPost(Name = "CreateGroup")]
-    public async Task<ActionResult<CreateGroupResponse>> CreateGroup(CreateGroupRequest request)
+    public async Task<ActionResult<IdResponse>> CreateGroup(CreateGroupRequest request)
     {
         var groupId = await _mediator.Send(new CreateGroupCommand(request.Name, request.OwnerId));
-        return new CreateGroupResponse(groupId);  
+        return new IdResponse(groupId);  
     }
 
     [HttpDelete("{groupId}", Name = "DeleteGroup")]

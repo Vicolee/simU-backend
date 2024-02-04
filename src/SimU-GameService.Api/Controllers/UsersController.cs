@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using SimU_GameService.Application.Common.Exceptions;
 using SimU_GameService.Application.Services.Users.Commands;
 using SimU_GameService.Application.Services.Users.Queries;
+using SimU_GameService.Contracts.Requests;
 using SimU_GameService.Contracts.Responses;
 using SimU_GameService.Domain.Models;
 
@@ -16,20 +17,6 @@ public class UsersController : ControllerBase
     private readonly IMediator _mediator;
 
     public UsersController(IMediator mediator) => _mediator = mediator;
-
-    [HttpGet("questions", Name = "GetQuestions")]
-    public async Task<ActionResult<IEnumerable<string>>> GetQuestions()
-    {
-        var questions = await _mediator.Send(new GetQuestionsQuery());
-        return Ok(questions);
-    }
-
-    [HttpPost("{userId}/responses", Name = "PostResponses")]
-    public async Task<ActionResult> PostResponses(Guid userId, IEnumerable<string> responses)
-    {
-        await _mediator.Send(new PostResponsesCommand(userId, responses));
-        return NoContent();
-    }
 
     [HttpGet("{userId}", Name = "GetUser")]
     public async Task<ActionResult<UserResponse>> GetUser(Guid userId)
@@ -63,5 +50,29 @@ public class UsersController : ControllerBase
     {
         var friends = await _mediator.Send(new GetFriendsQuery(userId));
         return Ok(friends.Select(f => new FriendResponse(f.FriendId, f.CreatedTime)));
+    }
+
+    [HttpGet("{id}/worlds", Name = "GetUserWorlds")]
+    public Task<ActionResult<IEnumerable<WorldResponse>>> GetUserWorlds(Guid id)
+    {
+        throw new NotImplementedException();
+    }
+
+    [HttpPost("{id}/worlds/{worldId}", Name = "AddUserWorld")]
+    public Task<ActionResult> AddUserWorld(Guid id, Guid worldId)
+    {
+        throw new NotImplementedException();
+    }
+
+    [HttpDelete("{id}/worlds/{worldId}", Name = "RemoveUserWorld")]
+    public Task<ActionResult> RemoveUserWorld(Guid id, Guid worldId)
+    {
+        throw new NotImplementedException();
+    }
+
+    [HttpPost("{id}/sprite", Name = "UpdateSprite")]
+    public Task<ActionResult> UpdateSprite(UpdateSpriteRequest request)
+    {
+        throw new NotImplementedException();
     }
 }

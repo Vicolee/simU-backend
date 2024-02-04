@@ -14,7 +14,7 @@ public class User : Entity
     public DateTime CreatedTime { get; set; }
     public Location? Location { get; set; }
     public List<Friend> Friends { get; set; }
-    public List<QuestionResponse> QuestionResponses { get; set; }
+    public List<QuestionResponsePair> QuestionResponses { get; set; }
 
     public User() : base()
     {

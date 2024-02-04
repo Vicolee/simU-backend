@@ -14,10 +14,7 @@ public class ChatsController : ControllerBase
 {
     private readonly IMediator _mediator;
 
-    public ChatsController(IMediator mediator)
-    {
-        _mediator = mediator;
-    }
+    public ChatsController(IMediator mediator) => _mediator = mediator;
 
     [HttpGet("{chatId}", Name = "GetChat")]
     public async Task<ActionResult<ChatResponse>> GetChat(Guid chatId)
