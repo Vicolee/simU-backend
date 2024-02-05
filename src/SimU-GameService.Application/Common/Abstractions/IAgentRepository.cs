@@ -38,20 +38,6 @@ public interface IAgentRepository
     public Task<string?> GetSummary(Guid agentId);
 
     /// <summary>
-    /// Gets the entrance questionnaire prompts from the repository.
-    /// </summary>
-    /// <returns></returns>
-    public Task<IEnumerable<string>> GetQuestions();
-
-    /// <summary>
-    /// Posts the entrance questionnaire responses for a user to the repository.
-    /// </summary>
-    /// <param name="agentId"></param>
-    /// <param name="responses"></param>
-    /// <returns></returns>
-    Task PostResponses(Guid userId, IEnumerable<string> responses);
-
-    /// <summary>
     /// Updates a user's location in the repository.
     /// </summary>
     /// <param name="userId"></param>
