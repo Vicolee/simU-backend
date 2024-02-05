@@ -12,6 +12,7 @@ public class SimUDbContext : DbContext
     public DbSet<User> Users { get; set; }
     public DbSet<Agent> Agents { get; set; }
     public DbSet<Chat> Chats { get; set; }
+    public DbSet<Conversation> Conversations { get; set; }
     public DbSet<Group> Groups { get; set; }
     public DbSet<World> Worlds { get; set; }
     public DbSet<Question> Questions { get; set; }

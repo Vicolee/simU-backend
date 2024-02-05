@@ -12,6 +12,7 @@ public class SendChatHandler : IRequestHandler<SendChatCommand, Chat>
     private readonly IChatRepository _chatRepository;
     private readonly IUserRepository _userRepository;
     private readonly IGroupRepository _groupRepository;
+    private readonly IConversationRepository _conversationRepository;
 
     private readonly ILLMService _llmService;
 
@@ -41,8 +42,18 @@ public class SendChatHandler : IRequestHandler<SendChatCommand, Chat>
 
         var receiver = (Entity?) receiverAsUser ?? receiverAsGroup;
 
-        var chat = new Chat(request.SenderId, request.ReceiverId, request.Content, receiver is Group, null, DateTime.UtcNow);
+        // TO DO: LEKINA DOUBLE CHECK LOGIC OF THIS CODE
+        var conversationId = await _conversationRepository.IsOnGoingConversation(request.SenderId, request.ReceiverId);
+        if (conversationId == null)
+        {
+            // this is start of a new conversation
+            conversationId = await _conversationRepository.StartConversation(request.SenderId, request.ReceiverId);
+        }
+        var chat = new Chat(request.SenderId, request.ReceiverId, conversationId.Value, request.Content, receiver is Group, null, DateTime.UtcNow);
         await _chatRepository.AddChat(chat);
+
+        await _conversationRepository.UpdateConversationLastMessageTime(conversationId.Value);
+
         if (receiverAsUser != null && receiverAsUser.IsAgent)
         {
             // the receiver of the chat is an LLM agent, so we send the chat to the agent and await its response
