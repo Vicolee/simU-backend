@@ -1,28 +1,25 @@
-using SimU_GameService.Domain.Primitives;
-
 namespace SimU_GameService.Domain.Models;
 
-public class Agent : Entity
+public class Agent : Character
 {
-	public Guid UserId { get; set; }
-	public string? FirstName { get; set; }
-	public string? LastName { get; set; }
-	public string? Description { get; set; }
-    public Guid AgentId { get; }
-	public DateTime CreatedTime { get; set; }
+    public Guid Creator { get; set; }
+    public DateTime HatchTime { get; set; }
 
+    public Agent() : base()
+    {
+    }
 
-	public Agent() : base()
-	{
-		AgentId = Id;
-	}
+    public Agent(string username,
+     Guid createdByUser, float collabDurationInHours, string description) : this()
+    {
+        Username = username;
+        Creator = createdByUser;
+        Description = description;
+        HatchTime = ComputeHatchTime(collabDurationInHours);
+    }
+    
+    public bool IsHatched => DateTime.UtcNow > HatchTime;
 
-	public Agent(Guid userID, string firstName, string lastName, string description) : this()
-	{
-		UserId = userID;
-		FirstName = firstName;
-		LastName = lastName;
-		Description = description;
-		CreatedTime = DateTime.UtcNow;
-	}
+    private DateTime ComputeHatchTime(float collabDurationInHours)
+        => CreatedTime.AddHours(collabDurationInHours);
 }

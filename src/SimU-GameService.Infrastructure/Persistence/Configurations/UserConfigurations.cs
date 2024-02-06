@@ -9,8 +9,8 @@ public class UserConfigurations : IEntityTypeConfiguration<User>
     public void Configure(EntityTypeBuilder<User> builder)
     {
         // set the primary key
-        builder.HasKey(u => u.UserId);
-        builder.Property(u => u.UserId)
+        builder.HasKey(u => u.Id);
+        builder.Property(u => u.Id)
             .ValueGeneratedNever();
         builder.Ignore(b => b.Id);
         
@@ -25,7 +25,7 @@ public class UserConfigurations : IEntityTypeConfiguration<User>
         // friends
         builder.OwnsMany(u => u.Friends, f =>
         {
-            f.WithOwner().HasForeignKey(nameof(User.UserId));
+            f.WithOwner().HasForeignKey(nameof(User.Id));
             f.Property(f => f.FriendId)
                 .ValueGeneratedNever();
         });
@@ -33,7 +33,7 @@ public class UserConfigurations : IEntityTypeConfiguration<User>
         // question responses
         builder.OwnsMany(u => u.QuestionResponses, qr =>
         {
-            qr.WithOwner().HasForeignKey(nameof(User.UserId));
+            qr.WithOwner().HasForeignKey(nameof(User.Id));
         });
     }
 }

@@ -37,7 +37,7 @@ public class AddUserToGroupHandler : IRequestHandler<AddUserToGroupCommand, Unit
         }
 
         // add user to the group
-        await _groupRepository.AddUser(group.GroupId, user.UserId);
+        await _groupRepository.AddUser(group.Id, user.Id);
         return Unit.Value;
     }
 }

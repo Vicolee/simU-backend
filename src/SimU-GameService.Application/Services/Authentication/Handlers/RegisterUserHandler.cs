@@ -31,9 +31,7 @@ public class RegisterUserHandler : IRequestHandler<RegisterUserCommand, Unit>
             identityId,
             request.Username,
             request.Email,
-            false,
-            string.Empty
-        );
+            false);
 
         await _userRepository.AddUser(user);
         return Unit.Value;

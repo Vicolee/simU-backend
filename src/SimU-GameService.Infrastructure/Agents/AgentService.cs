@@ -51,7 +51,6 @@ public class AgentService : IAgentService
             RecipientId = senderId,
             Content = content,
             IsGroupChat = false,
-            Id = responseId,
             CreatedTime = DateTime.UtcNow
         };
         return agentResponse;

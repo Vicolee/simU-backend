@@ -25,7 +25,7 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(options =>
 {
     options.SwaggerDoc("v1", new OpenApiInfo 
-        {    
+        {  
             Title = "SimU-GameService API",
             Version = "v2" 
         });
