@@ -11,11 +11,11 @@ public class GroupConfiguration : IEntityTypeConfiguration<Group>
     public void Configure(EntityTypeBuilder<Group> builder)
     {
         // set primary key
-        builder.HasKey(builder => builder.GroupId);
+        builder.HasKey(builder => builder.Id);
 
         // configure Guid properties to be user-generated
         builder.Ignore(b => b.Id);        
-        builder.Property(i => i.GroupId)
+        builder.Property(i => i.Id)
             .ValueGeneratedNever();
         builder.Property(i => i.OwnerId)
             .ValueGeneratedNever();

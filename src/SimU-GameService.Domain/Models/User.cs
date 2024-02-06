@@ -1,56 +1,27 @@
-using System.ComponentModel.DataAnnotations.Schema;
-using SimU_GameService.Domain.Primitives;
-
 namespace SimU_GameService.Domain.Models;
 
-public class User : Entity
+public class User : Character
 {
-    public Guid UserId { get; private set; }
     public string? IdentityId { get; set; }
-    public string? Username { get; set; }
     public string? Email { get; set; }
-    public bool IsAgent { get; set; } = false;
-	public string? Description { get; set; }
-    public DateTime CreatedTime { get; set; }
-    public Location? Location { get; set; }
+    public bool IsOnline { get; set; } = false;
     public List<Friend> Friends { get; set; }
-    public List<QuestionResponsePair> QuestionResponses { get; set; }
+    public List<Guid> WorldsJoined { get; set; }
+    public List<Guid> WorldsCreated { get; set; }
 
     public User() : base()
     {
         Friends = new();
-        QuestionResponses = new();
-        Location = new Location {
-            LocationId = Guid.NewGuid(),
-            X = 0,
-            Y = 0,
-        };
-        UserId = Id;
+        WorldsJoined = new();
+        WorldsCreated = new();
     }
 
-    public User(
-        string identityId,
-        string username,
-        string email,
-        bool isAgent,
-        string description
-        ) : this()
+    public User(string identityId, string username, string email, bool isOnline)
+        : this()
     {
         IdentityId = identityId;
         Username = username;
         Email = email;
-        IsAgent = isAgent;
-        Description = description;
-        CreatedTime = DateTime.UtcNow;
-    }
-
-    public void UpdateLocation(int xCoord, int yCoord)
-    {
-        Location = new Location
-        {
-            LocationId = Guid.NewGuid(),
-            X = xCoord,
-            Y = yCoord
-        };
+        IsOnline = isOnline;
     }
 }

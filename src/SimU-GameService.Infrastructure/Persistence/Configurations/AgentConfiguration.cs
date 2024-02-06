@@ -9,13 +9,11 @@ public class AgentConfigurations : IEntityTypeConfiguration<Agent>
     public void Configure(EntityTypeBuilder<Agent> builder)
     {
         // set the primary key
-        builder.HasKey(builder => builder.AgentId);
+        builder.HasKey(builder => builder.Id);
 
         // configure Guid properties to be user-generated
         builder.Ignore(b => b.Id);
-        builder.Property(builder => builder.AgentId)
-            .ValueGeneratedNever();
-        builder.Property(builder => builder.UserId)
+        builder.Property(builder => builder.Id)
             .ValueGeneratedNever();
 
         // conversion for CreatedTime

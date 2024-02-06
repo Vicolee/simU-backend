@@ -24,6 +24,11 @@ public static class DependencyInjection
         services.AddScoped<IUserRepository, UserRepository>();
         services.AddScoped<IChatRepository, ChatRepository>();
         services.AddScoped<IGroupRepository, GroupRepository>();
+        services.AddScoped<IWorldRepository, WorldRepository>();
+        services.AddScoped<IQuestionRepository, QuestionRepository>();
+        services.AddScoped<IQuestionResponseRepository, QuestionResponseRepository>();
+        services.AddScoped<IConversationRepository, ConversationRepository>();
+        services.AddScoped<IAgentRepository, AgentRepository>();
 
         // AI agent service
         services.AddScoped<IAgentService, AgentService>();

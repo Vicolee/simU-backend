@@ -30,7 +30,7 @@ public class RemoveUserFromGroupHandler : IRequestHandler<RemoveUserFromGroupCom
             throw new BadRequestException($"User with ID {request.RequesterId} is not the owner of group with ID {request.GroupId}");
         }
 
-        await _groupRepository.RemoveUser(group.GroupId, user.UserId);
+        await _groupRepository.RemoveUser(group.Id, user.Id);
         return Unit.Value;
     }
 }

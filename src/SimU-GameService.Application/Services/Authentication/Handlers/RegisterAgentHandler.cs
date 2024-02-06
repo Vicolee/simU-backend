@@ -7,21 +7,20 @@ namespace SimU_GameService.Application.Services.Authentication.Handlers;
 
 public class RegisterAgentHandler : IRequestHandler<RegisterAgentCommand, Guid>
 {
-    private readonly IUserRepository _userRepository;
+    private readonly IAgentRepository _agentRepository;
 
-    public RegisterAgentHandler(IUserRepository userRepository) => _userRepository = userRepository;
+    public RegisterAgentHandler(IAgentRepository agentRepository) => _agentRepository = agentRepository;
 
     public async Task<Guid> Handle(RegisterAgentCommand request, CancellationToken cancellationToken)
     {
-        var agent = new User(
-            string.Empty,
+        var agent = new Agent(
             request.Username,
-            string.Empty,
-            true,
+            Guid.Empty,
+            0,
             request.Description ?? string.Empty
         );
 
-        await _userRepository.AddUser(agent);
-        return agent.UserId;         
+        await _agentRepository.AddAgent(agent);
+        return agent.Id;         
     }
 }
