@@ -25,10 +25,10 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(options =>
 {
     options.SwaggerDoc("v1", new OpenApiInfo 
-        {  
-            Title = "SimU-GameService API",
-            Version = "v2" 
-        });
+    {    
+        Title = "SimU-GameService API",
+        Version = "v1" 
+    });
     options.AddSignalRSwaggerGen();
 });
 
