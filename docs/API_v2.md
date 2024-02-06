@@ -235,6 +235,46 @@ Returns a list of all agents (not offline players) that are currently on the spe
 ]
 ```
 
+### AddUserToWorld
+
+#### Description
+
+Adds a user to a worlds' list of users
+
+#### Request
+
+`POST /worlds/{id}/users`
+
+```json
+{
+    "userId": "00000000-0000-0000-0000-000000000000"
+}
+```
+
+#### Response
+
+`No Content`
+
+### AddAgentToWorld
+
+#### Description
+
+Adds an agent to a worlds' list of agents
+
+#### Request
+
+`POST /worlds/{id}/agents`
+
+```json
+{
+    "agentId": "00000000-0000-0000-0000-000000000000"
+}
+```
+
+#### Response
+
+`No Content`
+
 ### DeleteWorld
 
 #### Description
@@ -255,7 +295,7 @@ Deletes a world. Note that only the world's creator can delete it.
 
 `No Content`
 
-### GetIncubatingAgents
+### GetIncubating
 
 #### Description
 
@@ -282,7 +322,7 @@ Returns a list of the IDs of currently incubating agents.
 }
 ```
 
-### GetHatchedAgent
+### GetHatched
 
 #### Description
 
@@ -352,6 +392,42 @@ This endpoint returns the user object for the user with the given `id`.
 }
 ```
 
+### GetUserSummary
+
+#### Description
+
+Grabs the GPT summary generated for a user.
+
+#### Request
+
+`GET /users/{userId}/summary`
+
+#### Response
+
+```json
+{
+    "summary": "string"
+}
+```
+
+### UpdateUserSummary
+
+#### Description
+
+Updates the user's summary according to the revisions they made to it.
+
+#### Request
+
+`POST /users/{userId}/summary`
+
+#### Response
+
+```json
+{
+    "summary": "string"
+}
+```
+
 ### GetUserWorlds
 
 #### Description
@@ -375,7 +451,7 @@ Returns the list of worlds that a user belongs to.
 ]
 ```
 
-### AddUserWorld
+### AddWorld
 
 #### Description
 
@@ -383,13 +459,28 @@ Adds an existing world to the user's list of worlds. Use case: for display in th
 
 #### Request
 
-`POST /users/{id}/worlds/{worldId}`
+`POST /users/{id}/worlds/{joinCode}`
+
+```json
+{
+    "joinCode": "string"
+}
+```
 
 #### Response
 
-`No Content`
+`200 OK`
 
-### RemoveUserWorld
+```json
+{
+    "worldId": "00000000-0000-0000-0000-000000000000",
+    "worldName": "string",
+    "thumbnailURL": "https://world-pic.png"
+
+}
+```
+
+### RemoveWorldFromList
 
 #### Description
 
