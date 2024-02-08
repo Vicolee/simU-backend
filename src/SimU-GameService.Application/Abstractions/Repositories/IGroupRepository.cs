@@ -1,6 +1,6 @@
 using SimU_GameService.Domain.Models;
 
-namespace SimU_GameService.Application.Common.Abstractions;
+namespace SimU_GameService.Application.Abstractions.Repositories;
 
 public interface IGroupRepository
 {

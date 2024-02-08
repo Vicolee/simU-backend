@@ -1,7 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using SimU_GameService.Application.Common.Abstractions;
+using SimU_GameService.Application.Abstractions.Services;
+using SimU_GameService.Application.Abstractions.Repositories;
 using FirebaseAdmin;
 using Google.Apis.Auth.OAuth2;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -31,8 +32,8 @@ public static class DependencyInjection
         services.AddScoped<IAgentRepository, AgentRepository>();
 
         // AI agent service
-        services.AddScoped<IAgentService, AgentService>();
-        services.AddHttpClient<IAgentService, AgentService>((sp, httpClient) =>
+        services.AddScoped<ILLMService, LLMService>();
+        services.AddHttpClient<ILLMService, LLMService>((sp, httpClient) =>
         {
             var configuration = sp.GetRequiredService<IConfiguration>();
             var baseUri = configuration["AgentService:BaseUri"]

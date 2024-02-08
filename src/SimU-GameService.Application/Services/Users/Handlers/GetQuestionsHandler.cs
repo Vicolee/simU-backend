@@ -1,5 +1,5 @@
 // using MediatR;
-// using SimU_GameService.Application.Common.Abstractions;
+// using SimU_GameService.Application.Abstractions.Repositories;
 
 // namespace SimU_GameService.Application.Services.Users.Queries;
 
