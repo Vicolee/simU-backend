@@ -1,7 +1,7 @@
 using MediatR;
 using SimU_GameService.Domain.Models;
 
-namespace SimU_GameService.Application.Common.Abstractions;
+namespace SimU_GameService.Application.Abstractions.Repositories;
 
 /// <summary>
 /// This interface is used to abstract the database from services in the Application layer.

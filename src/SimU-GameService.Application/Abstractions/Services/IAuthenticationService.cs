@@ -1,4 +1,4 @@
-namespace SimU_GameService.Application.Common.Abstractions;
+namespace SimU_GameService.Application.Abstractions.Services;
 
 public interface IAuthenticationService
 {

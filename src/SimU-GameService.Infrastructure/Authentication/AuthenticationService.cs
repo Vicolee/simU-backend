@@ -1,6 +1,7 @@
 using System.Net.Http.Json;
 using FirebaseAdmin.Auth;
-using SimU_GameService.Application.Common.Abstractions;
+using SimU_GameService.Application.Abstractions.Repositories;
+using SimU_GameService.Application.Abstractions.Services;
 using SimU_GameService.Application.Common.Exceptions;
 
 namespace SimU_GameService.Infrastructure.Authentication;

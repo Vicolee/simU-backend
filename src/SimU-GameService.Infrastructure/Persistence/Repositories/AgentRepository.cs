@@ -1,5 +1,5 @@
 using Microsoft.EntityFrameworkCore;
-using SimU_GameService.Application.Common.Abstractions;
+using SimU_GameService.Application.Abstractions.Repositories;
 using SimU_GameService.Application.Common.Exceptions;
 using SimU_GameService.Domain.Models;
 

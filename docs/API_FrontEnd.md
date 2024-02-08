@@ -101,6 +101,7 @@ Creates a new world for the user.
 #### Request
 
 - `POST /worlds/create`
+
 ```json
   {
     "worldName": "string",
@@ -112,6 +113,7 @@ Creates a new world for the user.
 #### Response
 
 - `200 OK`
+
  ```json
   {
     "id": "string",
@@ -128,6 +130,7 @@ Adds another user's preexisting world to your "Worlds homepage screen" so that y
 #### Request
 
 - `GET /worlds/add/{privateCode}`
+
 ```json
   {
     "privateCode": "5XW2R" (5 characters),
@@ -138,6 +141,7 @@ Adds another user's preexisting world to your "Worlds homepage screen" so that y
 #### Response
 
 - `200 OK`
+
  ```json
   {
     "worldId": "string",
@@ -161,6 +165,7 @@ Adds another user's preexisting world to your "Worlds homepage screen" so that y
 #### Response
 
 - `200 OK`
+
 ```json
   {
     "worldId": "string",
@@ -176,9 +181,11 @@ Adds another user's preexisting world to your "Worlds homepage screen" so that y
 This endpoint returns a list of all users that belong to the server, along with their online/offline status. Typically, this function will be called when a user has just joined the server.
 
 #### Request
+
 - `GET /worlds/{worldId}/users`
 
 #### Response
+
 - `200 OK`
 
 ```json
@@ -195,9 +202,11 @@ This endpoint returns a list of all users that belong to the server, along with 
 This endpoint returns a list of all agents that are currently on the server. Typically, this function will be called when a user has just joined the server. **Note to Lekina: We must be careful about whether to include offline players whose AI trained personalities are now playing on the server**
 
 #### Request
+
 - `GET /worlds/{worldId}/agents`
 
 #### Response
+
 - `200 OK`
 
 ```json
@@ -216,6 +225,7 @@ Deletes a user's world if they are the creator of it.
 #### Request
 
 - `DELETE /worlds/remove/{worldId}`
+
 ```json
   {
     "worldId": "string",
@@ -241,10 +251,11 @@ This endpoint returns agent information for the Players list screen.
 #### Response
 
 - `200 OK`
+
 ```json
     {
     "users": [
-	{ "username1": ["spriteHeadshot URL", "isOnline (boolean)", "isOwner (boolean)"] },
+ { "username1": ["spriteHeadshot URL", "isOnline (boolean)", "isOwner (boolean)"] },
         { "username2": ["spriteHeadshot URL", "isOnline (boolean)", "isOwner (boolean)"] },
         { "username3": ["spriteHeadshot URL", "isOnline (boolean)", "isOwner (boolean)"] },
     ]
@@ -264,10 +275,11 @@ This endpoint returns agent information for the "Incubating" list screen.
 #### Response
 
 - `200 OK`
+
 ```json
     {
     "incubating": [
-	{ "userId1": ["username1", "spriteHeadshot URL", "TotalIncubationTime", "IncubationTimeLeft"] },
+ { "userId1": ["username1", "spriteHeadshot URL", "TotalIncubationTime", "IncubationTimeLeft"] },
         { "userId2": ["username2", "spriteHeadshot URL", "TotalIncubationTime", "IncubationTimeLeft"] },
         { "userId3": ["username3", "spriteHeadshot URL", "TotalIncubationTime", "IncubationTimeLeft"] }
     ]
@@ -287,10 +299,11 @@ This endpoint returns agent information for the "Hatched" list screen.
 #### Response
 
 - `200 OK`
+
 ```json
     {
     "hatched": [
-	{ "userId1": "username1", "spriteHeadshot URL" },
+ { "userId1": "username1", "spriteHeadshot URL" },
         { "userId2": "username2", "spriteHeadshot URL" },
         { "userId3": "username3", "spriteHeadshot URL" }
     ]
@@ -306,6 +319,7 @@ This endpoint is used to kick a player from a world (important: only the owner o
 #### Request
 
 - `DELETE /worlds/{worldId}/users/{userId}`
+
 ```json
     {
     "ownerId": "userToRemoveId"
@@ -316,13 +330,14 @@ This endpoint is used to kick a player from a world (important: only the owner o
 
 - `200 OK`
 
-### BroadcastUserLogin - IMPORTANT: LEKINA TO IMPLEMENT WITH SIGNAL R - THIS IS A GAME SERVICE TO FRONT END MESSAGE.
+### BroadcastUserLogin - IMPORTANT: LEKINA TO IMPLEMENT WITH SIGNAL R - THIS IS A GAME SERVICE TO FRONT END MESSAGE
 
 #### Description
 
 When the back-end receives notice that a new user has logged into the server, the back-end will send out a SingalR message to all other users about the login and the respective user's info.
 
 #### Response
+
 `SIGNAL R MESSAGE - TO DO: SET MESSAGE`
 
 ```json
@@ -340,13 +355,14 @@ When the back-end receives notice that a new user has logged into the server, th
     }
 ```
 
-### BroadcastUserLogOut - IMPORTANT: LEKINA TO IMPLEMENT WITH SIGNAL R - THIS IS A GAME SERVICE TO FRONT END MESSAGE.
+### BroadcastUserLogOut - IMPORTANT: LEKINA TO IMPLEMENT WITH SIGNAL R - THIS IS A GAME SERVICE TO FRONT END MESSAGE
 
 #### Description
 
 When the back-end receives notice from the front-end that an online user has logged off the server, the back-end will send out a SingalR message to all other users about the log-out.
 
 #### Response
+
 `SIGNAL R MESSAGE - TO DO: SET MESSAGE`
 
 ```json
@@ -386,6 +402,7 @@ This endpoint returns user information for the given `userId`.
 ### GetUserWorlds
 
 #### Description
+
 Returns the list of worlds that a user belongs to - for display on home screen.
 
 #### Request
@@ -393,17 +410,20 @@ Returns the list of worlds that a user belongs to - for display on home screen.
 - `GET /users/{userId}/worlds`
 
 #### Response
+
 - `200 OK`
+
 ```json
   {
     "worlds": [
-	{ "worldId1": ["worldName1", "description", [ "playerId1", "playerId2", "playerId3" ]] },
+ { "worldId1": ["worldName1", "description", [ "playerId1", "playerId2", "playerId3" ]] },
         { "worldId2": ["worldName2", "description", [ "playerId1", "playerId2", "playerId3"]] },
         { "worldId3": ["worldName3", "description", [ "playerId1 sprite", "playerId2 sprite", "playerId3 sprite"]] }
     ]
   }
   ```
-  - Note: When sending the playerId's to the front-end, the Game service will randomly pick up to 3 playerIds' sprites to send.
+
+- Note: When sending the playerId's to the front-end, the Game service will randomly pick up to 3 playerIds' sprites to send.
 
 ### RemoveUserWorld
 
@@ -414,7 +434,9 @@ Removes a world from a user's list of worlds that they belong to.
 #### Request
 
 - `DELETE /users/{userId}/worlds/{worldId}`
+
 #### Response
+
 - `200 OK`
 
   ```json
@@ -432,12 +454,15 @@ Updates a user's sprite - **TO DO: TALK TO EVAN TO FIGURE OUT IF WE ARE GOING TO
 #### Request
 
 - `POST /users/{userId}/sprite/`
+
 ```json
   [
     "userId": "summary of how they want avatar to look" OR "photo they upload"
   ]
 ```
+
 #### Response
+
 - `200 OK`
 
 ### UpdateLocation
@@ -710,6 +735,7 @@ This endpoint records the clients responses to either questions about themselves
     "responderId": ["targetCharacterId", "questionId", "response"]
   }
   ```
+
 - **ResponderID** is the ID of the user who is answering a question (either about themselves or an incubating agent).
 - **TargetCharacterID** is the ID of the user or agent who is having questions answered about them. If a user is answering questions about themselves, the **ResponderID** and **TargetCharacterID** is the same.
 - **Response** is the response to the question
@@ -741,6 +767,7 @@ This endpoint records the clients responses to either questions about themselves
     { "TargetCharacterId": "target_guid_here", "ResponderId": 5"responder_guid_here", "QuestionId": "question_guid_here", "Response": "Response 5" }
     }
 ```
+
 - Note: There can be multiple responses for one question.
 
 ### GetResponse
@@ -763,6 +790,7 @@ This endpoint records the clients responses to either questions about themselves
     { "TargetCharacterId": "same_target_guid_here", "ResponderId": "diff_responder_guid_here", "QuestionId": "same_question_ID", "Response": "Response 2" },
     }
 ```
+
 - Note: There can be multiple responses for one question.
 
 ### AddQuestion
@@ -774,6 +802,7 @@ This endpoint records the clients responses to either questions about themselves
 #### Request
 
 - `POST /questions/`
+
 ```json
   {
     "questionText": "string",
