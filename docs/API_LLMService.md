@@ -99,9 +99,9 @@ The GameService receives the question responses about a new user or a new AI Age
     "question 3"
   ],
   "responses": [
-    ["response to q1", "response to q1", ],
-    ["response to q2", "response to q2", ],
-    ["response to q3", "response to q3", ]
+    ["response to q1", "response to q1" ],
+    ["response to q2", "response to q2" ],
+    ["response to q3", "response to q3" ]
   ]
 }
 ```

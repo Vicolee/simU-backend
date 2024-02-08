@@ -32,8 +32,8 @@ public static class DependencyInjection
         services.AddScoped<IAgentRepository, AgentRepository>();
 
         // AI agent service
-        services.AddScoped<IAgentService, AgentService>();
-        services.AddHttpClient<IAgentService, AgentService>((sp, httpClient) =>
+        services.AddScoped<ILLMService, LLMService>();
+        services.AddHttpClient<ILLMService, LLMService>((sp, httpClient) =>
         {
             var configuration = sp.GetRequiredService<IConfiguration>();
             var baseUri = configuration["AgentService:BaseUri"]

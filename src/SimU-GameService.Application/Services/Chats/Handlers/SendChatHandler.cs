@@ -13,10 +13,10 @@ public class SendChatHandler : IRequestHandler<SendChatCommand, Unit>
     private readonly IChatRepository _chatRepository;
     private readonly IUserRepository _userRepository;
     private readonly IGroupRepository _groupRepository;
-    private readonly IAgentService _agentService;
+    private readonly ILLMService _agentService;
     private readonly IConversationRepository _conversationRepository;
 
-    public SendChatHandler(IChatRepository chatRepository, IUserRepository userRepository, IGroupRepository groupRepository, IAgentService agentService, IConversationRepository conversationRepository)
+    public SendChatHandler(IChatRepository chatRepository, IUserRepository userRepository, IGroupRepository groupRepository, ILLMService agentService, IConversationRepository conversationRepository)
     {
         _chatRepository = chatRepository;
         _userRepository = userRepository;
@@ -59,8 +59,12 @@ public class SendChatHandler : IRequestHandler<SendChatCommand, Unit>
         if (receiverAsUser != null) // incomplete logic
         {
             // send the chat to the LLM agent and save its response
-            var chatResponse = await _agentService.RelayUserChat(chat.Id, chat.Content, chat.SenderId, chat.RecipientId);
-            await _chatRepository.AddChat(chatResponse);
+            var chatResponse = await _agentService.SendChat(
+                chat.SenderId, chat.RecipientId, chat.ConversationId, chat.Content, false, false);
+
+            // TODO: create chat object from string response and save it to the database
+            // var chat = new Chat(...);
+            // await _chatRepository.AddChat(chat);
         }
         return Unit.Value;
     }
