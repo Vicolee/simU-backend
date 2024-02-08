@@ -57,33 +57,6 @@ At the end of any conversation taking place in the game, notify the AI service. 
 
 `No content`
 
-## GenerateSprite (*Stretch Feature*)
-
-### Description
-
-The GameService receives either a picture of the real person's face or a description of what the user wants their sprite's appearance to look like. If it's a picture, it will be sent to the AI Service to be described by GPT into words. Then the description will be sent along to DALL-E to generate a full body sprite and a headashot of the sprite, which will then be sent back to the GameService, saved by it, and sent along to the Front-End.
-
-### Request
-
-`POST ${generate_sprite_url}`
-
-```json
-{
-  "userId": "00000000-0000-0000-0000-000000000000",
-  "description": "Test description",
-  "photo_URL": "https://www.test.com/test_photo.png"
-}
-```
-
-### Response
-
-```json
-{
-  "sprite_URL": "https://www.test.com/test_sprite.png",
-  "spriteHeadshot_URL": "https://www.test.com/test_sprite_headshot.png"
-}
-```
-
 ## GenerateCharacterSummary
 
 ### Description
