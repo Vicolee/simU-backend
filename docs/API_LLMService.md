@@ -1,5 +1,9 @@
 # LLM Service API
 
+## Notes
+
+- Check the docs on the [AI Service repo](https://github.com/dartmouth-cs98-23f/SimYou_LLM_Service/blob/main/Docs/API.md) for updates.
+
 ## SendChat
 
 ### Description
@@ -8,7 +12,7 @@ The GameService sends the AI service a chat message from an online player whose 
 
 ### Request
 
-`POST ${send_chat_url}`
+`POST /api/agents/prompt`
 
 ```json
 {
@@ -37,7 +41,7 @@ At the end of any conversation taking place in the game, notify the AI service. 
 
 ### Request
 
-`POST ${end_conversation_url}`
+`POST /api/agents/endconversation`
 
 ```json
 {
@@ -88,7 +92,7 @@ The GameService receives the question responses about a new user or a new AI Age
 
 ### Request
 
-`POST ${generate_character_summary_url}`
+`POST /api/agents/generatepersona`
 
 ```json
 {
@@ -122,7 +126,7 @@ AI service uses generative AI to create a thumbnail for a world to be displayed 
 
 ### Request
 
-`POST ${generate_world_thumbnail_url}`
+`POST /api/thumbnails`
 
 ```json
 {
