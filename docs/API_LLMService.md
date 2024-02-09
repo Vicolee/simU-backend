@@ -70,17 +70,7 @@ The GameService receives the question responses about a new user or a new AI Age
 ```json
 {
   "characterId": "00000000-0000-0000-0000-000000000000",
-  "questions": [
-    "question 1",
-    "question 2",
-    "question 3"
-  ],
-  "responses": [
-    ["response to q1", "response to q1" ],
-    ["response to q2", "response to q2" ],
-    ["response to q3", "response to q3" ]
-  ]
-}
+  "questionResponeIds": "questionResponse1Id, questionRespones2Id, questionResponse3Id..."
 ```
 
 ### Response
