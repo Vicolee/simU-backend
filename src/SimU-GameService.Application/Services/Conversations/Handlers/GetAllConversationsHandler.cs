@@ -12,5 +12,5 @@ public class GetAllConversationsHandler : IRequestHandler<GetAllConversationsQue
     public GetAllConversationsHandler(IConversationRepository conversationRepository) => _conversationRepository = conversationRepository;
 
     public Task<IEnumerable<Guid>> Handle(GetAllConversationsQuery request,
-    CancellationToken cancellationToken) => _conversationRepository.GetAllConversations(request.SenderId, request.ReceiverId);
+    CancellationToken cancellationToken) => _conversationRepository.GetConversations(request.SenderId, request.ReceiverId);
 }

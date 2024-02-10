@@ -44,7 +44,7 @@ public class SendChatHandler : IRequestHandler<SendChatCommand, Unit>
         var receiver = (Entity?) receiverAsUser ?? receiverAsGroup;
 
         // TODO: double check logic here
-        var conversationId = await _conversationRepository.IsOnGoingConversation(request.SenderId, request.ReceiverId) ?? await _conversationRepository.StartConversation(request.SenderId, request.ReceiverId);
+        var conversationId = await _conversationRepository.IsConversationOnGoing(request.SenderId, request.ReceiverId) ?? await _conversationRepository.AddConversation(request.SenderId, request.ReceiverId);
 
         // Chat(Guid senderId, Guid receiverId, Guid conversationId, string content, bool isGroupChat)
         var chat = new Chat(
@@ -52,7 +52,7 @@ public class SendChatHandler : IRequestHandler<SendChatCommand, Unit>
         await _chatRepository.AddChat(chat);
 
 
-        await _conversationRepository.UpdateConversationLastMessageTime(conversationId.Value);
+        await _conversationRepository.UpdateLastMessageTime(conversationId.Value);
 
         // TODO: we need to add logic to check if the receiver is an agent higher up in this method
         // only send the chat to the agent if the receiver is an agent

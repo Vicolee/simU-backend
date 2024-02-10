@@ -1,39 +1,30 @@
 using SimU_GameService.Application.Abstractions.Repositories;
-using SimU_GameService.Application.Common.Exceptions;
 using SimU_GameService.Domain.Models;
 using Microsoft.EntityFrameworkCore;
 
 
 namespace SimU_GameService.Infrastructure.Persistence.Repositories;
 
-public class QuestionResponseRepository : IQuestionResponseRepository
+public class ResponseRepository : IResponseRepository
 {
     private readonly SimUDbContext _dbContext;
 
-    public QuestionResponseRepository(SimUDbContext dbContext)
+    public ResponseRepository(SimUDbContext dbContext)
     {
         _dbContext = dbContext;
     }
 
-    public async Task PostResponse(Response questionResponse)
+    public async Task PostResponse(Response response)
     {
-        await _dbContext.QuestionResponses.AddAsync(questionResponse);
-
-        // var user = _dbContext.Users
-        //     .FirstOrDefault(u => u.UserId == userId) ?? throw new NotFoundException(nameof(User), userId);
-
-        // user.QuestionResponses = responses
-        //     .Select((response, index) => new QuestionResponse(_questions.ElementAt(index), response))
-        //     .ToList();
-
+        await _dbContext.QuestionResponses.AddAsync(response);
         await _dbContext.SaveChangesAsync();
     }
-    public async Task<IEnumerable<object?>> GetAllResponses(Guid targetCharacterId)
+    public async Task<IEnumerable<object?>> GetResponses(Guid targetCharacterId)
     {
         return await _dbContext.QuestionResponses
             .Where(q => q.TargetId == targetCharacterId)
             .Select(q => new { q.TargetId, q.ResponderId, q.QuestionId, q.Content } )
-            .ToListAsync(); // Add ToListAsync() method call here
+            .ToListAsync();
     }
 
     public async Task<object?> GetResponse(Guid targetCharacterId, Guid questionId)

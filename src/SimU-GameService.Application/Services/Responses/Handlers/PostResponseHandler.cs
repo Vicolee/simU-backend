@@ -8,11 +8,11 @@ namespace SimU_GameService.Application.Services.QuestionResponses.Handlers;
 
 public class PostResponseHandler : IRequestHandler<PostResponseCommand, Unit>
 {
-    private readonly IQuestionResponseRepository _questionResponseRepository;
+    private readonly IResponseRepository _responseRepository;
 
-    public PostResponseHandler(IQuestionResponseRepository questionResponseRepository)
+    public PostResponseHandler(IResponseRepository responseRepository)
     {
-        _questionResponseRepository = questionResponseRepository;
+        _responseRepository = responseRepository;
     }
 
     /// <summary>
@@ -25,7 +25,7 @@ public class PostResponseHandler : IRequestHandler<PostResponseCommand, Unit>
     public async Task<Unit> Handle(PostResponseCommand request, CancellationToken cancellationToken)
     {
         var response = new Response(request.ResponderId, request.TargetCharacterId, request.QuestionId, request.Response) ?? throw new BadRequestException("Invalid response: missing required fields");
-        await _questionResponseRepository.PostResponse(response);
+        await _responseRepository.PostResponse(response);
 
         return Unit.Value;
     }

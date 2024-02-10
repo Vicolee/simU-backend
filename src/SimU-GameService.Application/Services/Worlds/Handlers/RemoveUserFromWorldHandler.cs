@@ -1,25 +1,18 @@
 using MediatR;
 using SimU_GameService.Application.Abstractions.Repositories;
-using SimU_GameService.Domain.Models;
 using SimU_GameService.Application.Services.Worlds.Commands;
 
 namespace SimU_GameService.Application.Services.Worlds.Handlers;
 
-public class RemoveUserFromWorldHandler : IRequestHandler<RemoveUserFromWorldCommand, Unit>
+public class RemoveUserFromWorldHandler : IRequestHandler<RemoveUserCommand, Unit>
 {
     private readonly IWorldRepository _worldRepository;
 
     public RemoveUserFromWorldHandler(IWorldRepository worldRepository) => _worldRepository = worldRepository;
 
-    public async Task<Unit> Handle(RemoveUserFromWorldCommand request, CancellationToken cancellationToken)
+    public async Task<Unit> Handle(RemoveUserCommand request, CancellationToken cancellationToken)
     {
-        try {
-            await _worldRepository.RemoveUserFromWorld(request.WorldId, request.UserId);
-            return Unit.Value;
-        }
-        catch
-        {
-            throw;
-        }
+        await _worldRepository.RemoveUser(request.WorldId, request.UserId);
+        return Unit.Value;
     }
 }

@@ -7,21 +7,21 @@ namespace SimU_GameService.Application.Abstractions.Repositories;
 /// We define the methods that we want to use in the Application layer here.
 /// These methods are implemented in the Infrastructure layer.
 /// </summary>
-public interface IQuestionResponseRepository
+public interface IResponseRepository
 {
     /// <summary>
     /// Adds response to a question to the repository.
     /// </summary>
-    /// <param name="questionResponse"></param>
+    /// <param name="response"></param>
     /// <returns></returns>
-    public Task PostResponse(Response questionResponse);
+    public Task PostResponse(Response response);
 
     /// <summary>
     /// Returns all the questions and corresponding responses about a user or agent.
     /// </summary>
     /// <param name="targetCharacterId"></param>
     /// <returns></returns>
-    public Task<IEnumerable<object?>> GetAllResponses(Guid targetCharacterId);
+    public Task<IEnumerable<object?>> GetResponses(Guid targetCharacterId);
 
     /// <summary>
     /// Returns the responses for a specific question about a user or agent.

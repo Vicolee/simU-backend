@@ -5,13 +5,13 @@ using SimU_GameService.Application.Services.Worlds.Queries;
 
 namespace SimU_GameService.Application.Services.Worlds.Handlers;
 
-public class GetHatchedHandler : IRequestHandler<GetHatchedQuery, IEnumerable<Agent?>?>
+public class GetHatchedAgentsHandler : IRequestHandler<GetHatchedAgentsQuery, IEnumerable<Agent?>?>
 {
     private readonly IWorldRepository _worldRepository;
 
-    public GetHatchedHandler(IWorldRepository worldRepository) => _worldRepository = worldRepository;
+    public GetHatchedAgentsHandler(IWorldRepository worldRepository) => _worldRepository = worldRepository;
 
-    public async Task<IEnumerable<Agent?>?> Handle(GetHatchedQuery request, CancellationToken cancellationToken)
+    public async Task<IEnumerable<Agent?>?> Handle(GetHatchedAgentsQuery request, CancellationToken cancellationToken)
     {
         var agents = await _worldRepository.GetWorldAgents(request.WorldId);
         var incubatingAgents = new List<Agent?>();

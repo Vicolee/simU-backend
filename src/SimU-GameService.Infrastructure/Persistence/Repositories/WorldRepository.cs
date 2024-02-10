@@ -1,4 +1,3 @@
-using FirebaseAdmin.Messaging;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using SimU_GameService.Application.Abstractions.Repositories;
@@ -9,7 +8,6 @@ namespace SimU_GameService.Infrastructure.Persistence.Repositories;
 
 public class WorldRepository : IWorldRepository
 {
-
     private readonly SimUDbContext _dbContext;
 
     public WorldRepository(SimUDbContext dbContext)
@@ -20,15 +18,7 @@ public class WorldRepository : IWorldRepository
     public Task CreateWorld(World world)
     {
         _dbContext.Add(world);
-        try
-        {
-            _dbContext.SaveChangesAsync();
-        }
-        catch
-        {
-            throw new Exception("Failed to create world");
-        }
-
+        _dbContext.SaveChangesAsync();
         return Task.CompletedTask;
     }
 
@@ -38,7 +28,7 @@ public class WorldRepository : IWorldRepository
             .FirstOrDefaultAsync(w => w.Id == worldId);
     }
 
-    public async Task<User?> GetWorldCreator(Guid worldId)
+    public async Task<User?> GetCreator(Guid worldId)
     {
         var world = await _dbContext.Worlds
             .FirstOrDefaultAsync(w => w.Id == worldId);
@@ -52,7 +42,7 @@ public class WorldRepository : IWorldRepository
             .FirstOrDefaultAsync(u => u.Id == world.CreatorId);
     }
 
-    public async Task<Unit> AddUserToWorld(Guid worldId, Guid userId)
+    public async Task<Unit> AddUser(Guid worldId, Guid userId)
     {
         var world = await _dbContext.Worlds
             .FirstOrDefaultAsync(w => w.Id == worldId) ?? throw new NotFoundException(nameof(World), worldId);
@@ -62,7 +52,7 @@ public class WorldRepository : IWorldRepository
         return Unit.Value;
     }
 
-    public async Task<Unit> AddAgentToWorld(Guid worldId, Guid agentId)
+    public async Task<Unit> AddAgent(Guid worldId, Guid agentId)
     {
         var world = await _dbContext.Worlds
             .FirstOrDefaultAsync(w => w.Id == worldId) ?? throw new NotFoundException(nameof(World), worldId);
@@ -72,7 +62,8 @@ public class WorldRepository : IWorldRepository
         return Unit.Value;
     }
 
-    public async Task<IEnumerable<User?>?> GetWorldUsers(Guid worldId) {
+    public async Task<IEnumerable<User?>?> GetWorldUsers(Guid worldId)
+    {
         var world = await _dbContext.Worlds
             .FirstOrDefaultAsync(w => w.Id == worldId);
 
@@ -92,7 +83,8 @@ public class WorldRepository : IWorldRepository
         return users;
     }
 
-    public async Task<IEnumerable<Agent?>?> GetWorldAgents(Guid worldId) {
+    public async Task<IEnumerable<Agent?>?> GetWorldAgents(Guid worldId)
+    {
         var world = await _dbContext.Worlds
             .FirstOrDefaultAsync(w => w.Id == worldId);
 
@@ -112,7 +104,8 @@ public class WorldRepository : IWorldRepository
         return agents;
     }
 
-    public Task RemoveUserFromWorld(Guid worldId, Guid userId) {
+    public Task RemoveUser(Guid worldId, Guid userId)
+    {
         var world = _dbContext.Worlds
             .FirstOrDefault(w => w.Id == worldId) ?? throw new NotFoundException(nameof(World), worldId);
 
@@ -127,7 +120,8 @@ public class WorldRepository : IWorldRepository
         return Task.CompletedTask;
     }
 
-    public Task DeleteWorld(Guid worldId, Guid ownerId) {
+    public Task DeleteWorld(Guid worldId, Guid ownerId)
+    {
         var world = _dbContext.Worlds
             .FirstOrDefault(w => w.Id == worldId) ?? throw new NotFoundException(nameof(World), worldId);
 

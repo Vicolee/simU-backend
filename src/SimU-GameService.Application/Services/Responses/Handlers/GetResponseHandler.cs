@@ -6,13 +6,13 @@ using SimU_GameService.Domain.Models;
 
 namespace SimU_GameService.Application.Services.QuestionResponses.Handlers;
 
-public class GetAllResponsesHandler : IRequestHandler<GetAllResponsesQuery, IEnumerable<object?>>
+public class GetResponseHandler : IRequestHandler<GetResponseQuery, object?>
 {
-    private readonly IQuestionResponseRepository _questionResponseRepository;
+    private readonly IResponseRepository _responseRepository;
 
-    public GetAllResponsesHandler(IQuestionResponseRepository questionResponseRepository)
+    public GetResponseHandler(IResponseRepository responseRepository)
     {
-        _questionResponseRepository = questionResponseRepository;
+        _responseRepository = responseRepository;
     }
 
     /// <summary>
@@ -22,8 +22,8 @@ public class GetAllResponsesHandler : IRequestHandler<GetAllResponsesQuery, IEnu
     /// <param name="request"></param>
     /// <param name="cancellationToken"></param>
     /// <returns></returns>
-    public async Task<IEnumerable<object?>> Handle(GetAllResponsesQuery request, CancellationToken cancellationToken)
+    public async Task<object?> Handle(GetResponseQuery request, CancellationToken cancellationToken)
     {
-        return await _questionResponseRepository.GetAllResponses(request.TargetCharacterId);
+        return await _responseRepository.GetResponse(request.TargetCharacterId, request.QuestionId);
     }
 }

@@ -1,6 +1,5 @@
 using MediatR;
 using SimU_GameService.Application.Abstractions.Repositories;
-using SimU_GameService.Domain.Models;
 using SimU_GameService.Application.Services.Worlds.Commands;
 
 namespace SimU_GameService.Application.Services.Worlds.Handlers;
