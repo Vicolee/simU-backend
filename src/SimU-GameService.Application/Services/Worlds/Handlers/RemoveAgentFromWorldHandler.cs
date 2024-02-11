@@ -6,16 +6,16 @@ using SimU_GameService.Application.Common.Exceptions;
 
 namespace SimU_GameService.Application.Services.Worlds.Handlers;
 
-public class RemoveUserFromWorldHandler : IRequestHandler<RemoveUserFromWorldCommand, Unit>
+public class RemoveAgentFromWorldHandler : IRequestHandler<RemoveAgentFromWorldCommand, Unit>
 {
     private readonly IWorldRepository _worldRepository;
 
-    public RemoveUserFromWorldHandler(IWorldRepository worldRepository) => _worldRepository = worldRepository;
+    public RemoveAgentFromWorldHandler(IWorldRepository worldRepository) => _worldRepository = worldRepository;
 
-    public async Task<Unit> Handle(RemoveUserFromWorldCommand request, CancellationToken cancellationToken)
+    public async Task<Unit> Handle(RemoveAgentFromWorldCommand request, CancellationToken cancellationToken)
     {
         try {
-            await _worldRepository.RemoveUserFromWorld(request.WorldId, request.UserId, request.OwnerId);
+            await _worldRepository.RemoveAgentFromWorld(request.WorldId, request.AgentId, request.DeleterId);
             return Unit.Value;
         }
         catch

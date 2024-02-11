@@ -2,6 +2,7 @@ using System;
 using System.ComponentModel.DataAnnotations.Schema;
 using SimU_GameService.Domain.Primitives;
 
+
 namespace SimU_GameService.Domain.Models
 {
     public class World : Entity
@@ -16,7 +17,7 @@ namespace SimU_GameService.Domain.Models
 
         [Column("WorldId")] // TO DO: REVIEW WITH LEKINA WHY WE NEED CHARACTER_ID IF WE INHERIT IT FROM ENTITY
         public Guid WorldId { get; private set; }
-        public string? PrivateCode { get; set; }
+        public string? JoinCode { get; set; }
 
         public World()
         {
@@ -28,18 +29,17 @@ namespace SimU_GameService.Domain.Models
         public World(
             string worldName,
             string description,
-            Guid ownerId
+            Guid ownerId,
+            string joinCode
         ) : this()
         {
             WorldName = worldName;
-            OwnerId = ownerId;
             Description = description;
+            OwnerId = ownerId;
+            JoinCode = joinCode;
             CreatedTime = DateTime.UtcNow;
-            GeneratePrivateCode();
+
         }
-    private void GeneratePrivateCode()
-    {
-       // while loop here to generate private code
-    }
+
     }
 }

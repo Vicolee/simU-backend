@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using MediatR;
+using Microsoft.EntityFrameworkCore;
 using SimU_GameService.Application.Common.Abstractions;
 using SimU_GameService.Application.Common.Exceptions;
 using SimU_GameService.Domain.Models;
@@ -22,7 +23,7 @@ public class UserRepository : IUserRepository
         return Task.CompletedTask;
     }
 
-    public Task AddWorld(Guid userId, Guid worldId, bool isOwner)
+    public Task<bool> AddWorld(Guid userId, Guid worldId, bool isOwner)
     {
         var user = _dbContext.Users
             .FirstOrDefault(u => u.Id == userId);
@@ -35,8 +36,9 @@ public class UserRepository : IUserRepository
                 user.WorldsJoined = user.WorldsJoined.Append(worldId).ToList();
             }
             _dbContext.SaveChanges();
+            return Task.FromResult(true);
         }
-        return Task.CompletedTask;
+        return Task.FromResult(true);
     }
     public async Task<User?> GetUser(Guid userId)
     {
@@ -98,7 +100,7 @@ public class UserRepository : IUserRepository
         _dbContext.SaveChanges();
     }
 
-    public async Task UpdateSprite(Guid userId, Uri spriteURL, Uri spriteHeadshotURL)
+    public async Task UpdateUserSprite(Guid userId, Uri spriteURL, Uri spriteHeadshotURL)
     {
        var user = await GetUser(userId);
        if (user is null)

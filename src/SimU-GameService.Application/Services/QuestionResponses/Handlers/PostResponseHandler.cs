@@ -26,6 +26,7 @@ public class PostResponseHandler : IRequestHandler<PostResponseCommand, Unit>
     {
         var response = new QuestionResponse(request.ResponderId, request.TargetCharacterId, request.QuestionId, request.Response) ?? throw new BadRequestException("Invalid response: missing required fields");
         await _questionResponseRepository.PostResponse(response);
+        // TO DO: CALL THE LLM HANDLER LEKINA WROTE: IT WILL Send message to LLM Service telling them that the summary has been posted
 
         return Unit.Value;
     }

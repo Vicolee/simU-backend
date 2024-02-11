@@ -1,3 +1,4 @@
+using MediatR;
 using SimU_GameService.Domain.Models;
 
 namespace SimU_GameService.Application.Common.Abstractions;
@@ -50,15 +51,15 @@ public interface IUserRepository
     /// </summary>
     /// <param name="userId"></param>
     /// <returns></returns>
-    public Task<IEnumerable<Guid?>> GetUserWorlds(Guid userId);
+    public Task<IEnumerable<Guid>> GetUserWorlds(Guid userId);
 
     /// <summary>
     /// Add's a world to a user's list of worlds that they belong to.
     /// <param name="userId"></param>
-    /// <param name="worldId"></param>
+    /// <param name="joinCode"></param>
     /// <param name="isOwner"></param>
     /// <returns></returns>
-    public Task AddWorld(Guid userId, Guid worldId, bool isOwner);
+    public Task<bool> AddWorld(Guid userId, Guid worldId, bool isOwner);
 
     /// <summary>
     /// Add's a world to a user's list of worlds that they belong to.
@@ -76,7 +77,7 @@ public interface IUserRepository
     /// <param name="spriteURL"></param>
     /// <param name="spriteHeadshotURL"></param>
     /// <returns></returns>
-    public Task UpdateSprite(Guid userId, Uri spriteURL, Uri spriteHeadshotURL);
+    public Task UpdateUserSprite(Guid userId, Uri spriteURL, Uri spriteHeadshotURL);
 
     /// <summary>
     /// Updates a user's location in the repository.

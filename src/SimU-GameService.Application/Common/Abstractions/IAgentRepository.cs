@@ -1,3 +1,4 @@
+using MediatR;
 using SimU_GameService.Domain.Models;
 
 namespace SimU_GameService.Application.Common.Abstractions;
@@ -35,7 +36,16 @@ public interface IAgentRepository
     /// </summary>
     /// <param name="agentId"</param>
     /// <returns></returns>
-    public Task<string?> GetSummary(Guid agentId);
+    public Task<object?> GetSummary(Guid agentId);
+
+    /// <summary>
+    /// Updates an agent's sprite in the repository.
+    /// </summary>
+    /// <param name="agentId"</param>
+    /// <param name="spriteURL"</param>
+    /// <param name="spriteHeadshotURL"</param>
+    /// <returns></returns>
+    public Task<Unit> UpdateAgentSprite(Guid agentId, Uri spriteURL, Uri spriteHeadshotURL);
 
     /// <summary>
     /// Updates a user's location in the repository.

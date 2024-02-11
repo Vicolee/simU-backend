@@ -6,7 +6,7 @@ using SimU_GameService.Domain.Models;
 
 namespace SimU_GameService.Application.Services.Agents.Handlers;
 
-public class GetAgentSummaryHandler : IRequestHandler<GetAgentSummaryQuery, string?>
+public class GetAgentSummaryHandler : IRequestHandler<GetAgentSummaryQuery, object?>
 {
     private readonly IAgentRepository _agentRepository;
 
@@ -22,9 +22,9 @@ public class GetAgentSummaryHandler : IRequestHandler<GetAgentSummaryQuery, stri
     /// <param name="request"></param>
     /// <param name="cancellationToken"></param>
     /// <returns></returns>
-    public async Task<string?> Handle(GetAgentSummaryQuery request, CancellationToken cancellationToken)
+    public async Task<object?> Handle(GetAgentSummaryQuery request, CancellationToken cancellationToken)
     {
-        string? summary = await _agentRepository.GetSummary(request.AgentId);
+        object? summary = await _agentRepository.GetSummary(request.AgentId);
         return summary;
     }
 }
