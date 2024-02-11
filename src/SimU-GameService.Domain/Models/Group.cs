@@ -11,7 +11,6 @@ public class Group : Entity
 
     public Group() : base()
     {
-        GroupId = Id;
     }
 
     public Group(string name, Guid ownerId) : this()
@@ -35,6 +34,4 @@ public class Group : Entity
     }
 
     public List<Guid> MemberIds => _memberIds;
-
-    public Guid GroupId { get; }
 }

@@ -16,12 +16,10 @@ public class SimUDbContext : DbContext
     public DbSet<Group> Groups { get; set; }
     public DbSet<World> Worlds { get; set; }
     public DbSet<Question> Questions { get; set; }
-    public DbSet<QuestionResponse> QuestionResponses { get; set; }
+    public DbSet<Response> QuestionResponses { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        modelBuilder.Entity<Location>()
-            .HasKey(builder => builder.LocationId);
         modelBuilder.ApplyConfigurationsFromAssembly(typeof(SimUDbContext).Assembly);
     }
 }

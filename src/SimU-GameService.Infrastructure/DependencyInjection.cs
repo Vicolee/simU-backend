@@ -1,14 +1,15 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using SimU_GameService.Application.Common.Abstractions;
-using SimU_GameService.Application.Services;
+using SimU_GameService.Application.Abstractions.Services;
+using SimU_GameService.Application.Abstractions.Repositories;
 using FirebaseAdmin;
 using Google.Apis.Auth.OAuth2;
-using Microsoft.Extensions.Options;
-using SimU_GameService.Application.Common.Authentication;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using SimU_GameService.Infrastructure.Persistence.Repositories;
+using SimU_GameService.Infrastructure.Authentication;
+using SimU_GameService.Application.Common.Exceptions;
+using SimU_GameService.Agents;
 
 namespace SimU_GameService.Infrastructure.Persistence;
 
@@ -24,29 +25,35 @@ public static class DependencyInjection
         services.AddScoped<IUserRepository, UserRepository>();
         services.AddScoped<IChatRepository, ChatRepository>();
         services.AddScoped<IGroupRepository, GroupRepository>();
+        services.AddScoped<IWorldRepository, WorldRepository>();
+        services.AddScoped<IQuestionRepository, QuestionRepository>();
+        services.AddScoped<IQuestionResponseRepository, QuestionResponseRepository>();
+        services.AddScoped<IConversationRepository, ConversationRepository>();
+        services.AddScoped<IAgentRepository, AgentRepository>();
 
+        // AI agent service
+        services.AddScoped<ILLMService, LLMService>();
+        services.AddHttpClient<ILLMService, LLMService>((sp, httpClient) =>
+        {
+            var configuration = sp.GetRequiredService<IConfiguration>();
+            var baseUri = configuration["AgentService:BaseUri"]
+                ?? throw new NotFoundException("AgentService:BaseUri not specified in appsettings.json");
+            httpClient.BaseAddress = new Uri(baseUri);
+        });
 
+        // authentication
         FirebaseApp.Create(new AppOptions()
         {
             Credential = GoogleCredential.FromFile("firebase.json")
         });
 
-        // changed from AddSingleton to AddScoped and the migration worked. Check back on this
         services.AddScoped<IAuthenticationService, AuthenticationService>();
-        // To Do: Make sure I added this service correctly, and figure out how to add HTTP client for this service
-        services.AddScoped<ILLMService, LLMService>();
-        services.Configure<AuthenticationSettings>(configuration.GetSection("Authentication"));
-
         services.AddHttpClient<IAuthenticationService, AuthenticationService>((sp, httpClient) =>
         {
-            var authSettings = sp.GetRequiredService<IOptions<AuthenticationSettings>>().Value;
-            httpClient.BaseAddress = new Uri(authSettings.TokenUri ?? string.Empty);
-        });
-
-        services.AddHttpClient<ILLMService, LLMService>( httpClient =>
-        {
-            httpClient.BaseAddress = new Uri("https://sim-you-lll-service.victoriousrock-3d13ba09.eastus2.azurecontainerapps.io/api/agents/prompt");
-            httpClient.Timeout = TimeSpan.FromMinutes(2);
+            var configuration = sp.GetRequiredService<IConfiguration>();
+            var tokenUri = configuration["Authentication:TokenUri"]
+                ?? throw new NotFoundException("Authentication:TokenUri not specified in appsettings.json");
+            httpClient.BaseAddress = new Uri(tokenUri);
         });
 
         services

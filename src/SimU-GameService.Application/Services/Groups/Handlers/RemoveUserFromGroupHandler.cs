@@ -1,5 +1,5 @@
 using MediatR;
-using SimU_GameService.Application.Common.Abstractions;
+using SimU_GameService.Application.Abstractions.Repositories;
 using SimU_GameService.Application.Common.Exceptions;
 using SimU_GameService.Application.Services.Groups.Commands;
 using SimU_GameService.Domain.Models;
@@ -30,7 +30,7 @@ public class RemoveUserFromGroupHandler : IRequestHandler<RemoveUserFromGroupCom
             throw new BadRequestException($"User with ID {request.RequesterId} is not the owner of group with ID {request.GroupId}");
         }
 
-        await _groupRepository.RemoveUser(group.GroupId, user.UserId);
+        await _groupRepository.RemoveUser(group.Id, user.Id);
         return Unit.Value;
     }
 }

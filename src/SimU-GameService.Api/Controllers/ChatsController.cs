@@ -1,4 +1,5 @@
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SimU_GameService.Application.Common.Exceptions;
 using SimU_GameService.Application.Services.Chats.Commands;
@@ -13,10 +14,7 @@ public class ChatsController : ControllerBase
 {
     private readonly IMediator _mediator;
 
-    public ChatsController(IMediator mediator)
-    {
-        _mediator = mediator;
-    }
+    public ChatsController(IMediator mediator) => _mediator = mediator;
 
     [HttpGet("{chatId}", Name = "GetChat")]
     public async Task<ActionResult<ChatResponse>> GetChat(Guid chatId)
@@ -33,6 +31,7 @@ public class ChatsController : ControllerBase
             result.CreatedTime));
     }
 
+    [Authorize]
     [HttpDelete("{chatId}", Name = "DeleteChat")]
     public async Task<ActionResult> DeleteChat(Guid chatId)
     {

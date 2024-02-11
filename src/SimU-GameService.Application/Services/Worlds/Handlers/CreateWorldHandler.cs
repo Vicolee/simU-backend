@@ -1,5 +1,5 @@
 using MediatR;
-using SimU_GameService.Application.Common.Abstractions;
+using SimU_GameService.Application.Abstractions.Repositories;
 using SimU_GameService.Domain.Models;
 using SimU_GameService.Application.Services.Worlds.Commands;
 
@@ -14,25 +14,25 @@ public class CreateWorldHandler : IRequestHandler<CreateWorldCommand, Guid>
 
     public async Task<Guid> Handle(CreateWorldCommand request, CancellationToken cancellationToken)
     {
-        string? joinCode = await GenerateJoinCode();
-        var world = new World(request.Name, request.Description, request.CreatorId, joinCode);
+        string? worldCode = await GenerateWorldCode();
+        var world = new World(request.Name, request.Description, request.CreatorId, worldCode);
         await _worldRepository.CreateWorld(world);
         return world.Id;
     }
 
     // wrote the method below with the help of GitHub Co-Pilot.
-    private async Task<string> GenerateJoinCode()
+    private async Task<string> GenerateWorldCode()
     {
         const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-        string joinCode;
+        string worldCode;
 
         do
         {
-            joinCode = new string(Enumerable.Repeat(chars, 8)
+            worldCode = new string(Enumerable.Repeat(chars, 8)
                 .Select(s => s[_random.Next(s.Length)]).ToArray());
 
-        } while (await _worldRepository.JoinCodeExists(joinCode));
+        } while (await _worldRepository.WorldCodeExists(worldCode));
 
-        return joinCode;
+        return worldCode;
     }
 }

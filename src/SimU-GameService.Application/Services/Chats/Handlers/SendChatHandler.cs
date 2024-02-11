@@ -1,5 +1,6 @@
 using MediatR;
-using SimU_GameService.Application.Common.Abstractions;
+using SimU_GameService.Application.Abstractions.Services;
+using SimU_GameService.Application.Abstractions.Repositories;
 using SimU_GameService.Application.Common.Exceptions;
 using SimU_GameService.Application.Services.Chats.Commands;
 using SimU_GameService.Domain.Models;
@@ -7,26 +8,26 @@ using SimU_GameService.Domain.Primitives;
 
 namespace SimU_GameService.Application.Services.Chats.Handlers;
 
-public class SendChatHandler : IRequestHandler<SendChatCommand, Chat>
+public class SendChatHandler : IRequestHandler<SendChatCommand, Unit>
 {
     private readonly IChatRepository _chatRepository;
     private readonly IUserRepository _userRepository;
     private readonly IAgentRepository _agentRepository;
     private readonly IGroupRepository _groupRepository;
+    private readonly ILLMService _agentService;
     private readonly IConversationRepository _conversationRepository;
 
-    private readonly ILLMService _llmService;
-
-    public SendChatHandler(IChatRepository chatRepository, IUserRepository userRepository, IAgentRepository agentRepository, IGroupRepository groupRepository, ILLMService llmService)
+    public SendChatHandler(IChatRepository chatRepository, IUserRepository userRepository, IAgentRepository agentRepository, IGroupRepository groupRepository, ILLMService agentService, IConversationRepository conversationRepository)
     {
         _chatRepository = chatRepository;
         _agentRepository = agentRepository;
         _userRepository = userRepository;
         _groupRepository = groupRepository;
-        _llmService = llmService;
+        _agentService = agentService;
+        _conversationRepository = conversationRepository;
     }
 
-    public async Task<Chat> Handle(SendChatCommand request, CancellationToken cancellationToken)
+    public async Task<Unit> Handle(SendChatCommand request, CancellationToken cancellationToken)
     {
         bool senderIsUser;
         Character? sender = await _userRepository.GetUser(request.SenderId);
@@ -71,23 +72,17 @@ public class SendChatHandler : IRequestHandler<SendChatCommand, Chat>
             receiver = receiverAsGroup;
         }
 
-        // TO DO: LEKINA DOUBLE CHECK LOGIC OF THIS CODE
-        var conversationId = await _conversationRepository.IsOnGoingConversation(request.SenderId, request.ReceiverId);
-        if (conversationId == null)
-        {
-            // this is start of a new conversation
-            conversationId = await _conversationRepository.StartConversation(request.SenderId, request.ReceiverId);
-        }
-
+        var conversationId = await _conversationRepository.IsOnGoingConversation(request.SenderId, request.ReceiverId) ?? await _conversationRepository.StartConversation(request.SenderId, request.ReceiverId);
         Chat chat;
+
         if (senderIsUser) {
             // if the sender is user, checks whether user was online or offline
             // when message was sent (sender.IsOnline)
             User senderAsUser = (User) sender;
-            chat = new Chat(request.SenderId, request.ReceiverId, conversationId.Value, request.Content, senderAsUser.IsOnline, receiver is Group, null, DateTime.UtcNow);
+            chat = new Chat(request.SenderId, request.ReceiverId, conversationId.Value, request.Content, senderAsUser.IsOnline, receiver is Group);
         } else {
             // sender is agent in this case
-            chat = new Chat(request.SenderId, request.ReceiverId, conversationId.Value, request.Content, false, receiver is Group, null, DateTime.UtcNow);
+            chat = new Chat(request.SenderId, request.ReceiverId, conversationId.Value, request.Content, false, receiver is Group);
         }
 
         await _chatRepository.AddChat(chat);
@@ -95,12 +90,14 @@ public class SendChatHandler : IRequestHandler<SendChatCommand, Chat>
 
         if (receiverAsAgent != null)
         {
-            // the receiver of the chat is an LLM agent, so we send the chat to the agent and await its response
-            var chatResponse = await _llmService.RelayUserChat(chat.Id, chat.Content, chat.SenderId, chat.RecipientId);
-            await _chatRepository.AddChat(chatResponse);
-            return chatResponse;
-        } else {
-            return chat;
+            // send the chat to the LLM agent and save its response
+            var chatResponse = await _agentService.SendChat(
+                chat.SenderId, chat.RecipientId, chat.ConversationId, chat.Content, false, false);
+
+            // TODO: create chat object from string response and save it to the database
+            // var chat = new Chat(...);
+            // await _chatRepository.AddChat(chat);
         }
+        return Unit.Value;
     }
 }

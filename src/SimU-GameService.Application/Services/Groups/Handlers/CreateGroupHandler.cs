@@ -1,5 +1,5 @@
 using MediatR;
-using SimU_GameService.Application.Common.Abstractions;
+using SimU_GameService.Application.Abstractions.Repositories;
 using SimU_GameService.Application.Common.Exceptions;
 using SimU_GameService.Application.Services.Groups.Commands;
 using SimU_GameService.Domain.Models;
@@ -24,6 +24,6 @@ public class CreateGroupHandler : IRequestHandler<CreateGroupCommand, Guid>
 
         var group = new Group(request.Name, request.OwnerId);
         await _groupRepository.AddGroup(group);
-        return group.GroupId;
+        return group.Id;
     }
 }

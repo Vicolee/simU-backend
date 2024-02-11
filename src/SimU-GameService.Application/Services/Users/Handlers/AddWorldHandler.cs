@@ -1,5 +1,5 @@
 using MediatR;
-using SimU_GameService.Application.Common.Abstractions;
+using SimU_GameService.Application.Abstractions.Repositories;
 using SimU_GameService.Application.Services.Users.Commands;
 using SimU_GameService.Domain.Models;
 
@@ -18,7 +18,7 @@ public class AddWorldHandler : IRequestHandler<AddWorldCommand, World>
 
     public async Task<World> Handle(AddWorldCommand request, CancellationToken cancellationToken)
     {
-        Guid worldId = await _worldRepository.MatchJoinCodeToWorldId(request.JoinCode) ?? throw new Exception($"World not found with join code: {request.JoinCode}");
+        Guid worldId = await _worldRepository.MatchWorldCodeToWorldId(request.WorldCode) ?? throw new Exception($"World not found with join code: {request.WorldCode}");
         bool success = await _userRepository.AddWorld(request.UserId, worldId, request.IsOwner);
         if (!success)
         {

@@ -1,8 +1,10 @@
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SimU_GameService.Application.Common.Exceptions;
 using SimU_GameService.Application.Services.Users.Commands;
 using SimU_GameService.Application.Services.Users.Queries;
+using SimU_GameService.Contracts.Requests;
 using SimU_GameService.Contracts.Responses;
 using SimU_GameService.Domain.Models;
 
@@ -16,45 +18,26 @@ public class UsersController : ControllerBase
 
     public UsersController(IMediator mediator) => _mediator = mediator;
 
-    [HttpGet("questions", Name = "GetQuestions")]
-    public async Task<ActionResult<IEnumerable<string>>> GetQuestions()
-    {
-        var questions = await _mediator.Send(new GetQuestionsQuery());
-        return Ok(questions);
-    }
-
-    [HttpPost("{userId}/responses", Name = "PostResponses")]
-    public async Task<ActionResult> PostResponses(Guid userId, IEnumerable<string> responses)
-    {
-        await _mediator.Send(new PostResponsesCommand(userId, responses));
-        return NoContent();
-    }
-
     [HttpGet("{userId}", Name = "GetUser")]
     public async Task<ActionResult<UserResponse>> GetUser(Guid userId)
     {
-
         var user = await _mediator.Send(new GetUserQuery(userId))
             ?? throw new NotFoundException(nameof(Domain.Models.User), userId);
-        // Console.WriteLine("here is the user's location id: ", user.Location?.LocationId);
-        // var location = user.Location != null ? await _mediator.Send(new GetLocationQuery(user.Location.LocationId)) : null;
         return MapUserToUserResponse(user);
-        // return MapUserToUserResponse(user, location ?? new Location());
     }
-
-    // private ActionResult<UserResponse> MapUserToUserResponse(User user, Location location)
+    
     private ActionResult<UserResponse> MapUserToUserResponse(User user)
     {
         return Ok(new UserResponse(
-                    user.FirstName,
-                    user.LastName,
+                    user.Username,
                     user.Email,
                     user.Description,
-                    user.Location?.X ?? default,
-                    user.Location?.Y ?? default,
+                    user.Location?.X_coord ?? default,
+                    user.Location?.Y_coord ?? default,
                     user.CreatedTime));
     }
-
+    
+    [Authorize]
     [HttpDelete("{userId}/friends", Name = "RemoveFriend")]
     public async Task<ActionResult> RemoveFriend(Guid userId, Guid friendId)
     {
@@ -69,5 +52,27 @@ public class UsersController : ControllerBase
         return Ok(friends.Select(f => new FriendResponse(f.FriendId, f.CreatedTime)));
     }
 
+    [HttpGet("{id}/worlds", Name = "GetUserWorlds")]
+    public Task<ActionResult<IEnumerable<WorldResponse>>> GetUserWorlds(Guid id)
+    {
+        throw new NotImplementedException();
+    }
 
+    [HttpPost("{id}/worlds/{worldId}", Name = "AddUserWorld")]
+    public Task<ActionResult> AddUserWorld(Guid id, Guid worldId)
+    {
+        throw new NotImplementedException();
+    }
+
+    [HttpDelete("{id}/worlds/{worldId}", Name = "RemoveUserWorld")]
+    public Task<ActionResult> RemoveUserWorld(Guid id, Guid worldId)
+    {
+        throw new NotImplementedException();
+    }
+
+    [HttpPost("{id}/sprite", Name = "UpdateSprite")]
+    public Task<ActionResult> UpdateSprite(UpdateSpriteRequest request)
+    {
+        throw new NotImplementedException();
+    }
 }

@@ -5,20 +5,21 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <RootNamespace>SimU_GameService.Api</RootNamespace>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(RunConfiguration)' == 'https' "/>
-  <PropertyGroup Condition=" '$(RunConfiguration)' == 'http' "/>
+  <PropertyGroup Condition=" '$(RunConfiguration)' == 'https' " />
+  <PropertyGroup Condition=" '$(RunConfiguration)' == 'http' " />
   <ItemGroup>
-    <PackageReference Include="MediatR" Version="12.1.1"/>
-    <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="7.0.12"/>
+    <PackageReference Include="MediatR" Version="12.1.1" />
+    <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="7.0.12" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="7.0.13">
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
-    <PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0"/>
+    <PackageReference Include="SignalRSwaggerGen" Version="4.5.0" />
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\SimU-GameService.Contracts\SimU-GameService.Contracts.csproj"/>
-    <ProjectReference Include="..\SimU-GameService.Application\SimU-GameService.Application.csproj"/>
-    <ProjectReference Include="..\SimU-GameService.Infrastructure\SimU-GameService.Infrastructure.csproj"/>
+    <ProjectReference Include="..\SimU-GameService.Contracts\SimU-GameService.Contracts.csproj" />
+    <ProjectReference Include="..\SimU-GameService.Application\SimU-GameService.Application.csproj" />
+    <ProjectReference Include="..\SimU-GameService.Infrastructure\SimU-GameService.Infrastructure.csproj" />
   </ItemGroup>
 </Project>

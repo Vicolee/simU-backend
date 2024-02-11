@@ -36,6 +36,6 @@ This project contains the code that handles our application's infrastructure. Fo
 
 This is a simple class library that defines the shared *data transfer objects* (DTO) for the WebAPI. The requests define the structure of the data objects that the API expects from clients, whereas the responses define the data models sent back. This component can be thought of as an extension of the WebAPI.
 
-### [Api](src/SimU-GameService.Api/)
+### [API](src/SimU-GameService.Api/)
 
 This is the application's interface with the Unity frontend and the bot microservice. It contains the SignalR controllers and hubs to route requests reaching the API endpoints to the correct services in the application layer and package the output into the appropriate response.

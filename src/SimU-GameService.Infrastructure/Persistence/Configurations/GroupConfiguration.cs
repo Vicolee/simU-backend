@@ -11,11 +11,11 @@ public class GroupConfiguration : IEntityTypeConfiguration<Group>
     public void Configure(EntityTypeBuilder<Group> builder)
     {
         // set primary key
-        builder.HasKey(builder => builder.GroupId);
+        builder.HasKey(builder => builder.Id);
 
         // configure Guid properties to be user-generated
         builder.Ignore(b => b.Id);        
-        builder.Property(i => i.GroupId)
+        builder.Property(i => i.Id)
             .ValueGeneratedNever();
         builder.Property(i => i.OwnerId)
             .ValueGeneratedNever();
@@ -31,7 +31,7 @@ public class GroupConfiguration : IEntityTypeConfiguration<Group>
                 m => JsonConvert.DeserializeObject<List<Guid>>(m) ?? new List<Guid>())
             .Metadata.SetValueComparer(
                 new ValueComparer<List<Guid>>(
-                    (c1, c2) 
+                    (c1, c2)
                         => (c1 == null && c2 == null) || (c1 != null && c2 != null && c1.SequenceEqual(c2)),
                     c => c.Aggregate(0, (a, v) => HashCode.Combine(a, v.GetHashCode())),
                     c => c.ToList()));

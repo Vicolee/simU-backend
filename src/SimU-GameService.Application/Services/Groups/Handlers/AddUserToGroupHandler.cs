@@ -1,5 +1,5 @@
 using MediatR;
-using SimU_GameService.Application.Common.Abstractions;
+using SimU_GameService.Application.Abstractions.Repositories;
 using SimU_GameService.Application.Common.Exceptions;
 using SimU_GameService.Application.Services.Groups.Commands;
 using SimU_GameService.Domain.Models;
@@ -37,7 +37,7 @@ public class AddUserToGroupHandler : IRequestHandler<AddUserToGroupCommand, Unit
         }
 
         // add user to the group
-        await _groupRepository.AddUser(group.GroupId, user.UserId);
+        await _groupRepository.AddUser(group.Id, user.Id);
         return Unit.Value;
     }
 }

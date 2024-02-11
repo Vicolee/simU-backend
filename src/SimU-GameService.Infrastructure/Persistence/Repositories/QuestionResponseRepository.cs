@@ -1,4 +1,4 @@
-using SimU_GameService.Application.Common.Abstractions;
+using SimU_GameService.Application.Abstractions.Repositories;
 using SimU_GameService.Application.Common.Exceptions;
 using SimU_GameService.Domain.Models;
 using Microsoft.EntityFrameworkCore;
@@ -15,7 +15,7 @@ public class QuestionResponseRepository : IQuestionResponseRepository
         _dbContext = dbContext;
     }
 
-    public async Task PostResponse(QuestionResponse questionResponse)
+    public async Task PostResponse(Response questionResponse)
     {
         await _dbContext.QuestionResponses.AddAsync(questionResponse);
 
@@ -31,16 +31,16 @@ public class QuestionResponseRepository : IQuestionResponseRepository
     public async Task<IEnumerable<object?>> GetAllResponses(Guid targetCharacterId)
     {
         return await _dbContext.QuestionResponses
-            .Where(q => q.TargetCharacterId == targetCharacterId)
-            .Select(q => new { q.TargetCharacterId, q.ResponderId, q.QuestionId, q.Response } )
+            .Where(q => q.TargetId == targetCharacterId)
+            .Select(q => new { q.TargetId, q.ResponderId, q.QuestionId, q.Content } )
             .ToListAsync(); // Add ToListAsync() method call here
     }
 
     public async Task<object?> GetResponse(Guid targetCharacterId, Guid questionId)
     {
         return await _dbContext.QuestionResponses
-            .Where(q => q.TargetCharacterId == targetCharacterId && q.QuestionId == questionId)
-            .Select(q => new { q.TargetCharacterId, q.ResponderId, q.QuestionId, q.Response } )
+            .Where(q => q.TargetId == targetCharacterId && q.QuestionId == questionId)
+            .Select(q => new { q.TargetId, q.ResponderId, q.QuestionId, q.Content } )
             .ToListAsync();
     }
 

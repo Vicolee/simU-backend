@@ -1,4 +1,0 @@
-@host=http://165.22.188.118
-@groupId=88b1812c-cc0f-4b8e-987b-b5235d653ccb
-
-DELETE {{host}}/Groups/{{groupId}}

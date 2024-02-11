@@ -1,4 +1,4 @@
-using SimU_GameService.Application.Common.Abstractions;
+using SimU_GameService.Application.Abstractions.Repositories;
 using SimU_GameService.Application.Common.Exceptions;
 using SimU_GameService.Domain.Models;
 using Microsoft.EntityFrameworkCore;
@@ -23,16 +23,16 @@ public class QuestionRepository : IQuestionRepository
      public async Task<IEnumerable<object?>> GetUserQuestions()
     {
         return await _dbContext.Questions
-            .Where(q => q.QuestionType == QuestionType.User || q.QuestionType == QuestionType.Both)
-            .Select(q => new { q.Id, q.QuestionText } )
+            .Where(q => q.QuestionType == QuestionType.UserQuestion || q.QuestionType == QuestionType.UserOrAgentQuestion)
+            .Select(q => new { q.Id, q.Content } )
             .ToListAsync();
     }
 
     public async Task<IEnumerable<object?>> GetAgentQuestions()
     {
         return await _dbContext.Questions
-            .Where(q => q.QuestionType == QuestionType.Agent || q.QuestionType == QuestionType.Both)
-            .Select(q => new { q.Id, q.QuestionText } )
+            .Where(q => q.QuestionType == QuestionType.AgentQuestion || q.QuestionType == QuestionType.UserOrAgentQuestion)
+            .Select(q => new { q.Id, q.Content } )
             .ToListAsync();
     }
 

@@ -1,6 +1,6 @@
 using MediatR;
 using Microsoft.EntityFrameworkCore;
-using SimU_GameService.Application.Common.Abstractions;
+using SimU_GameService.Application.Abstractions.Repositories;
 using SimU_GameService.Application.Common.Exceptions;
 using SimU_GameService.Domain.Models;
 
@@ -35,11 +35,10 @@ public class AgentRepository : IAgentRepository
             .FirstOrDefaultAsync(a => a.Id == agentId);
         return agent?.Summary;
     }
-    public async Task<Location?> GetLocation(Guid locationId)
+    public Task<Location?> GetLocation(Guid locationId)
     {
-        var agent = await _dbContext.Agents
-            .FirstOrDefaultAsync(a => a.Location != null && a.Location.LocationId == locationId);
-        return agent?.Location;
+        // TODO: why are we using the locationId here?
+        throw new NotImplementedException();
     }
 
     public async Task RemoveAgent(Guid agentId)
@@ -61,8 +60,8 @@ public class AgentRepository : IAgentRepository
        {
            return Unit.Value;
        }
-        agent.Sprite = spriteURL;
-        agent.SpriteHeadshot = spriteHeadshotURL;
+        agent.SpriteURL = spriteURL;
+        agent.SpriteHeadshotURL = spriteHeadshotURL;
         await _dbContext.SaveChangesAsync();
         return Unit.Value;
     }

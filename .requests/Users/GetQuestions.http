@@ -1,3 +1,0 @@
-@host=http://165.22.188.118
-
-GET {{host}}/Users/questions HTTP/1.1

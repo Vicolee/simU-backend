@@ -1,5 +1,5 @@
 using MediatR;
-using SimU_GameService.Application.Common.Abstractions;
+using SimU_GameService.Application.Abstractions.Repositories;
 using SimU_GameService.Domain.Models;
 using SimU_GameService.Application.Services.Worlds.Queries;
 
@@ -19,7 +19,7 @@ public class GetIncubatingHandler : IRequestHandler<GetIncubatingQuery, IEnumera
         {
             foreach (var agent in agents)
             {
-                if (agent != null && agent.isHatched == false)
+                if (agent != null && agent.IsHatched == false)
                 {
                     incubatingAgents.Add(agent);
                 }

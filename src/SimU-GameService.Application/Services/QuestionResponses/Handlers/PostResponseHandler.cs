@@ -1,5 +1,5 @@
 using MediatR;
-using SimU_GameService.Application.Common.Abstractions;
+using SimU_GameService.Application.Abstractions.Repositories;
 using SimU_GameService.Application.Common.Exceptions;
 using SimU_GameService.Application.Services.QuestionResponses.Commands;
 using SimU_GameService.Domain.Models;
@@ -24,7 +24,7 @@ public class PostResponseHandler : IRequestHandler<PostResponseCommand, Unit>
     /// <returns></returns>
     public async Task<Unit> Handle(PostResponseCommand request, CancellationToken cancellationToken)
     {
-        var response = new QuestionResponse(request.ResponderId, request.TargetCharacterId, request.QuestionId, request.Response) ?? throw new BadRequestException("Invalid response: missing required fields");
+        var response = new Response(request.ResponderId, request.TargetCharacterId, request.QuestionId, request.Response) ?? throw new BadRequestException("Invalid response: missing required fields");
         await _questionResponseRepository.PostResponse(response);
         // TO DO: CALL THE LLM HANDLER LEKINA WROTE: IT WILL Send message to LLM Service telling them that the summary has been posted
 
