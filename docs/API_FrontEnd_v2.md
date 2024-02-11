@@ -347,6 +347,20 @@ Returns a list of the IDs of hatched agents.
 ]
 ```
 
+### RemoveAgentFromWorld
+
+#### Description
+
+Removes an agent from a world. Only the owner of the world can remove agents.
+
+#### Request
+
+`DELETE /worlds/{id}/agents/{agentId}`
+
+#### Response
+
+`No Content`
+
 ### RemoveUserFromWorld
 
 #### Description
