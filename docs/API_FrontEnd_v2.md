@@ -131,6 +131,7 @@ Returns an object containing all the information regarding the world with given 
     "creatorId": "00000000-0000-0000-0000-000000000000",
     "name": "string",
     "description": "string",
+    "privateCode": "5X32AKT6" (8 character code)
     "thumbnail_URL" : "string"
 }
 ```
@@ -488,11 +489,11 @@ Adds an existing world to the user's list of worlds. Use case: for display in th
 
 #### Request
 
-`POST /users/{id}/worlds/{joinCode}`
+`POST /users/{id}/worlds/{privateCode}`
 
 ```json
 {
-    "joinCode": "string"
+    "privateCode": "string"
 }
 ```
 
