@@ -62,56 +62,53 @@ public class WorldRepository : IWorldRepository
         return Unit.Value;
     }
 
-    public async Task<IEnumerable<User?>?> GetWorldUsers(Guid worldId)
+    public async Task<IEnumerable<User>> GetWorldUsers(Guid worldId)
     {
-        var world = await _dbContext.Worlds
-            .FirstOrDefaultAsync(w => w.Id == worldId);
+        var users = new List<User>();
+        var world = await _dbContext.Worlds.FirstOrDefaultAsync(w => w.Id == worldId)
+            ?? throw new NotFoundException(nameof(World), worldId);
 
-        if (world == null)
-        {
-            return null;
-        }
-
-        var users = new List<User?>();
         foreach (var userId in world.WorldUsers)
         {
-            var user = await _dbContext.Users
-                .FirstOrDefaultAsync(u => u.Id == userId);
-            users.Add(user);
+            var user = await _dbContext.Users.FirstOrDefaultAsync(u => u.Id == userId);
+            if (user != null)
+            {
+                users.Add(user);
+            }
         }
-
         return users;
     }
 
-    public async Task<IEnumerable<Agent?>?> GetWorldAgents(Guid worldId)
+    public async Task<IEnumerable<Agent>> GetWorldAgents(Guid worldId)
     {
-        var world = await _dbContext.Worlds
-            .FirstOrDefaultAsync(w => w.Id == worldId);
+        var agents = new List<Agent>();
+        var world = await _dbContext.Worlds.FirstOrDefaultAsync(w => w.Id == worldId)
+            ?? throw new NotFoundException(nameof(World), worldId);
 
-        if (world == null)
-        {
-            return null;
-        }
-
-        var agents = new List<Agent?>();
         foreach (var agentId in world.WorldAgents)
         {
-            var agent = await _dbContext.Agents
-                .FirstOrDefaultAsync(a => a.Id == agentId);
-            agents.Add(agent);
+            var agent = await _dbContext.Agents.FirstOrDefaultAsync(a => a.Id == agentId);
+            if (agent != null)
+            {
+                agents.Add(agent);
+            }
         }
-
         return agents;
     }
 
-    public Task RemoveUser(Guid worldId, Guid userId)
+    public Task RemoveUser(Guid worldId, Guid creatorId, Guid userId)
     {
         var world = _dbContext.Worlds
             .FirstOrDefault(w => w.Id == worldId) ?? throw new NotFoundException(nameof(World), worldId);
 
+        if (world.CreatorId != creatorId)
+        {
+            throw new BadRequestException("Only the creator of the world can remove users");
+        }
+
         if (world.CreatorId == userId)
         {
-            throw new BadRequestException("Owner cannot be removed from the world");
+            throw new BadRequestException("The creator of the world cannot be removed");
         }
 
         world.WorldUsers.Remove(userId);
@@ -120,19 +117,18 @@ public class WorldRepository : IWorldRepository
         return Task.CompletedTask;
     }
 
-    public Task DeleteWorld(Guid worldId, Guid ownerId)
+    public Task DeleteWorld(Guid worldId, Guid creatorId)
     {
         var world = _dbContext.Worlds
             .FirstOrDefault(w => w.Id == worldId) ?? throw new NotFoundException(nameof(World), worldId);
 
-        if (world.CreatorId != ownerId)
+        if (world.CreatorId != creatorId)
         {
-            throw new BadRequestException("Only the owner can delete the world");
+            throw new BadRequestException("Only the creator of the world can delete it");
         }
 
         _dbContext.Worlds.Remove(world);
         _dbContext.SaveChanges();
         return Task.CompletedTask;
     }
-
 }

@@ -4,7 +4,7 @@ namespace SimU_GameService.Domain.Models;
 
 public class Character : Entity
 {
-    public string? Username { get; set; }
+    public string Username { get; set; } = default!;
     public string? Description { get; set; }
     public string? Summary { get; set; }
     public DateTime CreatedTime { get; set; }

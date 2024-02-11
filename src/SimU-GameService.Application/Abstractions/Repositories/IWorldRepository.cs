@@ -52,14 +52,14 @@ public interface IWorldRepository
     /// </summary>
     /// <param name="worldId"</param>
     /// <returns></returns>
-    public Task<IEnumerable<User?>?> GetWorldUsers(Guid worldId);
+    public Task<IEnumerable<User>> GetWorldUsers(Guid worldId);
 
     /// <summary>
     /// Gets a list of the agents in the world.
     /// </summary>
     /// <param name="worldId"</param>
     /// <returns></returns>
-    public Task<IEnumerable<Agent?>?> GetWorldAgents(Guid worldId);
+    public Task<IEnumerable<Agent>> GetWorldAgents(Guid worldId);
 
     /// <summary>
     /// Kicks a user from the world
@@ -67,7 +67,7 @@ public interface IWorldRepository
     /// <param name="worldId"></param>
     /// <param name="userId"></param>
     /// <returns></returns>
-    public Task RemoveUser(Guid worldId, Guid userId);
+    public Task RemoveUser(Guid worldId, Guid ownerId, Guid userId);
 
     /// <summary>
     /// Removes a world from the repository

@@ -23,20 +23,17 @@ public class UsersController : ControllerBase
     {
         var user = await _mediator.Send(new GetUserQuery(userId))
             ?? throw new NotFoundException(nameof(Domain.Models.User), userId);
-        return MapUserToUserResponse(user);
+        return Ok(MapUserToUserResponse(user));
     }
-    
-    private ActionResult<UserResponse> MapUserToUserResponse(User user)
-    {
-        return Ok(new UserResponse(
-                    user.Username,
-                    user.Email,
-                    user.Description,
-                    user.Location?.X_coord ?? default,
-                    user.Location?.Y_coord ?? default,
-                    user.CreatedTime));
-    }
-    
+
+    private static UserResponse MapUserToUserResponse(User user) => new(
+        user.Username,
+        user.Email,
+        user.Description,
+        user.Location?.X_coord ?? default,
+        user.Location?.Y_coord ?? default,
+        user.CreatedTime);
+
     [Authorize]
     [HttpDelete("{userId}/friends", Name = "RemoveFriend")]
     public async Task<ActionResult> RemoveFriend(Guid userId, Guid friendId)

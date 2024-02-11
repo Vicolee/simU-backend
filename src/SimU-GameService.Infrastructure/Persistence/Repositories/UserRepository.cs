@@ -116,4 +116,9 @@ public class UserRepository : IUserRepository
     {
         throw new NotImplementedException();
     }
+
+    public Task<Guid> GetUserFromIdentityId(string identityId) => _dbContext.Users
+            .Where(u => u.IdentityId == identityId)
+            .Select(u => u.Id)
+            .FirstOrDefaultAsync();
 }

@@ -2,4 +2,4 @@ using MediatR;
 
 namespace SimU_GameService.Application.Services.Worlds.Commands;
 
-public record RemoveUserCommand(Guid WorldId, Guid UserId) : IRequest<Unit>;
+public record RemoveUserCommand(Guid Id, Guid UserId, string CreatorIdentityId) : IRequest<Unit>;

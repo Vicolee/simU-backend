@@ -83,4 +83,5 @@ public interface IUserRepository
     Task RemoveFriend(Guid userId, Guid friendId);
     Task AddFriend(Guid requesterId, Guid requesteeId);
     Task PostResponses(Guid userId, IEnumerable<string> responses);
+    Task<Guid> GetUserFromIdentityId(string identityId);
 }
