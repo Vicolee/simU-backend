@@ -351,7 +351,7 @@ Returns a list of the IDs of hatched agents.
 
 #### Description
 
-Removes an agent from a world. Only the owner of the world or the creator of the agent can remove it.
+Removes an agent from a world. Only the owner of the world or the creator of the agent can remove it. (deleterId refers to the id of the user that is requesting for the agent to be deleted.
 
 #### Request
 
