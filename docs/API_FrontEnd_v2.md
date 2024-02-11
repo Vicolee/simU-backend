@@ -351,11 +351,17 @@ Returns a list of the IDs of hatched agents.
 
 #### Description
 
-Removes an agent from a world. Only the owner of the world can remove agents.
+Removes an agent from a world. Only the owner of the world or the creator of the agent can remove it.
 
 #### Request
 
 `DELETE /worlds/{id}/agents/{agentId}`
+
+```json
+{
+    "deleterId": "00000000-0000-0000-0000-000000000000"
+}
+```
 
 #### Response
 
@@ -370,6 +376,12 @@ Kicks a player out of a world. Only the owner of the world can remove users.
 #### Request
 
 `DELETE /worlds/{id}/users/{userId}`
+
+```json
+{
+    "ownerId": "00000000-0000-0000-0000-000000000000"
+}
+```
 
 #### Response
 
