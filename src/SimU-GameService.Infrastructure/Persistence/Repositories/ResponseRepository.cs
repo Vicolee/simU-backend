@@ -9,10 +9,7 @@ public class ResponseRepository : IResponseRepository
 {
     private readonly SimUDbContext _dbContext;
 
-    public ResponseRepository(SimUDbContext dbContext)
-    {
-        _dbContext = dbContext;
-    }
+    public ResponseRepository(SimUDbContext dbContext) => _dbContext = dbContext;
 
     public async Task PostResponse(Response response)
     {
@@ -26,20 +23,11 @@ public class ResponseRepository : IResponseRepository
         await _dbContext.SaveChangesAsync();
     }
 
-    public async Task<IEnumerable<object?>> GetResponses(Guid targetCharacterId)
-    {
-        return await _dbContext.QuestionResponses
-            .Where(q => q.TargetId == targetCharacterId)
-            .Select(q => new { q.TargetId, q.ResponderId, q.QuestionId, q.Content } )
-            .ToListAsync();
-    }
+    public async Task<IEnumerable<Response>> GetResponses(Guid targetId) => await _dbContext.QuestionResponses
+        .Where(r => r.TargetId == targetId)
+        .ToListAsync();
 
-    public async Task<object?> GetResponse(Guid targetCharacterId, Guid questionId)
-    {
-        return await _dbContext.QuestionResponses
-            .Where(q => q.TargetId == targetCharacterId && q.QuestionId == questionId)
-            .Select(q => new { q.TargetId, q.ResponderId, q.QuestionId, q.Content } )
-            .ToListAsync();
-    }
-
+    public async Task<IEnumerable<Response>> GetResponsesToQuestion(Guid targetId, Guid questionId) => await _dbContext.QuestionResponses
+        .Where(r => r.TargetId == targetId && r.QuestionId == questionId)
+        .ToListAsync();
 }

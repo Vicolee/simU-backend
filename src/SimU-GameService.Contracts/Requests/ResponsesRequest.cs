@@ -1,6 +1,6 @@
 namespace SimU_GameService.Contracts.Requests;
 
-public record QuestionnaireResponseRequest(
+public record ResponsesRequest(
     Guid TargetId,
     Guid ResponderId,
     IEnumerable<IdResponsePair> Responses);

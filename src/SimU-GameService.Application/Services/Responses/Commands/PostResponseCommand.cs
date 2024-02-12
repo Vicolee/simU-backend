@@ -1,6 +1,6 @@
 using MediatR;
 
-namespace SimU_GameService.Application.Services.QuestionResponses.Commands;
+namespace SimU_GameService.Application.Services.Responses.Commands;
 
 public record PostResponseCommand(Guid TargetCharacterId,
     Guid ResponderId,

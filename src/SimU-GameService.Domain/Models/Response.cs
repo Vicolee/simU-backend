@@ -6,7 +6,7 @@ public class Response : Entity
     public Guid ResponderId { get; set; }
     public Guid TargetId { get; set; }
     public Guid QuestionId { get; set; }
-    public string? Content { get; set; }
+    public string Content { get; set; } = default!;
 
     public Response() : base()
     {

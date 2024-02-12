@@ -17,17 +17,24 @@ public interface IResponseRepository
     public Task PostResponse(Response response);
 
     /// <summary>
+    /// Adds responses to questions (in bulk) to the repository.
+    /// </summary>
+    /// <param name="responses"></param>
+    /// <returns></returns>
+    public Task PostResponses(IEnumerable<Response> responses);
+
+    /// <summary>
     /// Returns all the questions and corresponding responses about a user or agent.
     /// </summary>
-    /// <param name="targetCharacterId"></param>
+    /// <param name="targetId"></param>
     /// <returns></returns>
-    public Task<IEnumerable<object?>> GetResponses(Guid targetCharacterId);
+    public Task<IEnumerable<Response>> GetResponses(Guid targetId);
 
     /// <summary>
     /// Returns the responses for a specific question about a user or agent.
     /// </summary>
-    /// <param name="targetCharacterId"></param>
+    /// <param name="targetId"></param>
     /// <param name="questionId"></param>
     /// <returns></returns>
-    public Task<object?> GetResponse(Guid targetCharacterId, Guid questionId);
+    public Task<IEnumerable<Response>> GetResponsesToQuestion(Guid targetId, Guid questionId);
 }

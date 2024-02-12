@@ -16,19 +16,11 @@ public class QuestionRepository : IQuestionRepository
         await _dbContext.SaveChangesAsync();
     }
 
-    public async Task<IEnumerable<object?>> GetUserQuestions()
-    {
-        return await _dbContext.Questions
-            .Where(q => q.QuestionType == QuestionType.UserQuestion || q.QuestionType == QuestionType.UserOrAgentQuestion)
-            .Select(q => new { q.Id, q.Content })
-            .ToListAsync();
-    }
+    public async Task<IEnumerable<Question>> GetUserQuestions() => await _dbContext.Questions
+        .Where(q => q.QuestionType == QuestionType.UserQuestion || q.QuestionType == QuestionType.UserOrAgentQuestion)
+        .ToListAsync();
 
-    public async Task<IEnumerable<object?>> GetAgentQuestions()
-    {
-        return await _dbContext.Questions
-            .Where(q => q.QuestionType == QuestionType.AgentQuestion || q.QuestionType == QuestionType.UserOrAgentQuestion)
-            .Select(q => new { q.Id, q.Content })
-            .ToListAsync();
-    }
+    public async Task<IEnumerable<Question>> GetAgentQuestions() => await _dbContext.Questions
+        .Where(q => q.QuestionType == QuestionType.AgentQuestion || q.QuestionType == QuestionType.UserOrAgentQuestion)
+        .ToListAsync();
 }
