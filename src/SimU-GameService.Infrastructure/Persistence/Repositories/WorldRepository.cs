@@ -42,24 +42,18 @@ public class WorldRepository : IWorldRepository
             .FirstOrDefaultAsync(u => u.Id == world.CreatorId);
     }
 
-    public async Task<Unit> AddUser(Guid worldId, Guid userId)
+    public async Task AddUser(Guid worldId, Guid userId)
     {
-        var world = await _dbContext.Worlds
-            .FirstOrDefaultAsync(w => w.Id == worldId) ?? throw new NotFoundException(nameof(World), worldId);
-
+        var world = await GetWorld(worldId) ?? throw new NotFoundException(nameof(World), worldId);
         world.WorldUsers.Add(userId);
-        _dbContext.SaveChanges();
-        return Unit.Value;
+        await _dbContext.SaveChangesAsync();
     }
 
-    public async Task<Unit> AddAgent(Guid worldId, Guid agentId)
+    public async Task AddAgent(Guid worldId, Guid agentId)
     {
-        var world = await _dbContext.Worlds
-            .FirstOrDefaultAsync(w => w.Id == worldId) ?? throw new NotFoundException(nameof(World), worldId);
-
-        world.WorldUsers.Add(agentId);
-        _dbContext.SaveChanges();
-        return Unit.Value;
+        var world = await GetWorld(worldId) ?? throw new NotFoundException(nameof(World), worldId);
+        world.WorldAgents.Add(agentId);
+        await _dbContext.SaveChangesAsync();
     }
 
     public async Task<IEnumerable<User>> GetWorldUsers(Guid worldId)

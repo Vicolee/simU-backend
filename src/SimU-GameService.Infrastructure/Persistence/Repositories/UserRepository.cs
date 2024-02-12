@@ -107,18 +107,29 @@ public class UserRepository : IUserRepository
         throw new NotImplementedException();
     }
 
-    public Task<IEnumerable<World?>> GetUserWorlds(Guid userId)
+    public Task<IEnumerable<Guid>> GetUserWorlds(Guid userId)
     {
-        throw new NotImplementedException();
+        var user = _dbContext.Users.FirstOrDefault(u => u.Id == userId)
+            ?? throw new NotFoundException(nameof(User), userId);
+        return Task.FromResult(user.WorldsJoined.AsEnumerable());
     }
 
-    public Task AddUserWorld(Guid userId, Guid worldId, string joinCode)
+    public async Task AddUserToWorld(Guid userId, Guid worldId)
     {
-        throw new NotImplementedException();
+        var user = await GetUser(userId) ?? throw new NotFoundException(nameof(User), userId);
+        user.WorldsJoined.Add(worldId);
+        await _dbContext.SaveChangesAsync();
     }
 
     public Task<Guid> GetUserFromIdentityId(string identityId) => _dbContext.Users
             .Where(u => u.IdentityId == identityId)
             .Select(u => u.Id)
             .FirstOrDefaultAsync();
+
+    public async Task RemoveUserFromWorld(Guid userId, Guid worldId)
+    {
+        var user = await GetUser(userId) ?? throw new NotFoundException(nameof(User), userId);
+        user.WorldsJoined.Remove(worldId);
+        await _dbContext.SaveChangesAsync();
+    }
 }

@@ -1,4 +1,3 @@
-using MediatR;
 using SimU_GameService.Domain.Models;
 
 namespace SimU_GameService.Application.Abstractions.Repositories;
@@ -37,7 +36,7 @@ public interface IWorldRepository
     /// <param name="worldId"</param>
     /// <param name="userId"</param>
     /// <returns></returns>
-    public Task<Unit> AddUser(Guid worldId, Guid userId);
+    public Task AddUser(Guid worldId, Guid userId);
 
     /// <summary>
     /// Adds a user to world's list of users
@@ -45,7 +44,7 @@ public interface IWorldRepository
     /// <param name="worldId"</param>
     /// <param name="agentId"</param>
     /// <returns></returns>
-    public Task<Unit> AddAgent(Guid worldId, Guid agentId);
+    public Task AddAgent(Guid worldId, Guid agentId);
 
     /// <summary>
     /// Gets a list of the users (both online and offline) in the world.

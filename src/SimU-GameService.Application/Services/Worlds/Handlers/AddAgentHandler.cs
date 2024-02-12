@@ -11,5 +11,9 @@ public class AddAgentHandler : IRequestHandler<AddAgentCommand, Unit>
     public AddAgentHandler(IWorldRepository worldRepository) => _worldRepository = worldRepository;
 
     public async Task<Unit> Handle(AddAgentCommand request,
-    CancellationToken cancellationToken) => await _worldRepository.AddAgent(request.WorldId, request.AgentId);
+    CancellationToken cancellationToken)
+    {
+        await _worldRepository.AddAgent(request.WorldId, request.AgentId);
+        return Unit.Value;
+    }
 }

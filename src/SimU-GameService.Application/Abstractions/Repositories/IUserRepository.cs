@@ -58,16 +58,17 @@ public interface IUserRepository
     /// </summary>
     /// <param name="userId"></param>
     /// <returns></returns>
-    public Task<IEnumerable<World?>> GetUserWorlds(Guid userId);
+    public Task<IEnumerable<Guid>> GetUserWorlds(Guid userId);
 
     /// <summary>
-    /// Add's a world to a user's list of worlds that they belong to.
+    /// Adds a world to a user's list of worlds that they belong to.
     /// </summary>
     /// <param name="userId"></param>
     /// <param name="worldId"></param>
-    /// <param name="joinCode"></param>
     /// <returns></returns>
-    public Task AddUserWorld(Guid userId, Guid worldId, string joinCode);
+    public Task AddUserToWorld(Guid userId, Guid worldId);
+    
+    public Task RemoveUserFromWorld(Guid userId, Guid worldId);
 
     /// <summary>
     /// Updates a user's location in the repository.
