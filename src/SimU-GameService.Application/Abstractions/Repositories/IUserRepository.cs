@@ -79,10 +79,8 @@ public interface IUserRepository
     /// <returns></returns>
     Task UpdateLocation(Guid userId, int xCoord, int yCoord);
 
-    // TODO: why are we passing locationId here?
-    Task<Location?> GetLocation(Guid locationId);
+    Task<Location?> GetLocation(Guid userId);
     Task RemoveFriend(Guid userId, Guid friendId);
     Task AddFriend(Guid requesterId, Guid requesteeId);
-    Task PostResponses(Guid userId, IEnumerable<string> responses);
     Task<Guid> GetUserFromIdentityId(string identityId);
 }

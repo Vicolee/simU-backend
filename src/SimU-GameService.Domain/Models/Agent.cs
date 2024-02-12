@@ -10,10 +10,10 @@ public class Agent : Character
     }
 
     public Agent(string username,
-     Guid createdByUser, float collabDurationInHours, string description) : this()
+     Guid creatorId, float collabDurationInHours, string description) : this()
     {
         Username = username;
-        CreatorId = createdByUser;
+        CreatorId = creatorId;
         Description = description;
         HatchTime = ComputeHatchTime(collabDurationInHours);
     }

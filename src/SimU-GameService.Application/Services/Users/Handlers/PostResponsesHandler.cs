@@ -9,9 +9,8 @@ public class PostResponsesHandler : IRequestHandler<PostResponsesCommand, Unit>
 
     public PostResponsesHandler(IUserRepository userRepository) => _userRepository = userRepository;
 
-    public async Task<Unit> Handle(PostResponsesCommand request, CancellationToken cancellationToken)
+    public Task<Unit> Handle(PostResponsesCommand request, CancellationToken cancellationToken)
     {
-        await _userRepository.PostResponses(request.UserId, request.Responses);
-        return Unit.Value;
+        throw new NotImplementedException();
     }
 }

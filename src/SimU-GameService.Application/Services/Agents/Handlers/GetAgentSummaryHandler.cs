@@ -10,10 +10,7 @@ public class GetAgentSummaryHandler : IRequestHandler<GetAgentSummaryQuery, stri
 {
     private readonly IAgentRepository _agentRepository;
 
-    public GetAgentSummaryHandler(IAgentRepository agentRepository)
-    {
-        _agentRepository = agentRepository;
-    }
+    public GetAgentSummaryHandler(IAgentRepository agentRepository) => _agentRepository = agentRepository;
 
     /// <summary>
     /// Returns the AI generated summary for an agent based off the
@@ -23,8 +20,5 @@ public class GetAgentSummaryHandler : IRequestHandler<GetAgentSummaryQuery, stri
     /// <param name="cancellationToken"></param>
     /// <returns></returns>
     public async Task<string?> Handle(GetAgentSummaryQuery request, CancellationToken cancellationToken)
-    {
-        string? summary = await _agentRepository.GetSummary(request.AgentId);
-        return summary;
-    }
+        => await _agentRepository.GetSummary(request.AgentId);
 }

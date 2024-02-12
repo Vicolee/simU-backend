@@ -15,7 +15,7 @@ public class CreateAgentHandler : IRequestHandler<CreateAgentCommand, Guid>
     {
         var agent = new Agent(
             request.Username,
-            request.Creator,
+            request.CreatorId,
             request.CollabDurationHours,
             request.Description
         );

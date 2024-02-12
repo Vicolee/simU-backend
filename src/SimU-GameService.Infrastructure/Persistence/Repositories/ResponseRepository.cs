@@ -17,8 +17,15 @@ public class ResponseRepository : IResponseRepository
     public async Task PostResponse(Response response)
     {
         await _dbContext.QuestionResponses.AddAsync(response);
+        await _dbContext.SaveChangesAsync(); 
+    }
+
+    public async Task PostResponses(IEnumerable<Response> responses)
+    {
+        await _dbContext.QuestionResponses.AddRangeAsync(responses);
         await _dbContext.SaveChangesAsync();
     }
+
     public async Task<IEnumerable<object?>> GetResponses(Guid targetCharacterId)
     {
         return await _dbContext.QuestionResponses

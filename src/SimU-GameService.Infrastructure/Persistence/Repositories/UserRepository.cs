@@ -34,27 +34,20 @@ public class UserRepository : IUserRepository
             .FirstOrDefaultAsync(u => u.Id == userId);
     }
 
-    public Task<Location?> GetLocation(Guid locationId)
+    public async Task<Location?> GetLocation(Guid userId)
     {
-        // TODO: again, why exactly are we using the locationId here?
-        throw new NotImplementedException();
+        var user = await GetUser(userId) ?? throw new NotFoundException(nameof(User), userId);
+        return user.Location;
     }
 
     public async Task RemoveUser(Guid userId)
     {
         var user = await GetUser(userId);
-
-        if (user is null)
+        if (user is not null)
         {
-            return;
+            _dbContext.Users.Remove(user);
+            await _dbContext.SaveChangesAsync();
         }
-        _dbContext.Users.Remove(user);
-        _dbContext.SaveChanges();
-    }
-
-    public Task PostResponses(Guid userId, IEnumerable<string> responses)
-    {
-        throw new NotImplementedException();
     }
 
     public async Task RemoveFriend(Guid userId, Guid friendId)
@@ -97,14 +90,17 @@ public class UserRepository : IUserRepository
         await _dbContext.SaveChangesAsync();
     }
 
-    public Task<string?> GetUserSummary(Guid userId)
+    public async Task<string?> GetUserSummary(Guid userId)
     {
-        throw new NotImplementedException();
+        var user = await GetUser(userId) ?? throw new NotFoundException(nameof(User), userId);
+        return user.Summary;
     }
 
-    public Task UpdateUserSummary(Guid userId, string summary)
+    public async Task UpdateUserSummary(Guid userId, string summary)
     {
-        throw new NotImplementedException();
+        var user = await GetUser(userId) ?? throw new NotFoundException(nameof(User), userId);
+        user.Summary = summary;
+        await _dbContext.SaveChangesAsync();
     }
 
     public Task<IEnumerable<Guid>> GetUserWorlds(Guid userId)
