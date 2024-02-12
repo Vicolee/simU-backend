@@ -8,13 +8,8 @@ namespace SimU_GameService.Application.Services.Chats.Handlers;
 public class GetChatHistoryHandler : IRequestHandler<GetChatHistoryQuery, IEnumerable<Chat>>
 {
     private readonly IChatRepository _chatRepository;
-    private readonly IUserRepository _userRepository;
 
-    public GetChatHistoryHandler(IChatRepository chatRepository, IUserRepository userRepository)
-    {
-        _chatRepository = chatRepository;
-        _userRepository = userRepository;
-    }
+    public GetChatHistoryHandler(IChatRepository chatRepository) => _chatRepository = chatRepository;
 
     /// <summary>
     /// Returns the union of two chat histories where both users are the sender and recipient.

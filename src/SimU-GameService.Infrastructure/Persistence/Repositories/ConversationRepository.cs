@@ -13,7 +13,7 @@ public class ConversationRepository : IConversationRepository
 
     public ConversationRepository(SimUDbContext dbContext) => _dbContext = dbContext;
 
-    public async Task<Guid?> StartConversation(Guid senderId, Guid receiverId, bool isGroupChat = false)
+    public async Task<Guid?> AddConversation(Guid senderId, Guid receiverId, bool isGroupChat = false)
     {
         var conversation = new Conversation
         {
@@ -27,7 +27,7 @@ public class ConversationRepository : IConversationRepository
         return conversation.Id;
     }
 
-    public async Task<Guid?> IsOnGoingConversation(Guid senderId, Guid receiverId)
+    public async Task<Guid?> IsConversationOnGoing(Guid senderId, Guid receiverId)
     {
         var conversation = await _dbContext.Conversations
             .Where(c => c.Participants.Contains(senderId) && c.Participants.Contains(receiverId))
@@ -58,7 +58,7 @@ public class ConversationRepository : IConversationRepository
             .FirstOrDefaultAsync();
     }
 
-    public async Task<IEnumerable<Guid>> GetAllConversations(Guid senderId, Guid receiverId)
+    public async Task<IEnumerable<Guid>> GetConversations(Guid senderId, Guid receiverId)
     {
         return await _dbContext.Conversations
             .Where(c => c.Participants.Contains(senderId) && c.Participants.Contains(receiverId))
@@ -66,19 +66,12 @@ public class ConversationRepository : IConversationRepository
             .ToListAsync();
     }
 
-    public async Task UpdateConversationLastMessageTime(Guid conversationId)
+    public async Task UpdateLastMessageTime(Guid conversationId)
     {
         var conversation = await _dbContext.Conversations
             .Where(c => c.Id == conversationId)
-            .FirstOrDefaultAsync();
-
-        if (conversation is null)
-        {
-            throw new InvalidOperationException("Conversation not found");
-        }
-
+            .FirstOrDefaultAsync() ?? throw new InvalidOperationException("Conversation not found");
         conversation.LastMessageTime = DateTime.UtcNow;
         await _dbContext.SaveChangesAsync();
     }
-
 }

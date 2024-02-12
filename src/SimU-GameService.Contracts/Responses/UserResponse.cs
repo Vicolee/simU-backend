@@ -1,7 +1,7 @@
 namespace SimU_GameService.Contracts.Responses;
 
 public record UserResponse(
-    string? Username,
+    string Username,
     string? Email,
     string? Description,
     int X_coord,

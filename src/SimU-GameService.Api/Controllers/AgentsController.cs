@@ -1,7 +1,12 @@
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using SimU_GameService.Api.Common;
+using SimU_GameService.Application.Common.Exceptions;
+using SimU_GameService.Application.Services.Agents.Commands;
+using SimU_GameService.Application.Services.Agents.Queries;
 using SimU_GameService.Contracts.Requests;
 using SimU_GameService.Contracts.Responses;
+using SimU_GameService.Domain.Models;
 
 namespace SimU_GameService.Api.Controllers;
 
@@ -10,24 +15,34 @@ namespace SimU_GameService.Api.Controllers;
 public class AgentsController : ControllerBase
 {
     private readonly IMediator _mediator;
-    
-    public AgentsController(IMediator mediator) => _mediator = mediator;
+    private readonly IMapper _mapper;
+
+    public AgentsController(IMediator mediator, IMapper mapper)
+    {
+        _mediator = mediator;
+        _mapper = mapper;
+    }
 
     [HttpPost(Name = "CreateAgent")]
-    public Task<ActionResult<IdResponse>> CreateAgent(CreateAgentRequest request)
+    public async Task<ActionResult<IdResponse>> CreateAgent(CreateAgentRequest request)
     {
-        throw new NotImplementedException();
+        var agentId = await _mediator.Send(new CreateAgentCommand(
+            request.Username, request.Description, request.CreatorId, request.IncubationTimeInHours));
+        return Ok(new IdResponse(agentId));
     }
 
     [HttpGet("{id}", Name = "GetAgent")]
-    public Task<ActionResult<AgentResponse>> GetAgent(Guid id)
+    public async Task<ActionResult<AgentResponse>> GetAgent(Guid id)
     {
-        throw new NotImplementedException();
+        var agent = await _mediator.Send(new GetAgentQuery(id))
+            ?? throw new NotFoundException(nameof(Agent), id);
+        return Ok(_mapper.MapToAgentResponse(agent));
     }
 
     [HttpGet("{id}/summary", Name = "GetAgentSummary")]
-    public Task<ActionResult<AgentSummaryResponse>> GetAgentSummary(Guid id)
+    public async Task<ActionResult<AgentSummaryResponse>> GetAgentSummary(Guid id)
     {
-        throw new NotImplementedException();
+        var agentSummary = await _mediator.Send(new GetAgentSummaryQuery(id));
+        return Ok(new AgentSummaryResponse(agentSummary ?? string.Empty));
     }
 }

@@ -12,5 +12,5 @@ public class IsOnGoingConversationHandler : IRequestHandler<IsOnGoingConversatio
     public IsOnGoingConversationHandler(IConversationRepository conversationRepository) => _conversationRepository = conversationRepository;
 
     public Task<Guid?> Handle(IsOnGoingConversationQuery request,
-    CancellationToken cancellationToken) => _conversationRepository.IsOnGoingConversation(request.SenderId, request.ReceiverId);
+    CancellationToken cancellationToken) => _conversationRepository.IsConversationOnGoing(request.SenderId, request.ReceiverId);
 }

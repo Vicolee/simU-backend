@@ -5,4 +5,4 @@ public record WorldResponse(
     Guid CreatorId,
     string Name,
     string Description,
-    Uri Thumbnail_URL);
+    Uri? Thumbnail_URL);
