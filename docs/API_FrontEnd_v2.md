@@ -261,7 +261,7 @@ Adds a user to a worlds' list of users
 
 #### Request
 
-`POST /worlds/{worldId}/users/{userId}`
+`POST /worlds/{id}/users/{userId}`
 
 #### Response
 
