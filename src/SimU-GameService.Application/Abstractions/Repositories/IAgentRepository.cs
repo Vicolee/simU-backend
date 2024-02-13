@@ -1,3 +1,4 @@
+using MediatR;
 using SimU_GameService.Domain.Models;
 
 namespace SimU_GameService.Application.Abstractions.Repositories;
@@ -38,18 +39,13 @@ public interface IAgentRepository
     public Task<string?> GetSummary(Guid agentId);
 
     /// <summary>
-    /// Gets the entrance questionnaire prompts from the repository.
+    /// Updates an agent's sprite in the repository.
     /// </summary>
+    /// <param name="agentId"</param>
+    /// <param name="spriteURL"</param>
+    /// <param name="spriteHeadshotURL"</param>
     /// <returns></returns>
-    public Task<IEnumerable<string>> GetQuestions();
-
-    /// <summary>
-    /// Posts the entrance questionnaire responses for a user to the repository.
-    /// </summary>
-    /// <param name="agentId"></param>
-    /// <param name="responses"></param>
-    /// <returns></returns>
-    Task PostResponses(Guid userId, IEnumerable<string> responses);
+    public Task<Unit> UpdateAgentSprite(Guid agentId, Uri spriteURL, Uri spriteHeadshotURL);
 
     /// <summary>
     /// Updates a user's location in the repository.

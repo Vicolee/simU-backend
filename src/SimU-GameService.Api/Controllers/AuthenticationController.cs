@@ -14,7 +14,7 @@ public class AuthenticationController : ControllerBase
     private readonly IMediator _mediator;
 
     public AuthenticationController(IMediator mediator) => _mediator = mediator;
-    
+
     [HttpPost("register", Name = "RegisterUser")]
     public async Task<ActionResult<AuthenticationResponse>> RegisterUser(RegisterRequest request)
     {

@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using MediatR;
+using Microsoft.EntityFrameworkCore;
 using SimU_GameService.Application.Abstractions.Repositories;
 using SimU_GameService.Application.Common.Exceptions;
 using SimU_GameService.Domain.Models;
@@ -22,22 +23,48 @@ public class UserRepository : IUserRepository
         return Task.CompletedTask;
     }
 
-    public async Task<User?> GetUserByEmail(string email)
+    public async Task<bool> AddUserToWorld(Guid userId, Guid worldId, bool isOwner)
     {
-        return await _dbContext.Users
-            .FirstOrDefaultAsync(u => u.Email == email);
+        var user = _dbContext.Users
+            .FirstOrDefault(u => u.Id == userId);
+        if (user != null)
+        {
+            if (isOwner)
+            {
+                user.WorldsCreated = user.WorldsCreated.Append(worldId).ToList();
+            } else {
+                user.WorldsJoined = user.WorldsJoined.Append(worldId).ToList();
+            }
+            await _dbContext.SaveChangesAsync();
+            return true;
+        } else {
+            throw new NotFoundException(nameof(User), userId);
+        }
     }
-
     public async Task<User?> GetUser(Guid userId)
     {
         return await _dbContext.Users
             .FirstOrDefaultAsync(u => u.Id == userId);
     }
 
+    public async Task<User?> GetUserByEmail(string email)
+    {
+        return await _dbContext.Users
+            .FirstOrDefaultAsync(u => u.Email == email);
+    }
     public async Task<Location?> GetLocation(Guid userId)
     {
         var user = await GetUser(userId) ?? throw new NotFoundException(nameof(User), userId);
         return user.Location;
+    }
+
+    public async Task<IEnumerable<Guid>> GetUserWorlds(Guid userId)
+    {
+        var user = await GetUser(userId) ?? throw new NotFoundException(nameof(User), userId);
+        var userWorlds = new List<Guid>();
+        userWorlds.AddRange(user.WorldsJoined);
+        userWorlds.AddRange(user.WorldsCreated);
+        return userWorlds;
     }
 
     public async Task RemoveUser(Guid userId)
@@ -48,6 +75,33 @@ public class UserRepository : IUserRepository
             _dbContext.Users.Remove(user);
             await _dbContext.SaveChangesAsync();
         }
+    }
+
+    public async Task RemoveWorldFromList(Guid userId, Guid worldId)
+    {
+        var user = await GetUser(userId);
+
+        if (user is null)
+        {
+            return;
+        }
+        user.WorldsJoined = user.WorldsJoined.Where(w => w != worldId).ToList();
+        _dbContext.SaveChanges();
+    }
+
+    public async Task UpdateUserSprite(Guid userId, Uri spriteURL, Uri spriteHeadshotURL)
+    {
+       var user = await GetUser(userId);
+       if (user is null)
+       {
+           return;
+       }
+        user.SpriteURL = spriteURL;
+        user.SpriteHeadshotURL = spriteHeadshotURL;
+    }
+    public Task PostResponses(Guid userId, IEnumerable<string> responses)
+    {
+        throw new NotImplementedException();
     }
 
     public async Task RemoveFriend(Guid userId, Guid friendId)
@@ -100,20 +154,6 @@ public class UserRepository : IUserRepository
     {
         var user = await GetUser(userId) ?? throw new NotFoundException(nameof(User), userId);
         user.Summary = summary;
-        await _dbContext.SaveChangesAsync();
-    }
-
-    public Task<IEnumerable<Guid>> GetUserWorlds(Guid userId)
-    {
-        var user = _dbContext.Users.FirstOrDefault(u => u.Id == userId)
-            ?? throw new NotFoundException(nameof(User), userId);
-        return Task.FromResult(user.WorldsJoined.AsEnumerable());
-    }
-
-    public async Task AddUserToWorld(Guid userId, Guid worldId)
-    {
-        var user = await GetUser(userId) ?? throw new NotFoundException(nameof(User), userId);
-        user.WorldsJoined.Add(worldId);
         await _dbContext.SaveChangesAsync();
     }
 

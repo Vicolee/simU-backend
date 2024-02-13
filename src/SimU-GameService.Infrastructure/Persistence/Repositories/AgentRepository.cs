@@ -1,3 +1,4 @@
+using MediatR;
 using Microsoft.EntityFrameworkCore;
 using SimU_GameService.Application.Abstractions.Repositories;
 using SimU_GameService.Application.Common.Exceptions;
@@ -16,26 +17,9 @@ public class AgentRepository : IAgentRepository
 
     public async Task AddAgent(Agent agent)
     {
-        _dbContext.Agents.Add(agent);
+        _dbContext.Add(agent);
         await _dbContext.SaveChangesAsync();
     }
-
-    // TODO: replace hard-coded sample questions with a database table.
-    private readonly IEnumerable<string> _questions = new List<string>()
-    {
-        "What is your favorite color?",
-        "What is your favorite animal?",
-        "What is your favorite food?",
-        "What is your favorite movie?",
-        "What is your favorite book?",
-        "What is your favorite song?",
-        "What is your favorite game?",
-        "What is your favorite sport?",
-        "What is your favorite hobby?",
-        "What is your favorite place?"
-    };
-
-    public Task<IEnumerable<string>> GetQuestions() => Task.FromResult(_questions);
 
     public async Task<Agent?> GetAgent(Guid agentId) => await _dbContext.Agents
         .FirstOrDefaultAsync(a => a.Id == agentId);
@@ -60,23 +44,21 @@ public class AgentRepository : IAgentRepository
         {
             return;
         }
-        _dbContext.Agents.Remove(agent);
+        _dbContext.Remove(agent);
         _dbContext.SaveChanges();
     }
 
-    public async Task PostResponses(Guid agentId, IEnumerable<string> responses)
+    public async Task<Unit> UpdateAgentSprite(Guid agentId, Uri spriteURL, Uri spriteHeadshotURL)
     {
-        if (responses.Count() != _questions.Count())
-        {
-            throw new ArgumentException("The number of responses must match the number of questions.");
-        }
-
-        var agent = _dbContext.Agents
-            .FirstOrDefault(a => a.Id == agentId) ?? throw new NotFoundException(nameof(Agent), agentId);
-
-        // TODO: flesh out this logic
-
+       var agent = await GetAgent(agentId);
+       if (agent is null)
+       {
+           return Unit.Value;
+       }
+        agent.SpriteURL = spriteURL;
+        agent.SpriteHeadshotURL = spriteHeadshotURL;
         await _dbContext.SaveChangesAsync();
+        return Unit.Value;
     }
 
     public async Task UpdateLocation(Guid agentId, int xCoord, int yCoord)
@@ -86,5 +68,40 @@ public class AgentRepository : IAgentRepository
         agent.UpdateLocation(xCoord, yCoord);
         await _dbContext.SaveChangesAsync();
     }
+
+
+    // public Task<IEnumerable<string>> GetQuestions() => Task.FromResult(_questions);
+
+    // // TODO: replace hard-coded sample questions with a database table.
+    // private readonly IEnumerable<string> _questions = new List<string>()
+    // {
+    //     "What is your favorite color?",
+    //     "What is your favorite animal?",
+    //     "What is your favorite food?",
+    //     "What is your favorite movie?",
+    //     "What is your favorite book?",
+    //     "What is your favorite song?",
+    //     "What is your favorite game?",
+    //     "What is your favorite sport?",
+    //     "What is your favorite hobby?",
+    //     "What is your favorite place?"
+    // };
+
+    // public async Task PostResponses(Guid agentId, IEnumerable<string> responses)
+    // {
+    //     if (responses.Count() != _questions.Count())
+    //     {
+    //         throw new ArgumentException("The number of responses must match the number of questions.");
+    //     }
+
+    //     var agent = _dbContext.Agents
+    //         .FirstOrDefault(a => a.Id == agentId) ?? throw new NotFoundException(nameof(Agent), agentId);
+
+    //     agent.QuestionResponses = responses
+    //         .Select((response, index) => new QuestionResponse(_questions.ElementAt(index), response))
+    //         .ToList();
+
+    //     await _dbContext.SaveChangesAsync();
+    // }
 
 }

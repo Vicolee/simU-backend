@@ -15,6 +15,8 @@ public class PostResponseHandler : IRequestHandler<PostResponseCommand, Unit>
     {
         var response = new Response(request.ResponderId, request.TargetCharacterId, request.QuestionId, request.Response);
         await _responseRepository.PostResponse(response);
+        // TO DO: CALL THE LLM SERVICE METHOD LEKINA WROTE IT WILL SEND A MESSAGE TO THE LLM SERVICE TO LET THEM KNOW
+        // THAT THE RESPONSES HAVE BEEN POSTED AND THEY CAN SUMMARIZE THE USER'S CHARACTER
         return Unit.Value;
     }
 }

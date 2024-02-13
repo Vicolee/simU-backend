@@ -15,24 +15,17 @@ public class World : Entity
 
     public World()
     {
-        WorldUsers = new();
-        WorldAgents = new();
+        WorldUsers = new List<Guid>();
+        WorldAgents = new List<Guid>();
     }
-
-    public World(string name, string description, Guid ownerId) : this()
+    public World(string name, string description, Guid ownerId, string worldCode) : this()
     {
         Name = name;
         CreatorId = ownerId;
         Description = description;
         CreatedTime = DateTime.UtcNow;
-        WorldCode = GenerateWorldCode();
-    }
-
-    private static string GenerateWorldCode()
-    {
-        var random = new Random();
-        const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-        return new string(Enumerable.Repeat(chars, 6)
-            .Select(s => s[random.Next(s.Length)]).ToArray());
+        WorldCode = worldCode;
+        // adds the creator to the list of users in the world
+        WorldUsers.Add(ownerId);
     }
 }

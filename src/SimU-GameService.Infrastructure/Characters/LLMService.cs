@@ -46,6 +46,7 @@ public class LLMService : ILLMService
         _ = await _userRepository.GetUser(senderId) ?? throw new NotFoundException(nameof(User), senderId);
         _ = await _userRepository.GetUser(recipientId) ?? throw new NotFoundException(nameof(User), recipientId);
 
+        // confirm that we no longer need to generate the responseId like this anymore.
         Guid responseId = Guid.NewGuid();
         var request = new
         {

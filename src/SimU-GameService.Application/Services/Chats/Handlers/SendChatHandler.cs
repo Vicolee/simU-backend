@@ -8,64 +8,102 @@ using SimU_GameService.Domain.Primitives;
 
 namespace SimU_GameService.Application.Services.Chats.Handlers;
 
-public class SendChatHandler : IRequestHandler<SendChatCommand, Unit>
+public class SendChatHandler : IRequestHandler<SendChatCommand, string?>
 {
     private readonly IChatRepository _chatRepository;
     private readonly IUserRepository _userRepository;
+    private readonly IAgentRepository _agentRepository;
     private readonly IGroupRepository _groupRepository;
     private readonly ILLMService _agentService;
     private readonly IConversationRepository _conversationRepository;
 
-    public SendChatHandler(IChatRepository chatRepository, IUserRepository userRepository, IGroupRepository groupRepository, ILLMService agentService, IConversationRepository conversationRepository)
+    public SendChatHandler(IChatRepository chatRepository, IUserRepository userRepository, IAgentRepository agentRepository, IGroupRepository groupRepository, ILLMService agentService, IConversationRepository conversationRepository)
     {
         _chatRepository = chatRepository;
+        _agentRepository = agentRepository;
         _userRepository = userRepository;
         _groupRepository = groupRepository;
         _agentService = agentService;
         _conversationRepository = conversationRepository;
     }
 
-    public async Task<Unit> Handle(SendChatCommand request, CancellationToken cancellationToken)
+    public async Task<string?> Handle(SendChatCommand request, CancellationToken cancellationToken)
     {
-        var sender = await _userRepository.GetUser(request.SenderId)
-            ?? throw new NotFoundException(nameof(User), request.SenderId);
+        bool senderIsUser;
+        Character? sender = await _userRepository.GetUser(request.SenderId);
+
+        if (sender != null)
+        {
+            senderIsUser = true;
+        }
+        else
+        {
+            sender = await _agentRepository.GetAgent(request.SenderId);
+            senderIsUser = false;
+        }
+
+        if (sender == null)
+        {
+            throw new NotFoundException(nameof(Character), request.SenderId);
+        }
 
         // attempt to retrieve the receiver as a User or Group
         var receiverAsUser = await _userRepository.GetUser(request.ReceiverId);
-        // var receiverAsAgent = receiverAsUser != null ? null : await _agentRepository.GetAgent(request.ReceiverId);
-        var receiverAsGroup = receiverAsUser != null ? null : await _groupRepository.GetGroup(request.ReceiverId);
+        var receiverAsAgent = receiverAsUser != null ? null : await _agentRepository.GetAgent(request.ReceiverId);
+        var receiverAsGroup = receiverAsUser != null || receiverAsAgent != null ? null : await _groupRepository.GetGroup(request.ReceiverId);
 
         // throw an exception if receiver is neither a User nor a Group
-        if (receiverAsUser == null && receiverAsGroup == null)
+        if (receiverAsUser == null && receiverAsAgent == null && receiverAsGroup == null)
         {
-            throw new NotFoundException("User or Group", request.ReceiverId);
+            throw new NotFoundException("User, Agent, or Group", request.ReceiverId);
         }
 
-        var receiver = (Entity?) receiverAsUser ?? receiverAsGroup;
+        Entity? receiver;
+        if (receiverAsUser != null)
+        {
+            receiver = receiverAsUser;
+        }
+        else if (receiverAsAgent != null)
+        {
+            receiver = receiverAsAgent;
+        }
+        else
+        {
+            receiver = receiverAsGroup;
+        }
 
-        // TODO: double check logic here
         var conversationId = await _conversationRepository.IsConversationOnGoing(request.SenderId, request.ReceiverId) ?? await _conversationRepository.AddConversation(request.SenderId, request.ReceiverId);
+        Chat chat;
 
-        // Chat(Guid senderId, Guid receiverId, Guid conversationId, string content, bool isGroupChat)
-        var chat = new Chat(
-            request.SenderId, request.ReceiverId, conversationId.Value, request.Content, receiver is Group);
+        if (senderIsUser) {
+            // if the sender is user, checks whether user was online or offline
+            // when message was sent (sender.IsOnline)
+            User senderAsUser = (User) sender;
+            chat = new Chat(request.SenderId, request.ReceiverId, conversationId.Value, request.Content, senderAsUser.IsOnline, receiver is Group);
+        } else {
+            // sender is agent in this case
+            chat = new Chat(request.SenderId, request.ReceiverId, conversationId.Value, request.Content, false, receiver is Group);
+        }
+
         await _chatRepository.AddChat(chat);
-
 
         await _conversationRepository.UpdateLastMessageTime(conversationId.Value);
 
-        // TODO: we need to add logic to check if the receiver is an agent higher up in this method
-        // only send the chat to the agent if the receiver is an agent
-        if (receiverAsUser != null) // incomplete logic
+        if (receiverAsAgent != null)
         {
             // send the chat to the LLM agent and save its response
-            var chatResponse = await _agentService.SendChat(
+            var AIResponse = await _agentService.SendChat(
                 chat.SenderId, chat.RecipientId, chat.ConversationId, chat.Content, false, false);
 
             // TODO: create chat object from string response and save it to the database
-            // var chat = new Chat(...);
-            // await _chatRepository.AddChat(chat);
+            var chatResponse = new Chat(chat.RecipientId, chat.SenderId, chat.ConversationId, AIResponse, false, false);
+            await _chatRepository.AddChat(chatResponse);
+
+            // is this return value correct? Should we not be returning the chat response?
+            return chatResponse.Content;
+        } else {
+            // review this: what should we return in the case where the chat is just sent to another online user?
+            return chat.Content;
         }
-        return Unit.Value;
     }
 }

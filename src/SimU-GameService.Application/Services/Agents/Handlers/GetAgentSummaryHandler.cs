@@ -19,6 +19,7 @@ public class GetAgentSummaryHandler : IRequestHandler<GetAgentSummaryQuery, stri
     /// <param name="request"></param>
     /// <param name="cancellationToken"></param>
     /// <returns></returns>
-    public async Task<string?> Handle(GetAgentSummaryQuery request, CancellationToken cancellationToken)
-        => await _agentRepository.GetSummary(request.AgentId);
+    public async Task<string?> Handle(GetAgentSummaryQuery request, CancellationToken cancellationToken) {
+        return await _agentRepository.GetSummary(request.AgentId);
+    }
 }

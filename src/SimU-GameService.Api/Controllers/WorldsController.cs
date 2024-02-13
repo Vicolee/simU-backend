@@ -32,12 +32,31 @@ public class WorldsController : ControllerBase
         return new IdResponse(worldId);
     }
 
+    [HttpPost("{id}/users/{userId}", Name = "AddUserToWorld")]
+    public async Task<ActionResult<WorldResponse>> AddUserToWorld(Guid id, Guid userId)
+    {
+        var world = await _mediator.Send(
+            new AddUserCommand(id, userId)) ?? throw new NotFoundException(nameof(World), id);
+        return Ok(_mapper.MapToWorldResponse(world));
+    }
+
     [HttpGet("{id}", Name = "GetWorld")]
     public async Task<ActionResult<WorldResponse>> GetWorld(Guid id)
     {
         var world = await _mediator.Send(new GetWorldQuery(id))
             ?? throw new NotFoundException(nameof(World), id);
         return Ok(_mapper.MapToWorldResponse(world));
+    }
+
+    [HttpGet("/code/{worldCode}", Name = "GetWorldIdFromWorldCode")]
+    public async Task<ActionResult<IdResponse>> GetWorldIdFromWorldCode(string worldCode)
+    {
+        Guid? worldId = await _mediator.Send(new GetWorldIdFromWorldCodeQuery(worldCode));
+        if (worldId == null)
+        {
+            throw new NotFoundException("World", worldCode);
+        }
+        return new IdResponse(worldId.Value);
     }
 
     [HttpGet("{id}/creator", Name = "GetWorldCreator")]

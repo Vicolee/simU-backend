@@ -36,7 +36,7 @@ public interface IWorldRepository
     /// <param name="worldId"</param>
     /// <param name="userId"</param>
     /// <returns></returns>
-    public Task AddUser(Guid worldId, Guid userId);
+    public Task<World> AddUser(Guid worldId, Guid userId);
 
     /// <summary>
     /// Adds a user to world's list of users
@@ -65,8 +65,19 @@ public interface IWorldRepository
     /// </summary>
     /// <param name="worldId"></param>
     /// <param name="userId"></param>
+    /// <param name="ownerId"></param>
     /// <returns></returns>
-    public Task RemoveUser(Guid worldId, Guid ownerId, Guid userId);
+    public Task RemoveUser(Guid worldId, Guid userId, Guid ownerId);
+
+    /// <summary>
+    /// Deletes an agent from the world
+    /// </summary>
+    /// <param name="worldId"></param>
+    /// <param name="agentId"></param>
+    /// <param name="deleterId"></param>
+    /// <returns></returns>
+    public Task RemoveAgent(Guid worldId, Guid agentId, Guid deleterId);
+
 
     /// <summary>
     /// Removes a world from the repository
@@ -75,4 +86,19 @@ public interface IWorldRepository
     /// <param name="ownerId"></param>
     /// <returns></returns>
     public Task DeleteWorld(Guid worldId, Guid ownerId);
+
+    /// <summary>
+    /// Checks whether a generated join code for a newly created world is already in use
+    /// </summary>
+    /// <param name="worldCode"></param>
+    /// <returns></returns>
+    public Task<bool> WorldCodeExists(string worldCode);
+
+
+    /// <summary>
+    /// Finds the world, specifically its respective ID, that matches the join code.
+    /// </summary>
+    /// <param name="worldCode"></param>
+    /// <returns></returns>
+    public  Task<Guid?> MatchWorldCodeToWorldId(string worldCode);
 }

@@ -9,12 +9,37 @@ public class CreateWorldHandler : IRequestHandler<CreateWorldCommand, Guid>
 {
     private readonly IWorldRepository _worldRepository;
 
-    public CreateWorldHandler(IWorldRepository worldRepository) => _worldRepository = worldRepository;
+    private readonly IUserRepository _userRepository;
+    private static readonly Random _random = new Random();
+
+    public CreateWorldHandler(IWorldRepository worldRepository, IUserRepository userRepository)
+    {
+        _worldRepository = worldRepository;
+        _userRepository = userRepository;
+    }
 
     public async Task<Guid> Handle(CreateWorldCommand request, CancellationToken cancellationToken)
     {
-        var world = new World(request.Name, request.Description, request.CreatorId);
+        string? worldCode = await GenerateWorldCode();
+        var world = new World(request.Name, request.Description, request.CreatorId, worldCode);
         await _worldRepository.CreateWorld(world);
+        await _userRepository.AddUserToWorld(request.CreatorId, world.Id, true);
         return world.Id;
+    }
+
+    // wrote the method below with the help of GitHub Co-Pilot.
+    private async Task<string> GenerateWorldCode()
+    {
+        const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+        string worldCode;
+
+        do
+        {
+            worldCode = new string(Enumerable.Repeat(chars, 8)
+                .Select(s => s[_random.Next(s.Length)]).ToArray());
+
+        } while (await _worldRepository.WorldCodeExists(worldCode));
+
+        return worldCode;
     }
 }

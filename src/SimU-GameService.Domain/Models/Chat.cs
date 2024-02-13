@@ -11,16 +11,22 @@ public class Chat : Entity
     public bool IsGroupChat { get; set; }
     public DateTime CreatedTime { get; set; }
 
+    // WasSenderOnline: records whether a user was online or offline
+    // when they sent a message. If the sender is an agent, the value
+    // will always be set to false.
+    public bool WasSenderOnline { get; set; }
+
     public Chat() : base()
     {
     }
 
-    public Chat(Guid senderId, Guid receiverId, Guid conversationId, string content, bool isGroupChat) : this()
+    public Chat(Guid senderId, Guid receiverId, Guid conversationId, string content, bool wasSenderOnline, bool isGroupChat) : this()
     {
         SenderId = senderId;
         RecipientId = receiverId;
         ConversationId = conversationId;
         Content = content;
+        WasSenderOnline = wasSenderOnline;
         IsGroupChat = isGroupChat;
         CreatedTime = DateTime.UtcNow;
     }
