@@ -13,5 +13,5 @@ public class GetLocationHandler : IRequestHandler<GetLocationQuery, Location?>
 
     public async Task<Location?> Handle(
         GetLocationQuery request,
-        CancellationToken cancellationToken) => await _userRepository.GetLocation(request.LocationId);
+        CancellationToken cancellationToken) => await _userRepository.GetLocation(request.UserId);
 }

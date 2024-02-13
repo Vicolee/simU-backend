@@ -15,7 +15,7 @@ public class RemoveUserFromWorldHandler : IRequestHandler<RemoveUserFromWorldCom
     public async Task<Unit> Handle(RemoveUserFromWorldCommand request, CancellationToken cancellationToken)
     {
         try {
-            await _worldRepository.RemoveUserFromWorld(request.WorldId, request.UserId, request.OwnerId);
+            await _worldRepository.RemoveUser(request.WorldId, request.UserId, request.OwnerId);
             return Unit.Value;
         }
         catch

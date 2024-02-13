@@ -5,12 +5,12 @@ using SimU_GameService.Application.Services.Worlds.Queries;
 
 namespace SimU_GameService.Application.Services.Worlds.Handlers;
 
-public class GetWorldUsersHandler : IRequestHandler<GetWorldUsersQuery, IEnumerable<User?>?>
+public class GetWorldUsersHandler : IRequestHandler<GetWorldUsersQuery, IEnumerable<User>>
 {
     private readonly IWorldRepository _worldRepository;
 
     public GetWorldUsersHandler(IWorldRepository worldRepository) => _worldRepository = worldRepository;
 
-    public async Task<IEnumerable<User?>?> Handle(GetWorldUsersQuery request,
+    public async Task<IEnumerable<User>> Handle(GetWorldUsersQuery request,
     CancellationToken cancellationToken) => await _worldRepository.GetWorldUsers(request.WorldId);
 }

@@ -36,7 +36,7 @@ public interface IAgentRepository
     /// </summary>
     /// <param name="agentId"</param>
     /// <returns></returns>
-    public Task<object?> GetSummary(Guid agentId);
+    public Task<string?> GetSummary(Guid agentId);
 
     /// <summary>
     /// Updates an agent's sprite in the repository.
@@ -55,5 +55,5 @@ public interface IAgentRepository
     /// <param name="yCoord"></param>
     /// <returns></returns>
     Task UpdateLocation(Guid agentId, int xCoord, int yCoord);
-    Task<Location?> GetLocation(Guid locationId);
+    Task<Location?> GetLocation(Guid agentId);
 }

@@ -47,6 +47,14 @@ public interface IUserRepository
     public Task UpdateUserSummary(Guid userId, string summary);
 
     /// <summary>
+    /// Updates a user's sprite.
+    /// </summary>
+    /// <param name="userId"></param>
+    /// <param name="summary"></param>
+    /// <returns></returns>
+    public Task UpdateUserSprite(Guid userId, Uri spriteURL, Uri spriteHeadshotURL);
+
+    /// <summary>
     /// Get's the list of worlds a user belongs to
     /// </summary>
     /// <param name="userId"></param>
@@ -54,30 +62,20 @@ public interface IUserRepository
     public Task<IEnumerable<Guid>> GetUserWorlds(Guid userId);
 
     /// <summary>
-    /// Add's a world to a user's list of worlds that they belong to.
-    /// <param name="userId"></param>
-    /// <param name="joinCode"></param>
-    /// <param name="isOwner"></param>
-    /// <returns></returns>
-    public Task<bool> AddWorld(Guid userId, Guid worldId, bool isOwner);
-
-    /// <summary>
-    /// Add's a world to a user's list of worlds that they belong to.
+    /// Adds a world to a user's list of worlds that they belong to.
     /// </summary>
     /// <param name="userId"></param>
     /// <param name="worldId"></param>
-    /// <param name="joinCode"></param>
     /// <returns></returns>
-    public Task RemoveWorldFromList(Guid userId, Guid worldId);
+    public Task<bool> AddUserToWorld(Guid userId, Guid worldId, bool isOwner);
 
     /// <summary>
-    /// Updates a user's in game sprite / character avatar
+    /// Removes a world from a user's list of worlds that they belong to.
     /// </summary>
     /// <param name="userId"></param>
-    /// <param name="spriteURL"></param>
-    /// <param name="spriteHeadshotURL"></param>
+    /// <param name="worldId"></param>
     /// <returns></returns>
-    public Task UpdateUserSprite(Guid userId, Uri spriteURL, Uri spriteHeadshotURL);
+    public Task RemoveUserFromWorld(Guid userId, Guid worldId);
 
     /// <summary>
     /// Updates a user's location in the repository.
@@ -88,9 +86,15 @@ public interface IUserRepository
     /// <returns></returns>
     Task UpdateLocation(Guid userId, int xCoord, int yCoord);
 
-    // TODO: why are we passing locationId here?
-    Task<Location?> GetLocation(Guid locationId);
+    /// <summary>
+    /// Removes a world from a user's list of worlds that they belong to.
+    /// </summary>
+    /// <param name="userId"></param>
+    /// <param name="worldId"></param>
+    /// <returns></returns>
+    public Task RemoveWorldFromList(Guid userId, Guid worldId);
+    Task<Location?> GetLocation(Guid userId);
     Task RemoveFriend(Guid userId, Guid friendId);
     Task AddFriend(Guid requesterId, Guid requesteeId);
-    Task PostResponses(Guid userId, IEnumerable<string> responses);
+    Task<Guid> GetUserFromIdentityId(string identityId);
 }

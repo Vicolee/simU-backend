@@ -8,7 +8,7 @@ using SimU_GameService.Domain.Primitives;
 
 namespace SimU_GameService.Application.Services.Chats.Handlers;
 
-public class SendChatHandler : IRequestHandler<SendChatCommand, Unit>
+public class SendChatHandler : IRequestHandler<SendChatCommand, string?>
 {
     private readonly IChatRepository _chatRepository;
     private readonly IUserRepository _userRepository;
@@ -27,7 +27,7 @@ public class SendChatHandler : IRequestHandler<SendChatCommand, Unit>
         _conversationRepository = conversationRepository;
     }
 
-    public async Task<Unit> Handle(SendChatCommand request, CancellationToken cancellationToken)
+    public async Task<string?> Handle(SendChatCommand request, CancellationToken cancellationToken)
     {
         bool senderIsUser;
         Character? sender = await _userRepository.GetUser(request.SenderId);
@@ -72,7 +72,7 @@ public class SendChatHandler : IRequestHandler<SendChatCommand, Unit>
             receiver = receiverAsGroup;
         }
 
-        var conversationId = await _conversationRepository.IsOnGoingConversation(request.SenderId, request.ReceiverId) ?? await _conversationRepository.StartConversation(request.SenderId, request.ReceiverId);
+        var conversationId = await _conversationRepository.IsConversationOnGoing(request.SenderId, request.ReceiverId) ?? await _conversationRepository.AddConversation(request.SenderId, request.ReceiverId);
         Chat chat;
 
         if (senderIsUser) {
@@ -86,18 +86,24 @@ public class SendChatHandler : IRequestHandler<SendChatCommand, Unit>
         }
 
         await _chatRepository.AddChat(chat);
-        await _conversationRepository.UpdateConversationLastMessageTime(conversationId.Value);
+
+        await _conversationRepository.UpdateLastMessageTime(conversationId.Value);
 
         if (receiverAsAgent != null)
         {
             // send the chat to the LLM agent and save its response
-            var chatResponse = await _agentService.SendChat(
+            var AIResponse = await _agentService.SendChat(
                 chat.SenderId, chat.RecipientId, chat.ConversationId, chat.Content, false, false);
 
             // TODO: create chat object from string response and save it to the database
-            // var chat = new Chat(...);
-            // await _chatRepository.AddChat(chat);
+            var chatResponse = new Chat(chat.RecipientId, chat.SenderId, chat.ConversationId, AIResponse, false, false);
+            await _chatRepository.AddChat(chatResponse);
+
+            // is this return value correct? Should we not be returning the chat response?
+            return chatResponse.Content;
+        } else {
+            // review this: what should we return in the case where the chat is just sent to another online user?
+            return chat.Content;
         }
-        return Unit.Value;
     }
 }

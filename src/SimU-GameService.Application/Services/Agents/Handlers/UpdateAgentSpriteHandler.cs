@@ -1,5 +1,6 @@
 using MediatR;
-using SimU_GameService.Application.Common.Abstractions;
+using SimU_GameService.Application.Abstractions.Repositories;
+using SimU_GameService.Application.Common;
 using SimU_GameService.Application.Services.Agents.Commands;
 using SimU_GameService.Domain.Models;
 

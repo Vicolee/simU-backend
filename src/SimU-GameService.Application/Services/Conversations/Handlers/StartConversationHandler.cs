@@ -13,6 +13,6 @@ public class StartConversationHandler : IRequestHandler<StartConversationCommand
 
     public async Task<Guid?> Handle(StartConversationCommand request, CancellationToken cancellationToken)
     {
-        return await _conversationRepository.StartConversation(request.SenderId, request.ReceiverId);
+        return await _conversationRepository.AddConversation(request.SenderId, request.ReceiverId);
     }
 }

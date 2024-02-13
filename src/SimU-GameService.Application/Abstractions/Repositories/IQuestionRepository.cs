@@ -20,11 +20,11 @@ public interface IQuestionRepository
     /// Grabs the training questions for the player to answer about themselves when they are creating their own character.
     /// </summary>
     /// <returns></returns>
-    public Task<IEnumerable<object?>> GetUserQuestions();
+    public Task<IEnumerable<Question>> GetUserQuestions();
 
     /// <summary>
     /// Grabs the incubation questions for the user to answer about an agent they are creating.
     /// </summary>
     /// <returns></returns>
-    public Task<IEnumerable<object?>> GetAgentQuestions();
+    public Task<IEnumerable<Question>> GetAgentQuestions();
 }

@@ -8,15 +8,22 @@ namespace SimU_GameService.Application.Services.Worlds.Handlers;
 public class CreateWorldHandler : IRequestHandler<CreateWorldCommand, Guid>
 {
     private readonly IWorldRepository _worldRepository;
+
+    private readonly IUserRepository _userRepository;
     private static readonly Random _random = new Random();
 
-    public CreateWorldHandler(IWorldRepository worldRepository) => _worldRepository = worldRepository;
+    public CreateWorldHandler(IWorldRepository worldRepository, IUserRepository userRepository)
+    {
+        _worldRepository = worldRepository;
+        _userRepository = userRepository;
+    }
 
     public async Task<Guid> Handle(CreateWorldCommand request, CancellationToken cancellationToken)
     {
         string? worldCode = await GenerateWorldCode();
         var world = new World(request.Name, request.Description, request.CreatorId, worldCode);
         await _worldRepository.CreateWorld(world);
+        await _userRepository.AddUserToWorld(request.CreatorId, world.Id, true);
         return world.Id;
     }
 

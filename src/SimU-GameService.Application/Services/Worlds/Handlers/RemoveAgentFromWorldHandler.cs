@@ -1,5 +1,5 @@
 using MediatR;
-using SimU_GameService.Application.Common.Abstractions;
+using SimU_GameService.Application.Abstractions.Repositories;
 using SimU_GameService.Domain.Models;
 using SimU_GameService.Application.Services.Worlds.Commands;
 using SimU_GameService.Application.Common.Exceptions;
@@ -15,7 +15,7 @@ public class RemoveAgentFromWorldHandler : IRequestHandler<RemoveAgentFromWorldC
     public async Task<Unit> Handle(RemoveAgentFromWorldCommand request, CancellationToken cancellationToken)
     {
         try {
-            await _worldRepository.RemoveAgentFromWorld(request.WorldId, request.AgentId, request.DeleterId);
+            await _worldRepository.RemoveAgent(request.WorldId, request.AgentId, request.DeleterId);
             return Unit.Value;
         }
         catch

@@ -3,4 +3,4 @@ using SimU_GameService.Domain.Models;
 
 namespace SimU_GameService.Application.Services.Users.Queries;
 
-public record GetUserWorldsQuery(Guid UserId) : IRequest<IEnumerable<Guid>>;
+public record GetUserWorldsQuery(Guid Id) : IRequest<IEnumerable<World>>;

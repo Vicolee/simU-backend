@@ -2,7 +2,7 @@ namespace SimU_GameService.Domain.Models;
 
 public class Agent : Character
 {
-    public Guid Creator { get; set; }
+    public Guid CreatorId { get; set; }
     public DateTime HatchTime { get; set; }
 
     public Agent() : base()
@@ -10,10 +10,10 @@ public class Agent : Character
     }
 
     public Agent(string username,
-     Guid createdByUser, float collabDurationInHours, string description) : this()
+     Guid creatorId, float collabDurationInHours, string description) : this()
     {
         Username = username;
-        Creator = createdByUser;
+        CreatorId = creatorId;
         Description = description;
         HatchTime = ComputeHatchTime(collabDurationInHours);
     }

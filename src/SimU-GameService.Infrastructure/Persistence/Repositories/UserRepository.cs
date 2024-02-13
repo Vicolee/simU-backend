@@ -23,7 +23,7 @@ public class UserRepository : IUserRepository
         return Task.CompletedTask;
     }
 
-    public Task<bool> AddWorld(Guid userId, Guid worldId, bool isOwner)
+    public async Task<bool> AddUserToWorld(Guid userId, Guid worldId, bool isOwner)
     {
         var user = _dbContext.Users
             .FirstOrDefault(u => u.Id == userId);
@@ -35,10 +35,11 @@ public class UserRepository : IUserRepository
             } else {
                 user.WorldsJoined = user.WorldsJoined.Append(worldId).ToList();
             }
-            _dbContext.SaveChanges();
-            return Task.FromResult(true);
+            await _dbContext.SaveChangesAsync();
+            return true;
+        } else {
+            throw new NotFoundException(nameof(User), userId);
         }
-        return Task.FromResult(true);
     }
     public async Task<User?> GetUser(Guid userId)
     {
@@ -51,10 +52,10 @@ public class UserRepository : IUserRepository
         return await _dbContext.Users
             .FirstOrDefaultAsync(u => u.Email == email);
     }
-    public Task<Location?> GetLocation(Guid locationId)
+    public async Task<Location?> GetLocation(Guid userId)
     {
-        // TODO: again, why exactly are we using the locationId here?
-        throw new NotImplementedException();
+        var user = await GetUser(userId) ?? throw new NotFoundException(nameof(User), userId);
+        return user.Location;
     }
 
     public async Task<IEnumerable<Guid>> GetUserWorlds(Guid userId)
@@ -66,24 +67,14 @@ public class UserRepository : IUserRepository
         return userWorlds;
     }
 
-    public async Task UpdateUserSummary(Guid userId, string summary)
-    {
-        var user = await GetUser(userId) ?? throw new NotFoundException(nameof(User), userId);
-
-        user.Summary = summary;
-        await _dbContext.SaveChangesAsync();
-    }
-
     public async Task RemoveUser(Guid userId)
     {
         var user = await GetUser(userId);
-
-        if (user is null)
+        if (user is not null)
         {
-            return;
+            _dbContext.Users.Remove(user);
+            await _dbContext.SaveChangesAsync();
         }
-        _dbContext.Users.Remove(user);
-        _dbContext.SaveChanges();
     }
 
     public async Task RemoveWorldFromList(Guid userId, Guid worldId)
@@ -150,6 +141,31 @@ public class UserRepository : IUserRepository
         var user = await GetUser(userId) ?? throw new NotFoundException(nameof(User), userId);
 
         user.UpdateLocation(xCoord, yCoord);
+        await _dbContext.SaveChangesAsync();
+    }
+
+    public async Task<string?> GetUserSummary(Guid userId)
+    {
+        var user = await GetUser(userId) ?? throw new NotFoundException(nameof(User), userId);
+        return user.Summary;
+    }
+
+    public async Task UpdateUserSummary(Guid userId, string summary)
+    {
+        var user = await GetUser(userId) ?? throw new NotFoundException(nameof(User), userId);
+        user.Summary = summary;
+        await _dbContext.SaveChangesAsync();
+    }
+
+    public Task<Guid> GetUserFromIdentityId(string identityId) => _dbContext.Users
+            .Where(u => u.IdentityId == identityId)
+            .Select(u => u.Id)
+            .FirstOrDefaultAsync();
+
+    public async Task RemoveUserFromWorld(Guid userId, Guid worldId)
+    {
+        var user = await GetUser(userId) ?? throw new NotFoundException(nameof(User), userId);
+        user.WorldsJoined.Remove(worldId);
         await _dbContext.SaveChangesAsync();
     }
 }

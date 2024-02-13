@@ -15,30 +15,25 @@ public class AgentRepository : IAgentRepository
         _dbContext = dbContext;
     }
 
-    public Task AddAgent(Agent agent)
+    public async Task AddAgent(Agent agent)
     {
         _dbContext.Add(agent);
-        _dbContext.SaveChanges();
-
-        return Task.CompletedTask;
+        await _dbContext.SaveChangesAsync();
     }
 
-    public async Task<Agent?> GetAgent(Guid agentId)
+    public async Task<Agent?> GetAgent(Guid agentId) => await _dbContext.Agents
+        .FirstOrDefaultAsync(a => a.Id == agentId);
+
+    public async Task<string?> GetSummary(Guid agentId)
     {
-        return await _dbContext.Agents
-            .FirstOrDefaultAsync(a => a.Id == agentId);
+        var agent = await GetAgent(agentId) ?? throw new NotFoundException(nameof(Agent), agentId);
+        return agent.Summary;
     }
 
-    public async Task<object?> GetSummary(Guid agentId)
+    public async Task<Location?> GetLocation(Guid agentId)
     {
-        var agent = await _dbContext.Agents
-            .FirstOrDefaultAsync(a => a.Id == agentId);
-        return agent?.Summary;
-    }
-    public Task<Location?> GetLocation(Guid locationId)
-    {
-        // TODO: why are we using the locationId here?
-        throw new NotImplementedException();
+        var agent = await GetAgent(agentId) ?? throw new NotFoundException(nameof(Agent), agentId);
+        return agent.Location;
     }
 
     public async Task RemoveAgent(Guid agentId)
@@ -49,7 +44,7 @@ public class AgentRepository : IAgentRepository
         {
             return;
         }
-        _dbContext.Agents.Remove(agent);
+        _dbContext.Remove(agent);
         _dbContext.SaveChanges();
     }
 
@@ -76,7 +71,7 @@ public class AgentRepository : IAgentRepository
 
 
     // public Task<IEnumerable<string>> GetQuestions() => Task.FromResult(_questions);
-    
+
     // // TODO: replace hard-coded sample questions with a database table.
     // private readonly IEnumerable<string> _questions = new List<string>()
     // {
