@@ -244,7 +244,7 @@ Adds a user to a worlds' list of users
 
 #### Request
 
-`POST /worlds/{id}/users`
+`POST /worlds/{worldCode}/users`
 
 ```json
 {
@@ -254,7 +254,16 @@ Adds a user to a worlds' list of users
 
 #### Response
 
-`No Content`
+`200 OK`
+
+```json
+{
+    "worldId": "00000000-0000-0000-0000-000000000000",
+    "worldName": "string",
+    "thumbnailURL": "https://world-pic.png"
+
+}
+```
 
 ### AddAgentToWorld
 
@@ -479,35 +488,6 @@ Returns the list of worlds that a user belongs to.
         "thumbnail_URL" : "string"
     }
 ]
-```
-
-### AddWorld
-
-#### Description
-
-Adds an existing world to the user's list of worlds. Use case: for display in the homepage.
-
-#### Request
-
-`POST /users/{id}/worlds/{privateCode}`
-
-```json
-{
-    "privateCode": "string"
-}
-```
-
-#### Response
-
-`200 OK`
-
-```json
-{
-    "worldId": "00000000-0000-0000-0000-000000000000",
-    "worldName": "string",
-    "thumbnailURL": "https://world-pic.png"
-
-}
 ```
 
 ### RemoveWorldFromList
