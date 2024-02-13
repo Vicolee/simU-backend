@@ -136,7 +136,7 @@ Returns an object containing all the information regarding the world with given 
 }
 ```
 
-### GetWorldIdFromJoinCode
+### GetWorldIdFromWorldCode
 
 #### Description
 
