@@ -136,6 +136,23 @@ Returns an object containing all the information regarding the world with given 
 }
 ```
 
+### GetWorldIdFromJoinCode
+
+#### Description
+
+Front-end provides a world's private world code, and the back-end returns the `worldId`, which the front-end can then use to call the "AddUserToWorld" method in the /worlds/ route.
+#### Request
+
+`GET /worlds/code/{worldCode}`
+
+#### Response
+
+```json
+{
+    "worldId": "00000-00000-00000-00000-00000"
+}
+```
+
 ### GetWorldCreator
 
 #### Description
@@ -244,13 +261,7 @@ Adds a user to a worlds' list of users
 
 #### Request
 
-`POST /worlds/{worldCode}/users`
-
-```json
-{
-    "userId": "00000000-0000-0000-0000-000000000000"
-}
-```
+`POST /worlds/{worldId}/users/{userId}`
 
 #### Response
 
