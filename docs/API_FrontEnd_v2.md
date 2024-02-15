@@ -834,6 +834,30 @@ Records the users responses to the initial questionnaire or responses to questio
 
 `No Content`
 
+### SendAgentVisualDescription
+
+#### Description
+
+Sends the description the user provides when asked, "What does your bot look like?" to the backend. 
+
+#### Request
+
+`POST /agents/{id}/visual
+
+```json
+{
+    "description" : "string"
+}
+```
+
+#### Response
+
+```json
+{
+    "sprite_URL" : "string"
+}
+```
+
 ### GetResponses
 
 #### Description
