@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using SimU_GameService.Infrastructure.Persistence;
@@ -12,9 +13,11 @@ using SimU_GameService.Infrastructure.Persistence;
 namespace SimU_GameService.Infrastructure.Migrations
 {
     [DbContext(typeof(SimUDbContext))]
-    partial class SimUDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240216201157_AppliedEFCoreConfigurations_MinorFixToModelConfigs")]
+    partial class AppliedEFCoreConfigurations_MinorFixToModelConfigs
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -191,13 +194,13 @@ namespace SimU_GameService.Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<string>("WorldsCreated")
+                    b.Property<List<Guid>>("WorldsCreated")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasColumnType("uuid[]");
 
-                    b.Property<string>("WorldsJoined")
+                    b.Property<List<Guid>>("WorldsJoined")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasColumnType("uuid[]");
 
                     b.HasKey("Id");
 

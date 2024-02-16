@@ -14,7 +14,7 @@ public class GroupConfiguration : IEntityTypeConfiguration<Group>
         builder.HasKey(builder => builder.Id);
 
         // configure Guid properties to be user-generated
-        builder.Ignore(b => b.Id);        
+               
         builder.Property(i => i.Id)
             .ValueGeneratedNever();
         builder.Property(i => i.OwnerId)

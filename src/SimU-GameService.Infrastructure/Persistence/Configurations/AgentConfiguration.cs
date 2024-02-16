@@ -12,12 +12,29 @@ public class AgentConfigurations : IEntityTypeConfiguration<Agent>
         builder.HasKey(builder => builder.Id);
 
         // configure Guid properties to be user-generated
-        builder.Ignore(b => b.Id);
+       
         builder.Property(builder => builder.Id)
             .ValueGeneratedNever();
 
         // conversion for CreatedTime
         builder.Property(e => e.CreatedTime)
             .HasConversion(v => v.ToUniversalTime(), v => DateTime.SpecifyKind(v, DateTimeKind.Utc));
+
+        // question responses
+        builder.OwnsMany(a => a.QuestionResponses, qr =>
+        {
+            qr.WithOwner().HasForeignKey(nameof(Agent.Id));
+        });
+
+        // location
+        
+        // location
+        builder.OwnsOne(
+            a => a.Location,
+            l =>
+            {
+                l.Property(x => x.X_coord).HasColumnName("X_coord");
+                l.Property(y => y.Y_coord).HasColumnName("Y_coord");
+            });
     }
 }
