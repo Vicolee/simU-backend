@@ -1,4 +1,3 @@
-using MediatR;
 using SimU_GameService.Domain.Models;
 
 namespace SimU_GameService.Application.Abstractions.Repositories;
@@ -45,15 +44,5 @@ public interface IAgentRepository
     /// <param name="spriteURL"</param>
     /// <param name="spriteHeadshotURL"</param>
     /// <returns></returns>
-    public Task<Unit> UpdateAgentSprite(Guid agentId, Uri spriteURL, Uri spriteHeadshotURL);
-
-    /// <summary>
-    /// Updates a user's location in the repository.
-    /// </summary>
-    /// <param name="userId"></param>
-    /// <param name="xCoord"></param>
-    /// <param name="yCoord"></param>
-    /// <returns></returns>
-    Task UpdateLocation(Guid agentId, int xCoord, int yCoord);
-    Task<Location?> GetLocation(Guid agentId);
+    public Task UpdateAgentSprite(Guid agentId, Uri spriteURL, Uri spriteHeadshotURL);
 }

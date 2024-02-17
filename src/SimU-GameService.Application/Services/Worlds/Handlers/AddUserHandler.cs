@@ -1,5 +1,6 @@
 using MediatR;
 using SimU_GameService.Application.Abstractions.Repositories;
+using SimU_GameService.Application.Common.Exceptions;
 using SimU_GameService.Application.Services.Worlds.Commands;
 using SimU_GameService.Domain.Models;
 
@@ -19,12 +20,9 @@ public class AddUserHandler : IRequestHandler<AddUserCommand, World>
     public async Task<World> Handle(AddUserCommand request,
     CancellationToken cancellationToken)
     {
-        var world = await _worldRepository.AddUser(request.WorldId, request.UserId) ?? throw new Exception($"World not found with id: {request.WorldId}");
-        bool success = await _userRepository.AddUserToWorld(request.UserId, request.WorldId, false);
-        if (!success)
-        {
-            throw new Exception("Failed to add world to user's list of worlds");
-        }
+        var world = await _worldRepository.AddUser(request.WorldId, request.UserId)
+            ?? throw new NotFoundException(nameof(World), request.WorldId);
+        await _userRepository.AddUserToWorld(request.UserId, request.WorldId, false);
         return world;
     }
 }

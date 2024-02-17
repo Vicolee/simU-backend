@@ -6,16 +6,13 @@ namespace SimU_GameService.Application.Services.Users.Handlers;
 
 public class UpdateLocationHandler : IRequestHandler<UpdateLocationCommand, Unit>
 {
-    private readonly IUserRepository _userRepository;
+    private readonly ILocationRepository _locationRepository;
 
-    public UpdateLocationHandler(IUserRepository userRepository)
-    {
-        _userRepository = userRepository;
-    }
+    public UpdateLocationHandler(ILocationRepository locationRepository) => _locationRepository = locationRepository;
 
     public async Task<Unit> Handle(UpdateLocationCommand request, CancellationToken cancellationToken)
     {
-        await _userRepository.UpdateLocation(request.UserId, request.XCoord, request.YCoord);
+        await _locationRepository.UpdateLocation(request.UserId, request.XCoord, request.YCoord);
         return Unit.Value;
     }
 }

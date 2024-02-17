@@ -1,5 +1,4 @@
-﻿using MediatR;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using SimU_GameService.Application.Abstractions.Repositories;
 using SimU_GameService.Application.Common.Exceptions;
 using SimU_GameService.Domain.Models;
@@ -10,52 +9,32 @@ public class UserRepository : IUserRepository
 {
     private readonly SimUDbContext _dbContext;
 
-    public UserRepository(SimUDbContext dbContext)
+    public UserRepository(SimUDbContext dbContext) => _dbContext = dbContext;
+
+    public async Task AddUser(User user)
     {
-        _dbContext = dbContext;
+        await _dbContext.AddAsync(user);
+        await _dbContext.SaveChangesAsync();
     }
 
-    public Task AddUser(User user)
-    {
-        _dbContext.Add(user);
-        _dbContext.SaveChanges();
-
-        return Task.CompletedTask;
-    }
-
-    public async Task<bool> AddUserToWorld(Guid userId, Guid worldId, bool isOwner)
-    {
-        var user = _dbContext.Users
-            .FirstOrDefault(u => u.Id == userId);
-        if (user != null)
-        {
-            if (isOwner)
-            {
-                user.WorldsCreated = user.WorldsCreated.Append(worldId).ToList();
-            } else {
-                user.WorldsJoined = user.WorldsJoined.Append(worldId).ToList();
-            }
-            await _dbContext.SaveChangesAsync();
-            return true;
-        } else {
-            throw new NotFoundException(nameof(User), userId);
-        }
-    }
-    public async Task<User?> GetUser(Guid userId)
-    {
-        return await _dbContext.Users
+    public async Task<User?> GetUser(Guid userId) => await _dbContext.Users
             .FirstOrDefaultAsync(u => u.Id == userId);
-    }
 
     public async Task<User?> GetUserByEmail(string email)
     {
         return await _dbContext.Users
             .FirstOrDefaultAsync(u => u.Email == email);
     }
-    public async Task<Location?> GetLocation(Guid userId)
+
+    public async Task AddUserToWorld(Guid userId, Guid worldId, bool isOwner)
     {
         var user = await GetUser(userId) ?? throw new NotFoundException(nameof(User), userId);
-        return user.Location;
+        if (isOwner)
+        {
+            user.WorldsCreated.Add(worldId);
+        }
+        user.WorldsJoined.Add(worldId);
+        await _dbContext.SaveChangesAsync();
     }
 
     public async Task<IEnumerable<Guid>> GetUserWorlds(Guid userId)
@@ -79,29 +58,19 @@ public class UserRepository : IUserRepository
 
     public async Task RemoveWorldFromList(Guid userId, Guid worldId)
     {
-        var user = await GetUser(userId);
-
-        if (user is null)
-        {
-            return;
-        }
-        user.WorldsJoined = user.WorldsJoined.Where(w => w != worldId).ToList();
-        _dbContext.SaveChanges();
+        var user = await GetUser(userId) ?? throw new NotFoundException(nameof(User), userId);
+        user.WorldsJoined.Remove(worldId);
+        await _dbContext.SaveChangesAsync();
     }
 
     public async Task UpdateUserSprite(Guid userId, Uri spriteURL, Uri spriteHeadshotURL)
     {
-       var user = await GetUser(userId);
-       if (user is null)
-       {
-           return;
-       }
+        var user = await GetUser(userId) ?? throw new NotFoundException(nameof(User), userId);
+
         user.SpriteURL = spriteURL;
         user.SpriteHeadshotURL = spriteHeadshotURL;
-    }
-    public Task PostResponses(Guid userId, IEnumerable<string> responses)
-    {
-        throw new NotImplementedException();
+
+        await _dbContext.SaveChangesAsync();
     }
 
     public async Task RemoveFriend(Guid userId, Guid friendId)
@@ -133,14 +102,6 @@ public class UserRepository : IUserRepository
 
         user.Friends.Add(new Friend(friendId, DateTime.UtcNow));
         friend.Friends.Add(new Friend(userId, DateTime.UtcNow));
-        await _dbContext.SaveChangesAsync();
-    }
-
-    public async Task UpdateLocation(Guid userId, int xCoord, int yCoord)
-    {
-        var user = await GetUser(userId) ?? throw new NotFoundException(nameof(User), userId);
-
-        user.UpdateLocation(xCoord, yCoord);
         await _dbContext.SaveChangesAsync();
     }
 
