@@ -7,11 +7,11 @@ namespace SimU_GameService.Application.Services.Users.Handlers;
 
 public class GetLocationHandler : IRequestHandler<GetLocationQuery, Location?>
 {
-    private readonly IUserRepository _userRepository;
+    private readonly ILocationRepository _locationRepository;
 
-    public GetLocationHandler(IUserRepository userRepository) => _userRepository = userRepository;
+    public GetLocationHandler(ILocationRepository locationRepository) => _locationRepository = locationRepository;
 
     public async Task<Location?> Handle(
         GetLocationQuery request,
-        CancellationToken cancellationToken) => await _userRepository.GetLocation(request.UserId);
+        CancellationToken cancellationToken) => await _locationRepository.GetLocation(request.UserId);
 }

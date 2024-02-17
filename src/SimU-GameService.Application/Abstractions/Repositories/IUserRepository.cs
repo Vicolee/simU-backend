@@ -1,4 +1,3 @@
-using MediatR;
 using SimU_GameService.Domain.Models;
 
 namespace SimU_GameService.Application.Abstractions.Repositories;
@@ -67,7 +66,7 @@ public interface IUserRepository
     /// <param name="userId"></param>
     /// <param name="worldId"></param>
     /// <returns></returns>
-    public Task<bool> AddUserToWorld(Guid userId, Guid worldId, bool isOwner);
+    public Task AddUserToWorld(Guid userId, Guid worldId, bool isOwner);
 
     /// <summary>
     /// Removes a world from a user's list of worlds that they belong to.
@@ -78,22 +77,13 @@ public interface IUserRepository
     public Task RemoveUserFromWorld(Guid userId, Guid worldId);
 
     /// <summary>
-    /// Updates a user's location in the repository.
-    /// </summary>
-    /// <param name="userId"></param>
-    /// <param name="xCoord"></param>
-    /// <param name="yCoord"></param>
-    /// <returns></returns>
-    Task UpdateLocation(Guid userId, int xCoord, int yCoord);
-
-    /// <summary>
     /// Removes a world from a user's list of worlds that they belong to.
     /// </summary>
     /// <param name="userId"></param>
     /// <param name="worldId"></param>
     /// <returns></returns>
     public Task RemoveWorldFromList(Guid userId, Guid worldId);
-    Task<Location?> GetLocation(Guid userId);
+    
     Task RemoveFriend(Guid userId, Guid friendId);
     Task AddFriend(Guid requesterId, Guid requesteeId);
     Task<Guid> GetUserFromIdentityId(string identityId);
