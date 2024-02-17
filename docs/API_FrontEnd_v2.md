@@ -943,3 +943,20 @@ Notify all users in the same world as user X that user X has logged off the serv
 #### Description
 
 Notify all users in the same world as user X that user X has logged into the server.
+
+
+## OnlineStatusChecker Endpoint
+
+### OnlineStatus
+
+#### Description
+
+Signal R - user responds to a Signal R activity status checker message. This status checker message is sent every 5 minutes to the user on the front-end. They have 3 minutes to respond and declare their online status. If they fail to respond within the 3 minute window, they will be marked as offline.
+
+#### Request
+
+TO DO: FILL THIS OUT
+
+#### Response
+
+TO DO: FILL THIS OUT
