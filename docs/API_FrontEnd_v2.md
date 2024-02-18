@@ -145,13 +145,13 @@ Returns an object containing all the information regarding the world with given 
 Front-end provides a world's private world code, and the back-end returns the `worldId`, which the front-end can then use to call the "AddUserToWorld" method in the /worlds/ route.
 #### Request
 
-`GET /worlds/code/{worldCode}`
+`GET /code/{worldCode}`
 
 #### Response
 
 ```json
 {
-    "worldId": "00000-00000-00000-00000-00000"
+    "id": "00000-00000-00000-00000-00000"
 }
 ```
 
