@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using SimU_GameService.Application.Common.Exceptions;
 
-namespace SimU_GameService.Api.Filters
+namespace SimU_GameService.Api.Middleware
 {
     public class ErrorHandlingFilterAttribute : ExceptionFilterAttribute
     {

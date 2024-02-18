@@ -2,7 +2,7 @@ namespace SimU_GameService.Domain.Models;
 
 public class User : Character
 {
-    public string? IdentityId { get; set; }
+    public string IdentityId { get; set; } = default!;
     public string? Email { get; set; }
     public bool IsOnline { get; set; } = false;
     public List<Friend> Friends { get; set; }

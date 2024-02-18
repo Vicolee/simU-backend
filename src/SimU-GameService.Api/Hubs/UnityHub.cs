@@ -6,7 +6,10 @@ using SimU_GameService.Api.Hubs.Abstractions;
 using SimU_GameService.Application.Common.Exceptions;
 using SimU_GameService.Application.Services.Chats.Commands;
 using SimU_GameService.Application.Services.Groups.Commands;
+using SimU_GameService.Application.Services.Groups.Queries;
 using SimU_GameService.Application.Services.Users.Commands;
+using SimU_GameService.Application.Services.Users.Queries;
+using SimU_GameService.Domain.Models;
 
 namespace SimU_GameService.Api.Hubs;
 
@@ -17,140 +20,125 @@ namespace SimU_GameService.Api.Hubs;
 public class UnityHub : Hub<IUnityClient>,  IUnityHub
 {
     private readonly IMediator _mediator;
-    private static readonly ConcurrentDictionary<Guid, string> _connectionMap = new();
+    private static readonly ConcurrentDictionary<string, string> _identityMap = new();
 
-    public UnityHub(IMediator mediator)
-    {
-        _mediator = mediator;
-    }
+    public UnityHub(IMediator mediator) => _mediator = mediator;
 
     /// <inheritdoc/>
     public override async Task OnConnectedAsync()
     {
-        // create mapping between user ID and connection ID
-        var userIdStr = (string?) Context.GetHttpContext()?.Request.Query["userId"];
-        var userId = userIdStr is null ? throw new ArgumentNullException(nameof(userIdStr)) : Guid.Parse(userIdStr);
+        // create mapping between identity ID and connection ID
+        var identityId = Context.User?.FindFirst("sub")?.Value 
+            ?? throw new UnauthorizedAccessException("User not authenticated");
+        _identityMap[identityId] = Context.ConnectionId;
 
-        _connectionMap[userId] = Context.ConnectionId;
         await base.OnConnectedAsync();
     }
 
     /// <inheritdoc/>
     public override async Task OnDisconnectedAsync(Exception? exception)
     {
-        // remove mapping between user ID and connection ID
-        _connectionMap.TryRemove(
-            _connectionMap.FirstOrDefault(x => x.Value == Context.ConnectionId));
+        // remove mapping between identity ID and connection ID
+        _identityMap.TryRemove(
+            _identityMap.FirstOrDefault(x => x.Value == Context.ConnectionId));
 
         await base.OnDisconnectedAsync(exception);
     }
 
-    private Guid? GetUserIdFromConnectionMap() => _connectionMap.FirstOrDefault(x => x.Value == Context.ConnectionId).Key;
+    private string GetIdentityIdFromConnectionMap()
+        => _identityMap.FirstOrDefault(x => x.Value == Context.ConnectionId).Key;
+
+    private async Task<Guid> GetUserIdFromIdentityId(string identityId)
+        => await _mediator.Send(new GetUserIdFromIdentityIdQuery(identityId));
+    
+    private async Task<string> GetIdentityIdFromUserId(Guid userId)
+        => await _mediator.Send(new GetIdentityIdFromUserIdQuery(userId));
+
+    private async Task NotifyUser(Guid userId, string message)
+    {
+        var identityId = await GetIdentityIdFromUserId(userId);
+        if (!_identityMap.TryGetValue(identityId, out string? connectionId))
+        {
+            // TODO: maybe implement a notification system for offline users
+            throw new NotFoundException($"Connection ID for user", userId);
+        }
+        await Clients.Client(connectionId)
+            .ReceiveMessage(nameof(UnityHub), message);
+    }
 
     /// <inheritdoc/>
     public async Task AddUserToGroup(Guid groupId, Guid userId)
     {
-        var requesterId = GetUserIdFromConnectionMap() ??
-            throw new NotFoundException($"User ID mapping to connection ID {Context.ConnectionId}");
+        var requesterIdentifier = GetIdentityIdFromConnectionMap() ??
+            throw new NotFoundException(nameof(User), Context.ConnectionId);
+        var requesterId = await GetUserIdFromIdentityId(requesterIdentifier);
 
-        await _mediator.Send(new AddUserToGroupCommand(groupId, requesterId, userId));
-
-        // send notification to user
-        if (!_connectionMap.TryGetValue(userId, out string? connectionId))
-        {
-            throw new NotFoundException($"Connection ID for user", userId);
-        }
-        await Clients.Client(connectionId)
-            .ReceiveMessage(nameof(UnityHub), $"You have been added to a group with ID {groupId}");
+        await _mediator.Send(new AddUserToGroupCommand(groupId, userId, requesterId));
+        await NotifyUser(userId, $"You have been added to a group with ID {groupId}");
     }
 
     /// <inheritdoc/>
     public async Task RequestToJoinGroup(Guid groupId)
-    {
-        // get user ID from connection map
-        var userId = GetUserIdFromConnectionMap() ??
-            throw new NotFoundException($"User ID mapping to connection ID {Context.ConnectionId}");
- 
-        // check if group exists
-        // get owner ID from group
+    { 
         var ownerId = await _mediator.Send(
-            new RequestToJoinGroupCommand(groupId));
+            new GetGroupOwnerQuery(groupId));
 
-        // send add to group request to owner
-        if (!_connectionMap.TryGetValue(ownerId, out string? connectionId))
+        if (!_identityMap.TryGetValue(await GetIdentityIdFromUserId(ownerId), out string? connectionId))
         {
             throw new NotFoundException($"Connection ID for group admin", ownerId);
         }
 
-        await Clients.Client(connectionId).AddToGroupRequest(groupId, userId);
+        var userId = GetIdentityIdFromConnectionMap() ??
+            throw new NotFoundException(nameof(User), Context.ConnectionId);
+        await Clients.Client(connectionId).AddToGroupRequest(groupId, await GetUserIdFromIdentityId(userId));
     }
 
     /// <inheritdoc/>
     public async Task RemoveUserFromGroup(Guid groupId, Guid userId)
     {
-        // get ID of request sender from connection map
-        var requesterId = GetUserIdFromConnectionMap() ??
-            throw new NotFoundException($"User ID mapping to connection ID {Context.ConnectionId}");
-
-        await _mediator.Send(new RemoveUserFromGroupCommand(groupId, requesterId, userId));
-
-        // send notification to user
-        if (!_connectionMap.TryGetValue(userId, out string? connectionId))
-        {
-            throw new NotFoundException($"Connection ID for user", userId);
-        }
-        await Clients.Client(connectionId)
-            .ReceiveMessage(nameof(UnityHub), $"You have been removed from a group with ID {groupId}");
+        var requesterIdentityId = GetIdentityIdFromConnectionMap() ??
+            throw new NotFoundException(nameof(User), Context.ConnectionId);
+        await _mediator.Send(
+            new RemoveUserFromGroupCommand(groupId, await GetUserIdFromIdentityId(requesterIdentityId), userId));
+        await NotifyUser(userId, $"You have been removed from a group with ID {groupId}");
     }
 
     /// <inheritdoc/>
     public async Task RespondToFriendRequest(Guid userId, bool accepted)
     {
-       var responderId = GetUserIdFromConnectionMap() ??
+       var responderIdentityId = GetIdentityIdFromConnectionMap() ??
             throw new NotFoundException($"User ID mapping to connection ID {Context.ConnectionId}");
 
-        // if friend request is not accepted, we only need to notify the requester
         if (accepted)
         {
-            await _mediator.Send(new RespondToFriendRequestCommand(responderId, userId));
+            await _mediator.Send(new AcceptFriendRequestCommand(
+                await GetUserIdFromIdentityId(responderIdentityId), userId));
         }
 
-        // notify requester of response
-        if (!_connectionMap.TryGetValue(userId, out string? connectionId))
-        {
-            throw new NotFoundException($"Connection ID for user", userId);
-        }
-        await Clients.Client(connectionId)
-            .ReceiveMessage(nameof(UnityHub), $"Your friend request to user with ID {responderId} has been {(accepted ? "accepted" : "rejected")}.");
+        await NotifyUser(userId, 
+            $"Your friend request to user with ID {responderIdentityId} has been {(accepted ? "accepted" : "rejected")}.");
     }
 
     /// <inheritdoc/>
     public async Task SendFriendRequest(Guid userId)
     {
-        var requesterId = GetUserIdFromConnectionMap() ??
-            throw new NotFoundException($"User ID mapping to connection ID {Context.ConnectionId}");
-
-        await _mediator.Send(new SendFriendRequestCommand(requesterId, userId));
-
-        // notify requestee of friend request
-        if (!_connectionMap.TryGetValue(userId, out string? connectionId))
-        {
-            throw new NotFoundException($"Connection ID for user", userId);
-        }
-        await Clients.Client(connectionId)
-            .ReceiveMessage(nameof(UnityHub), $"You have received a friend request from {requesterId}");
+        var requesterId = GetIdentityIdFromConnectionMap() ??
+            throw new NotFoundException(nameof(User), Context.ConnectionId);
+        await _mediator.Send(new SendFriendRequestCommand(await GetUserIdFromIdentityId(requesterId), userId));
+        await NotifyUser(userId, $"You have received a friend request from user with ID {requesterId}");
     }
 
     /// <inheritdoc/>
     public async Task SendChat(Guid receiverId, string message)
     {
-        var senderId = GetUserIdFromConnectionMap() ??
-            throw new NotFoundException($"User ID mapping to connection ID {Context.ConnectionId}");
-        var chatResponse = await _mediator.Send(new SendChatCommand(senderId, receiverId, message));
+        var senderId = GetIdentityIdFromConnectionMap() ??
+            throw new NotFoundException(nameof(User), Context.ConnectionId);
+        var chatResponse = await _mediator.Send(
+            new SendChatCommand(await GetUserIdFromIdentityId(senderId), receiverId, message));
 
         // notify receiver of message
         // TODO: figure out how to implement group notifications
-        if (_connectionMap.TryGetValue(receiverId, out string? connectionId))
+        if (_identityMap.TryGetValue(await GetIdentityIdFromUserId(receiverId), out string? connectionId))
         {
             await Clients.Client(connectionId).ReceiveMessage(senderId.ToString(), message);
         }
@@ -159,10 +147,9 @@ public class UnityHub : Hub<IUnityClient>,  IUnityHub
     /// <inheritdoc/>
     public async Task UpdateLocation(int x_coord, int y_coord)
     {
-        var senderId = GetUserIdFromConnectionMap() ??
-            throw new NotFoundException($"User ID mapping to connection ID {Context.ConnectionId}");
-
-        await _mediator.Send(new UpdateLocationCommand(senderId, x_coord, y_coord));
+        var senderId = GetIdentityIdFromConnectionMap() ??
+            throw new NotFoundException(nameof(User), Context.ConnectionId);
+        await _mediator.Send(new UpdateLocationCommand(await GetUserIdFromIdentityId(senderId), x_coord, y_coord));
 
         // broadcast location update to all users
         await Clients.All.ReceiveMessage(nameof(UnityHub), $"User {senderId} has moved to ({x_coord}, {y_coord})");

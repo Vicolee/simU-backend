@@ -86,5 +86,6 @@ public interface IUserRepository
     
     Task RemoveFriend(Guid userId, Guid friendId);
     Task AddFriend(Guid requesterId, Guid requesteeId);
-    Task<Guid> GetUserFromIdentityId(string identityId);
+    Task<Guid> GetUserIdFromIdentityId(string identityId);
+    Task<string> GetIdentityIdFromUserId(Guid userId);
 }

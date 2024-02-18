@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.SignalR;
 
-namespace SimU_GameService.Api.Filters;
+namespace SimU_GameService.Api.Middleware;
 
 public class ErrorHandlingHubFilter : IHubFilter
 {
