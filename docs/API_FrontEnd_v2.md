@@ -195,9 +195,8 @@ Returns a list of all users that are active in the specified world (both online 
             "y_coord": "int"
         },
         "isOnline": false,
-        "isCreator": false,
         "sprite_URL": "string",
-        "sprite_headshot_URL" : "string"
+        "sprite_headshot_URL": "string"
     },
     {
         "id": "00000000-0000-0000-0000-000000000000",
@@ -207,9 +206,8 @@ Returns a list of all users that are active in the specified world (both online 
             "y_coord": "int"
         },
         "isOnline": true,
-        "isCreator": true,
         "sprite_URL": "string",
-        "sprite_headshot_URL" : "string"
+        "sprite_headshot_URL": "string"
     }
 ]
 ```
