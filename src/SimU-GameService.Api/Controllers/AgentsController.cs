@@ -40,9 +40,9 @@ public class AgentsController : ControllerBase
     }
 
     [HttpGet("{id}/summary", Name = "GetAgentSummary")]
-    public async Task<ActionResult<AgentSummaryResponse>> GetAgentSummary(Guid id)
+    public async Task<ActionResult<SummaryResponse>> GetAgentSummary(Guid id)
     {
         var agentSummary = await _mediator.Send(new GetAgentSummaryQuery(id));
-        return Ok(new AgentSummaryResponse(agentSummary ?? string.Empty));
+        return Ok(new SummaryResponse(agentSummary ?? string.Empty));
     }
 }

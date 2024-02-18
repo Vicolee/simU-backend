@@ -52,7 +52,7 @@ public class Mapper : IMapper
     {
         var responses = request.Responses
             .Select(r => new Response(request.ResponderId, request.TargetId, r.QuestionId, r.Response));
-        return new PostResponsesCommand(responses);
+        return new PostResponsesCommand(request.TargetId, responses);
     }
 
     public AnswersResponse MapToAnswersResponse(Response response) => new

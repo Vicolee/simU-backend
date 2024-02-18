@@ -37,4 +37,11 @@ public interface IResponseRepository
     /// <param name="questionId"></param>
     /// <returns></returns>
     public Task<IEnumerable<Response>> GetResponsesToQuestion(Guid targetId, Guid questionId);
+
+    /// <summary>
+    /// Returns a mapping of question IDs to responses for a specific character.
+    /// </summary>
+    /// <param name="targetId"></param>
+    /// <returns></returns>
+    public Task<(IEnumerable<Guid>, IEnumerable<IEnumerable<string>>)> GetQuestionIdResponsesMapping(Guid targetId);
 }

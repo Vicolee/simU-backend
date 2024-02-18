@@ -12,14 +12,6 @@ public class GetAgentSummaryHandler : IRequestHandler<GetAgentSummaryQuery, stri
 
     public GetAgentSummaryHandler(IAgentRepository agentRepository) => _agentRepository = agentRepository;
 
-    /// <summary>
-    /// Returns the AI generated summary for an agent based off the
-    /// information users provided about it during its incubation process
-    /// </summary>
-    /// <param name="request"></param>
-    /// <param name="cancellationToken"></param>
-    /// <returns></returns>
-    public async Task<string?> Handle(GetAgentSummaryQuery request, CancellationToken cancellationToken) {
-        return await _agentRepository.GetSummary(request.AgentId);
-    }
+    public async Task<string?> Handle(GetAgentSummaryQuery request, CancellationToken cancellationToken)
+        => await _agentRepository.GetSummary(request.AgentId);
 }

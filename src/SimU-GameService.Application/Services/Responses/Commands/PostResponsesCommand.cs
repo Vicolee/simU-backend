@@ -3,4 +3,4 @@ using SimU_GameService.Domain.Models;
 
 namespace SimU_GameService.Application.Services.Responses.Commands;
 
-public record PostResponsesCommand(IEnumerable<Response> Responses) : IRequest<Unit>;
+public record PostResponsesCommand(Guid TargetCharacterId, IEnumerable<Response> Responses) : IRequest<string>;

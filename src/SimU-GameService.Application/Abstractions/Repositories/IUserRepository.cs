@@ -38,6 +38,13 @@ public interface IUserRepository
     public Task<User?> GetUserByEmail(string email);
 
     /// <summary>
+    /// Gets a user's summary.
+    /// </summary>
+    /// <param name="userId"></param>
+    /// <returns></returns>
+    public Task<string?> GetUserSummary(Guid userId);
+
+    /// <summary>
     /// Updates a user's summary.
     /// </summary>
     /// <param name="userId"></param>
