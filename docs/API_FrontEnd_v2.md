@@ -497,7 +497,7 @@ Returns the list of worlds that a user belongs to.
         "id": "00000000-0000-0000-0000-000000000000",
         "name": "string",
         "description": "string",
-        "thumbnail_URL" : "string"
+        "thumbnail_URL": "string"
     }
 ]
 ```
@@ -510,7 +510,7 @@ Removes a world from the list of worlds that a user belongs to.
 
 #### Request
 
-`DELETE /users/{id}/worlds/{worldId}`
+`DELETE /worlds/{worldId}/users/{userId}`
 
 #### Response
 
