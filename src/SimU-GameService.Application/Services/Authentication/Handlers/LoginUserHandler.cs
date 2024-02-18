@@ -22,6 +22,7 @@ public class LoginUserHandler : IRequestHandler<LoginUserCommand, Tuple<Guid, st
         var user = await _userRepository.GetUserByEmail(request.Email)
             ?? throw new BadRequestException("Invalid login credentials.");
         var authToken = await _authenticationService.LoginUser(request.Email, request.Password);
+        await _userRepository.MarkOnline(user.Id);
         return new Tuple<Guid, string>(user.Id, authToken);
     }
 }

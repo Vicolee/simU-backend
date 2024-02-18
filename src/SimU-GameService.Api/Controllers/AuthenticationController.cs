@@ -29,6 +29,7 @@ public class AuthenticationController : ControllerBase
         var idTokenPair = await _mediator.Send(
             new LoginUserCommand(request.Email, request.Password))
             ?? throw new BadRequestException("Invalid email or password.");
+
         return Ok(new AuthenticationResponse(idTokenPair.Item1, idTokenPair.Item2));
     }
 }

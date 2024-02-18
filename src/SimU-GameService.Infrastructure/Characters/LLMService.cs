@@ -4,7 +4,7 @@ using SimU_GameService.Application.Abstractions.Repositories;
 using SimU_GameService.Application.Common.Exceptions;
 using SimU_GameService.Domain.Models;
 
-namespace SimU_GameService.Agents;
+namespace SimU_GameService.Infrastructure.Characters;
 
 public class LLMService : ILLMService
 {
