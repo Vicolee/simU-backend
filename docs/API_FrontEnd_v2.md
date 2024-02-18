@@ -430,6 +430,7 @@ This endpoint returns the user object for the user with the given `id`.
 {
     "id": "00000000-0000-0000-0000-000000000000",
     "username": "string",
+    "summary": "string",
     "email": "string",
     "location": {
         "x_coord": "int",
@@ -437,9 +438,8 @@ This endpoint returns the user object for the user with the given `id`.
     },
     "createdTime": "2024-01-01T00:01:00Z",
     "isOnline": true,
-    "isCreator": false,
     "sprite_URL": "string",
-    "sprite_headshot_URL" : "string"
+    "sprite_headshot_URL": "string"
 }
 ```
 
