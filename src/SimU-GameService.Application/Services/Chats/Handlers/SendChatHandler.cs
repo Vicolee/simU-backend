@@ -87,7 +87,7 @@ public class SendChatHandler : IRequestHandler<SendChatCommand, string?>
 
         await _chatRepository.AddChat(chat);
 
-        await _conversationRepository.UpdateLastMessageTime(conversationId.Value);
+        await _conversationRepository.UpdateLastMessageSentAt(conversationId.Value);
 
         if (receiverAsAgent != null)
         {

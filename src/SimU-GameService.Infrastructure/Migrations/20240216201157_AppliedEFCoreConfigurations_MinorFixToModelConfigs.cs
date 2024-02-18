@@ -197,7 +197,7 @@ namespace SimU_GameService.Infrastructure.Migrations
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
                     CreatedTime = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    LastMessageTime = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    LastMessageSentAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     Participants = table.Column<List<Guid>>(type: "uuid[]", nullable: false),
                     IsGroupChat = table.Column<bool>(type: "boolean", nullable: false),
                     IsConversationOver = table.Column<bool>(type: "boolean", nullable: false)

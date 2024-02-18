@@ -19,7 +19,7 @@ public class LLMService : ILLMService
         _httpClient = httpClient;
     }
 
-    public Task EndConversation(Guid conversationID, IEnumerable<Guid> participants)
+    public async Task EndConversation(Guid conversationID, IEnumerable<Guid> participants)
     {
         throw new NotImplementedException();
     }

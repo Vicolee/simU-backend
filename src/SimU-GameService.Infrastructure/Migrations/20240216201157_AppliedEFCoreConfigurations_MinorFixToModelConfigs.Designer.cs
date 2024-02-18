@@ -108,7 +108,7 @@ namespace SimU_GameService.Infrastructure.Migrations
                     b.Property<bool>("IsGroupChat")
                         .HasColumnType("boolean");
 
-                    b.Property<DateTime>("LastMessageTime")
+                    b.Property<DateTime>("LastMessageSentAt")
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<List<Guid>>("Participants")
