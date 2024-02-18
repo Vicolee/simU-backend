@@ -11,7 +11,7 @@ namespace SimU_GameService.Infrastructure.Characters;
 
 public class OnlineStatusService : IHostedService, IOnlineStatusService
 {
-   private Dictionary<Guid, bool> _userResponses;
+    private readonly Dictionary<Guid, bool> _userResponses;
     private Timer? _timer;
     private readonly IUserRepository _userRepository;
     private readonly IChatRepository _chatRepository;
@@ -19,6 +19,7 @@ public class OnlineStatusService : IHostedService, IOnlineStatusService
 
     public OnlineStatusService(IUserRepository userRepository, IChatRepository chatRepository, HttpClient httpClient)
     {
+        _userResponses = new Dictionary<Guid, bool>();
         _userRepository = userRepository;
         _chatRepository = chatRepository;
         _httpClient = httpClient;
@@ -26,7 +27,6 @@ public class OnlineStatusService : IHostedService, IOnlineStatusService
 
     public Task StartAsync(CancellationToken cancellationToken)
     {
-        _userResponses = new Dictionary<Guid, bool>();
        _timer = new Timer(state => CheckOnlineStatus(), null, TimeSpan.Zero, TimeSpan.FromMinutes(5));
        return Task.CompletedTask;
     }
