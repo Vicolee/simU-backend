@@ -271,10 +271,11 @@ Adds a user to a worlds' list of users
 
 ```json
 {
-    "worldId": "00000000-0000-0000-0000-000000000000",
-    "worldName": "string",
-    "thumbnailURL": "https://world-pic.png"
-
+    "id": "00000000-0000-0000-0000-000000000000",
+    "creatorId": "00000000-0000-0000-0000-000000000000",
+    "name": "string",
+    "description": "string",
+    "thumbnail_URL": "https://world-pic.png"
 }
 ```
 
