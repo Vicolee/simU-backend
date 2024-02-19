@@ -429,29 +429,11 @@ This endpoint returns the user object for the user with the given `id`.
 
 #### Description
 
-Grabs the GPT summary generated for a user.
+Returns the GPT summary generated for a user.
 
 #### Request
 
 `GET /users/{userId}/summary`
-
-#### Response
-
-```json
-{
-    "summary": "string"
-}
-```
-
-### UpdateUserSummary
-
-#### Description
-
-Updates the user's summary according to the revisions they made to it.
-
-#### Request
-
-`POST /users/{userId}/summary`
 
 #### Response
 
@@ -484,20 +466,6 @@ Returns the list of worlds that a user belongs to.
 ]
 ```
 
-### RemoveWorldFromList
-
-#### Description
-
-Removes a world from the list of worlds that a user belongs to.
-
-#### Request
-
-`DELETE /worlds/{worldId}/users/{userId}`
-
-#### Response
-
-`No Content`
-
 ### UpdateSprite
 
 #### Description
@@ -518,34 +486,6 @@ Updates a user's sprite by providing a text description or the URL to a photo th
 #### Response
 
 `No Content`
-
-### UpdateLocation
-
-#### Description
-
-Updates the user’s location in the map whenever a user changes location in the game.
-
-#### Function prototype
-
-```csharp
-Task UpdateLocation(Location location);
-public record Location(int X_coord, int Y_coord);
-```
-
-#### Request
-
-```csharp
-Location location = new Location(0, 0);
-HubConnection.SendAsync("UpdateLocation", location)
-```
-
-#### Response
-
-The `UpdateLocation` callback on the server will broadcast the user’s new location to all other clients using the client-side `UpdateLocation` callback as shown below:
-
-```csharp
-await Clients.All.SendAsync("UpdateLocation", userId, location);
-```
 
 ## Agent Endpoints
 
@@ -626,30 +566,6 @@ Grabs the GPT summary generated for an AI agent.
 ```
 
 ## Chat Endpoints
-
-### SendChat
-
-#### Description
-
-Sends a message to a user/group through the server.
-
-#### Function prototype
-
-```csharp
-Task SendChat(Guid receiverId, string message);
-```
-
-#### Request
-
-```csharp
-Guid receiverId = Guid.NewGuid();
-string message = "Example message"
-HubConnection.SendAsync("SendChat", receiverId, message)
-```
-
-#### Response
-
-The `SendChat` callback on the server will forward the message to the `User` or `Group` matching the `receiverId`.
 
 ### DeleteChat
 
@@ -894,6 +810,56 @@ Returns the responses for a specific question regarding a specific user or agent
 ```
 
 - Note: There can be multiple responses for one question.
+
+## SignalR Endpoints
+
+### UpdateLocation
+
+#### Description
+
+Updates the user’s location in the map whenever a user changes location in the game.
+
+#### Function prototype
+
+```csharp
+Task UpdateLocation(Location location);
+```
+
+#### Request
+
+```csharp
+HubConnection.SendAsync("UpdateLocation", new Location(0, 0))
+```
+
+#### Response
+
+The `UpdateLocation` callback on the server will broadcast the user’s new location to all other clients using the client-side `UpdateLocation` callback as shown below:
+
+```csharp
+await Clients.All.SendAsync("UpdateLocation", userId, location);
+```
+
+### SendChat
+
+#### Description
+
+Sends a message to a user/group through the server.
+
+#### Function prototype
+
+```csharp
+Task SendChat(Guid receiverId, string message);
+```
+
+#### Request
+
+```csharp
+HubConnection.SendAsync("SendChat", Guid.NewGuid(), "Example message")
+```
+
+#### Response
+
+The `SendChat` callback on the server will forward the message to the `User` or `Group` matching the `receiverId`.
 
 ## Additional endpoints/suggestions
 

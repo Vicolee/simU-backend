@@ -5,6 +5,7 @@ using SimU_GameService.Api.Common;
 using SimU_GameService.Application.Common.Exceptions;
 using SimU_GameService.Application.Services.Users.Commands;
 using SimU_GameService.Application.Services.Users.Queries;
+using SimU_GameService.Contracts.Requests;
 using SimU_GameService.Contracts.Responses;
 
 namespace SimU_GameService.Api.Controllers;
@@ -50,5 +51,18 @@ public class UsersController : ControllerBase
     {
         var worlds = await _mediator.Send(new GetUserWorldsQuery(id));
         return Ok(worlds.Select(_mapper.MapToWorldResponse));
+    }
+
+    [HttpGet("{id}/summary", Name = "GetUserSummary")]
+    public async Task<ActionResult<SummaryResponse>> GetUserSummary(Guid id)
+    {
+        var summary = await _mediator.Send(new GetUserSummaryQuery(id));
+        return Ok(new SummaryResponse(summary ?? default!));
+    }
+
+    [HttpPut("{id}/sprite", Name = "UpdateSprite")]
+    public Task<ActionResult> UpdateSprite(Guid id, UpdateSpriteRequest request)
+    {
+        throw new NotImplementedException();
     }
 }
