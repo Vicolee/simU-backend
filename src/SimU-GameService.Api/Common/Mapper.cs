@@ -16,14 +16,18 @@ public class Mapper : IMapper
             world.ThumbnailURL
         );
 
-    public UserResponse MapToUserResponse(User creator) => new
+    public UserResponse MapToUserResponse(User user) => new
         (
-            creator.Username,
-            creator.Email,
-            creator.Description,
-            creator.Location?.X_coord ?? default,
-            creator.Location?.Y_coord ?? default,
-            creator.CreatedTime
+            user.Id,
+            user.Username,
+            user.Email,
+            user.Summary,
+            user.Description,
+            user.Location,
+            user.CreatedTime,
+            user.IsOnline,
+            user.SpriteURL,
+            user.SpriteHeadshotURL
         );
 
     public AgentResponse MapToAgentResponse(Agent agent) => new
@@ -32,8 +36,7 @@ public class Mapper : IMapper
             agent.Username,
             agent.Description,
             agent.Summary,
-            agent.Location?.X_coord ?? default,
-            agent.Location?.Y_coord ?? default,
+            agent.Location,
             agent.CreatorId,
             agent.IsHatched,
             agent.SpriteURL,
@@ -67,6 +70,19 @@ public class Mapper : IMapper
             response.ResponderId,
             response.Content
         );
+
+    public WorldAgentResponse MapToWorldAgentResponse(Agent agent) => new
+        (
+            agent.Id,
+            agent.Username,
+            agent.Description,
+            agent.Summary,
+            agent.Location,
+            agent.IsHatched,
+            agent.HatchTime,
+            agent.SpriteURL,
+            agent.SpriteHeadshotURL
+        );
 }
 
 public interface IMapper
@@ -74,6 +90,7 @@ public interface IMapper
     WorldResponse MapToWorldResponse(World world);
     UserResponse MapToUserResponse(User creator);
     AgentResponse MapToAgentResponse(Agent agent);
+    WorldAgentResponse MapToWorldAgentResponse(Agent agent);
     IncubatingAgentResponse MapToIncubatingAgentResponse(Agent agent);
     QuestionResponse MapToQuestionResponse(Question question);
     PostResponsesCommand MapToPostResponsesCommand(ResponsesRequest request);

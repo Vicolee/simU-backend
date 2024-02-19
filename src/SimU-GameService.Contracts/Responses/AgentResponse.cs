@@ -1,3 +1,5 @@
+using SimU_GameService.Domain.Models;
+
 namespace SimU_GameService.Contracts.Responses;
 
 public record AgentResponse(
@@ -5,8 +7,7 @@ public record AgentResponse(
     string Username,
     string? Description,
     string? Summary,
-    int X_coord,
-    int Y_coord,
+    Location? Location,
     Guid CreatorId,
     bool IsHatched,
     Uri? Sprite_URL,

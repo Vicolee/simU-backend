@@ -78,7 +78,7 @@ public class WorldsController : ControllerBase
     public async Task<ActionResult<IEnumerable<WorldAgentResponse>>> GetWorldAgents(Guid id)
     {
         var agents = await _mediator.Send(new GetWorldAgentsQuery(id));
-        return Ok(agents.Select(_mapper.MapToAgentResponse));
+        return Ok(agents.Select(_mapper.MapToWorldAgentResponse));
     }
 
     [Authorize]

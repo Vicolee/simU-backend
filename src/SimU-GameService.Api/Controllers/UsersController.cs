@@ -6,7 +6,6 @@ using SimU_GameService.Application.Common.Exceptions;
 using SimU_GameService.Application.Services.Users.Commands;
 using SimU_GameService.Application.Services.Users.Queries;
 using SimU_GameService.Contracts.Responses;
-using SimU_GameService.Domain.Models;
 
 namespace SimU_GameService.Api.Controllers;
 
@@ -28,16 +27,8 @@ public class UsersController : ControllerBase
     {
         var user = await _mediator.Send(new GetUserQuery(userId))
             ?? throw new NotFoundException(nameof(Domain.Models.User), userId);
-        return Ok(MapUserToUserResponse(user));
+        return Ok(_mapper.MapToUserResponse(user));
     }
-
-    private static UserResponse MapUserToUserResponse(User user) => new(
-        user.Username,
-        user.Email,
-        user.Description,
-        user.Location?.X_coord ?? default,
-        user.Location?.Y_coord ?? default,
-        user.CreatedTime);
 
     [Authorize]
     [HttpDelete("{userId}/friends", Name = "RemoveFriend")]

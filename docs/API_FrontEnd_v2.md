@@ -133,7 +133,7 @@ Returns an object containing all the information regarding the world with given 
     "creatorId": "00000000-0000-0000-0000-000000000000",
     "name": "string",
     "description": "string",
-    "privateCode": "5X32AKT6" (8 character code)
+    "privateCode": "5X32AKT6",
     "thumbnail_URL" : "string"
 }
 ```
@@ -143,6 +143,7 @@ Returns an object containing all the information regarding the world with given 
 #### Description
 
 Front-end provides a world's private world code, and the back-end returns the `worldId`, which the front-end can then use to call the "AddUserToWorld" method in the /worlds/ route.
+
 #### Request
 
 `GET /code/{worldCode}`
@@ -235,8 +236,8 @@ Returns a list of all agents (not offline players) that are currently on the spe
             "x_coord": "int",
             "y_coord": "int"
         },
-        "isHatched": bool,
-        "hatchTime": DateTime,
+        "isHatched": true,
+        "hatchTime": "2024-01-01T00:01:00Z",
         "sprite_URL": "string",
         "sprite_headshot_URL" : "string"
     },
@@ -249,8 +250,8 @@ Returns a list of all agents (not offline players) that are currently on the spe
             "x_coord": "int",
             "y_coord": "int"
         },
-        "isHatched": bool,
-        "hatchTime": DateTime,
+        "isHatched": true,
+        "hatchTime": "2024-01-01T00:01:00Z",
         "sprite_URL": "string",
         "sprite_headshot_URL" : "string"
     }
@@ -377,18 +378,11 @@ Returns a list of the IDs of hatched agents.
 
 #### Description
 
-Removes an agent from a world. Only the owner of the world or the creator of the agent can remove it. 
-- `deleterId` refers to the id of the user that is requesting for the agent to be deleted.
+Removes an agent from a world. Only the owner of the world or the creator of the agent can remove it.
 
 #### Request
 
 `DELETE /worlds/{id}/agents/{agentId}`
-
-```json
-{
-    "deleterId": "00000000-0000-0000-0000-000000000000"
-}
-```
 
 #### Response
 
@@ -398,9 +392,7 @@ Removes an agent from a world. Only the owner of the world or the creator of the
 
 #### Description
 
-Kicks a player out of a world. Only the owner of the world can remove users.
-- `userId` is the id of user being removed from the world
-- `ownerId` is the id of owner (the only person who can kick users)
+Kicks a player out of a world. Only the owner of the world can remove users. `userId` is the id of user being removed from the world.
 
 #### Request
 
@@ -841,7 +833,7 @@ Records the users responses to the initial questionnaire or responses to questio
 
 #### Description
 
-Sends the description the user provides when asked, "What does your bot look like?" to the backend. 
+Sends the description the user provides when asked, "What does your bot look like?" to the backend.
 
 #### Request
 
@@ -946,7 +938,6 @@ Notify all users in the same world as user X that user X has logged off the serv
 #### Description
 
 Notify all users in the same world as user X that user X has logged into the server.
-
 
 ## OnlineStatusChecker Endpoint
 
