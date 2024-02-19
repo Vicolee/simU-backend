@@ -235,6 +235,8 @@ Returns a list of all agents (not offline players) that are currently on the spe
             "x_coord": "int",
             "y_coord": "int"
         },
+        "isHatched": bool,
+        "hatchTime": DateTime,
         "sprite_URL": "string",
         "sprite_headshot_URL" : "string"
     },
@@ -247,6 +249,8 @@ Returns a list of all agents (not offline players) that are currently on the spe
             "x_coord": "int",
             "y_coord": "int"
         },
+        "isHatched": bool,
+        "hatchTime": DateTime,
         "sprite_URL": "string",
         "sprite_headshot_URL" : "string"
     }
