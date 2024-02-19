@@ -19,16 +19,21 @@ public class AuthenticationController : ControllerBase
     public async Task<ActionResult<AuthenticationResponse>> RegisterUser(RegisterRequest request)
     {
         await _mediator.Send(new RegisterUserCommand(request.Username, request.Email, request.Password));
-        var idTokenPair = await _mediator.Send(new LoginUserCommand(request.Email, request.Password));
-        return Ok(new AuthenticationResponse(idTokenPair.Item1, idTokenPair.Item2));
+        var (id, authToken) = await _mediator.Send(new LoginUserCommand(request.Email, request.Password));
+        return Ok(new AuthenticationResponse(id, authToken));
     }
 
     [HttpPost("login", Name = "LoginUser")]
     public async Task<ActionResult<AuthenticationResponse>> LoginUser(LoginRequest request)
     {
-        var idTokenPair = await _mediator.Send(
-            new LoginUserCommand(request.Email, request.Password))
-            ?? throw new BadRequestException("Invalid email or password.");
-        return Ok(new AuthenticationResponse(idTokenPair.Item1, idTokenPair.Item2));
+        var (id, authToken) = await _mediator.Send(
+            new LoginUserCommand(request.Email, request.Password));
+        return Ok(new AuthenticationResponse(id, authToken));
+    }
+
+    [HttpPost("{id}/logout", Name = "LogoutUser")]
+    public Task<ActionResult> LogoutUser(Guid id)
+    {
+        throw new NotImplementedException();
     }
 }

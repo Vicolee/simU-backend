@@ -13,6 +13,7 @@ public class Mapper : IMapper
             world.CreatorId,
             world.Name,
             world.Description,
+            world.WorldCode,
             world.ThumbnailURL
         );
 

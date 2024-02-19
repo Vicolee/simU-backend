@@ -79,7 +79,7 @@ Logs out the user from the game.
 
 #### Request
 
-- `PUT /authentication/{id}/logout`
+- `POST /authentication/{id}/logout`
 
 #### Response
 
@@ -146,7 +146,7 @@ Front-end provides a world's private world code, and the back-end returns the `w
 
 #### Request
 
-`GET /code/{worldCode}`
+`GET /{code}`
 
 #### Response
 
@@ -170,7 +170,15 @@ Returns the `id` of the world's creator.
 
 ```json
 {
-    "id": "00000000-0000-0000-0000-000000000000"
+    "id": "00000000-0000-0000-0000-000000000000",
+    "username": "string",
+    "location": {
+        "x_coord": "int",
+        "y_coord": "int"
+    },
+    "isOnline": false,
+    "sprite_URL": "string",
+    "sprite_headshot_URL": "string"
 }
 ```
 
@@ -270,17 +278,7 @@ Adds a user to a worlds' list of users
 
 #### Response
 
-`200 OK`
-
-```json
-{
-    "id": "00000000-0000-0000-0000-000000000000",
-    "creatorId": "00000000-0000-0000-0000-000000000000",
-    "name": "string",
-    "description": "string",
-    "thumbnail_URL": "https://world-pic.png"
-}
-```
+`No Content`
 
 ### AddAgentToWorld
 
@@ -290,13 +288,7 @@ Adds an agent to a worlds' list of agents
 
 #### Request
 
-`POST /worlds/{id}/agents`
-
-```json
-{
-    "agentId": "00000000-0000-0000-0000-000000000000"
-}
-```
+`POST /worlds/{id}/agents/{agentId}`
 
 #### Response
 
@@ -312,17 +304,11 @@ Deletes a world. Note that only the world's creator can delete it.
 
 `DELETE /worlds/{id}`
 
-```json
-{
-    "ownerId": "00000-00000-00000-00000-00000"
-}
-```
-
 #### Response
 
 `No Content`
 
-### GetIncubating
+### GetIncubatingAgents
 
 #### Description
 
@@ -349,7 +335,7 @@ Returns a list of the IDs of currently incubating agents.
 }
 ```
 
-### GetHatched
+### GetHatchedAgents
 
 #### Description
 

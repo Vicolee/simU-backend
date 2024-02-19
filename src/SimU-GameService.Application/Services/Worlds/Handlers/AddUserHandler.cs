@@ -6,7 +6,7 @@ using SimU_GameService.Domain.Models;
 
 namespace SimU_GameService.Application.Services.Worlds.Handlers;
 
-public class AddUserHandler : IRequestHandler<AddUserCommand, World>
+public class AddUserHandler : IRequestHandler<AddUserCommand, Unit>
 {
     private readonly IWorldRepository _worldRepository;
     private readonly IUserRepository _userRepository;
@@ -17,12 +17,11 @@ public class AddUserHandler : IRequestHandler<AddUserCommand, World>
         _userRepository = userRepository;
     }
 
-    public async Task<World> Handle(AddUserCommand request,
+    public async Task<Unit> Handle(AddUserCommand request,
     CancellationToken cancellationToken)
     {
-        var world = await _worldRepository.AddUser(request.WorldId, request.UserId)
-            ?? throw new NotFoundException(nameof(World), request.WorldId);
+        await _worldRepository.AddUser(request.WorldId, request.UserId);
         await _userRepository.AddUserToWorld(request.UserId, request.WorldId, false);
-        return world;
+        return Unit.Value;
     }
 }
