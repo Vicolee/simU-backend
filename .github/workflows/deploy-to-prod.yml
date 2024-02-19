@@ -1,14 +1,11 @@
 name: deploy-to-prod
 
 on:
-  workflow_run:
-    workflows: [ "test-build" ]
-    types:
-      - completed
+  schedule:
+    - cron: '0 1 * * *'
 
 jobs:
   deploy:
-    if: github.event.workflow_run.event == 'push'
     runs-on: ubuntu-latest
 
     steps:
