@@ -427,8 +427,7 @@ This endpoint returns the user object for the user with the given `id`.
     },
     "createdTime": "2024-01-01T00:01:00Z",
     "isOnline": true,
-    "sprite_URL": "string",
-    "sprite_headshot_URL": "string"
+    "spriteAnimations": [1, 4, 2, 3]
 }
 ```
 
@@ -477,7 +476,7 @@ Returns the list of worlds that a user belongs to.
 
 #### Description
 
-Updates a user's sprite by providing a text description or the URL to a photo that will be used to generate the new sprite. We use the `isURL` flag to determine if the user is providing a URL or a description.
+Updates a user's sprite by providing a list of integers that refer to the different customizable parts of their character's sprite.
 
 #### Request
 
@@ -485,14 +484,13 @@ Updates a user's sprite by providing a text description or the URL to a photo th
 
 ```json
 {
-    "description" : "string",
-    "isURL": false
+    "spriteAnimations": [1, 1, 0, 1]
 }
 ```
 
 #### Response
 
-`No Content`
+`200 OK`
 
 ## Agent Endpoints
 
@@ -651,6 +649,31 @@ Gets all the chats sent by the user matching given `id`.
     }
 ]
 ```
+### PromptAgentForQuestion
+
+#### Description
+
+When this route is pinged, the agent will be prompted by the back-end for a question that it will then ask the user (this is so agents can also initiate conversation).
+
+#### Request
+
+`GET /chats/question`
+
+```json
+{
+    "senderId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+    "recipientId": "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+}
+```
+
+#### Response
+
+```json
+[
+    "question": "how are you doing today?"
+]
+```
+
 
 ## Question Endpoints
 
