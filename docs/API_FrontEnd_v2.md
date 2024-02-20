@@ -649,7 +649,7 @@ Gets all the chats sent by the user matching given `id`.
     }
 ]
 ```
-### PromptForQuestion
+### GetQuestion
 
 #### Description
 
