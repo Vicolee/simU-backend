@@ -48,10 +48,10 @@ public class AgentsController : ControllerBase
     }
 
     [HttpPost("{id}/description", Name = "PostDescription")]
-    public async Task<ActionResult> PostDescription(Guid id, DescriptionRequest request)
+    public async Task<ActionResult<SpriteURLsResponse>> PostDescription(Guid id, DescriptionRequest request)
     {
-        await _mediator.Send(
+        var (sprite_URL, sprite_headshot_URL) = await _mediator.Send(
             new PostDescriptionCommand(id, request.Description));
-        return NoContent();
+        return Ok(new SpriteURLsResponse(sprite_URL, sprite_headshot_URL));
     }
 }

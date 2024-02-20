@@ -5,16 +5,21 @@ using SimU_GameService.Application.Services.Users.Commands;
 
 namespace SimU_GameService.Application.Services.Agents.Handlers;
 
-public class PostDescriptionHandler : IRequestHandler<PostDescriptionCommand, Unit>
+public class PostDescriptionHandler : IRequestHandler<PostDescriptionCommand, (Uri, Uri)>
 {
     private readonly IAgentRepository _agentRepository;
+    private readonly ILLMService _llmService;
 
-    public PostDescriptionHandler(IAgentRepository agentRepository)
-        => _agentRepository = agentRepository;
+    public PostDescriptionHandler(IAgentRepository agentRepository, ILLMService llmService)
+    {
+        _agentRepository = agentRepository;
+        _llmService = llmService;
+    }
 
-    public async Task<Unit> Handle(PostDescriptionCommand request, CancellationToken cancellationToken)
+    public async Task<(Uri, Uri)> Handle(PostDescriptionCommand request, CancellationToken cancellationToken)
     {
         await _agentRepository.UpdateDescription(request.AgentId, request.Description);
-        return Unit.Value;
+        var spriteURLs = await _llmService.GenerateSprites(request.AgentId, request.Description);
+        return (spriteURLs["sprite_URL"],spriteURLs["sprite_headshot_URL"]);
     }
 }

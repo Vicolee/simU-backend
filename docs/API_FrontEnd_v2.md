@@ -576,7 +576,7 @@ Grabs the GPT summary generated for an AI agent.
 
 #### Description
 
-Registers an agent's visual description that is provided by the user.
+Posts an agent's visual description that is provided by the user and returns the URL to the updated agent sprite.
 
 #### Request
 
@@ -590,7 +590,12 @@ Registers an agent's visual description that is provided by the user.
 
 #### Response
 
-`No Content`
+```json
+{
+    "sprite_URL" : "string",
+    "sprite_headshot_URL" : "string"
+}
+```
 
 ## Chat Endpoints
 

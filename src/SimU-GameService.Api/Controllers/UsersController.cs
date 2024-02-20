@@ -61,8 +61,9 @@ public class UsersController : ControllerBase
     }
 
     [HttpPut("{id}/sprite", Name = "UpdateSprite")]
-    public Task<ActionResult> UpdateSprite(Guid id, UpdateSpriteRequest request)
+    public async Task<ActionResult> UpdateSprite(Guid id, UpdateSpriteRequest request)
     {
-        throw new NotImplementedException();
+        await _mediator.Send(new UpdateUserSpriteCommand(id, request.Description, request.IsURL));
+        return NoContent();
     }
 }
