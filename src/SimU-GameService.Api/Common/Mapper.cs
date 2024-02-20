@@ -13,6 +13,7 @@ public class Mapper : IMapper
             world.CreatorId,
             world.Name,
             world.Description,
+            world.WorldCode,
             world.ThumbnailURL
         );
 
@@ -83,6 +84,16 @@ public class Mapper : IMapper
             agent.SpriteURL,
             agent.SpriteHeadshotURL
         );
+
+    public ChatResponse MapToChatResponse(Chat chat) => new
+    (
+        chat.Id,
+        chat.SenderId,
+        chat.RecipientId,
+        chat.Content,
+        chat.IsGroupChat,
+        chat.CreatedTime
+    );
 }
 
 public interface IMapper
@@ -96,4 +107,5 @@ public interface IMapper
     PostResponsesCommand MapToPostResponsesCommand(ResponsesRequest request);
     AnswersResponse MapToAnswersResponse(Response response);
     AnswersToQuestionResponse MapToAnswersToQuestionResponse(Response response);
+    ChatResponse MapToChatResponse(Chat chat);
 }

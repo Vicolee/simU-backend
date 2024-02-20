@@ -1,17 +1,18 @@
+using SimU_GameService.Domain.Models;
+
 namespace SimU_GameService.Api.Hubs.Abstractions;
 
 /// <summary>
 /// This interface specifies the methods on the server that can be invoked by the client.
 /// </summary>
-public interface IUnityHub
+public interface IUnityServer
 {
     /// <summary>
-    /// Updates the location of the user to the given <paramref name="x_coord"/> and <paramref name="y_coord"/>
+    /// Updates the location of the user to the given location.
     /// </summary>
-    /// <param name="x_coord"></param>
-    /// <param name="y_coord"></param>
+    /// <param name="location">The user's new coordinates</param>
     /// <returns></returns>
-    Task UpdateLocation(int x_coord, int y_coord);
+    Task UpdateLocation(Location location);
 
     /// <summary>
     /// Sends a friend request to the user with the given <paramref name="userId"/>
@@ -58,4 +59,10 @@ public interface IUnityHub
     /// <param name="message">The actual contents of the message</param>
     /// <returns></returns>
     Task SendChat(Guid receiverId, string message);
+
+    /// <summary>
+    /// Notifies the server that the user is online. We use this to keep track of active users. 
+    /// </summary>
+    /// <returns></returns>
+    Task PingServer();
 }

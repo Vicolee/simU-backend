@@ -2,7 +2,7 @@ name: deploy-to-prod
 
 on:
   schedule:
-    - cron: '0 1 * * *'
+    - cron: '0 6 * * *'
 
 jobs:
   deploy:
@@ -23,8 +23,3 @@ jobs:
         run: |
           chmod +x deploy.sh
           ./deploy.sh
-
-
-
-
-

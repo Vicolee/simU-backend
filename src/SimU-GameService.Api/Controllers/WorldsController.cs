@@ -16,7 +16,7 @@ namespace SimU_GameService.Api.Controllers;
 public class WorldsController : ControllerBase
 {
     private readonly IMediator _mediator;
-    private IMapper _mapper;
+    private readonly IMapper _mapper;
 
     public WorldsController(IMediator mediator, IMapper mapper)
     {
@@ -25,19 +25,26 @@ public class WorldsController : ControllerBase
     }
 
     [HttpPost(Name = "CreateWorld")]
-    public async Task<ActionResult<IdResponse>> CreateWorld(CreateWorldRequest request)
+    public async Task<ActionResult<WorldResponse>> CreateWorld(CreateWorldRequest request)
     {
-        var worldId = await _mediator.Send(
-            new CreateWorldCommand(request.Name, request.Description, request.CreatorId));
-        return new IdResponse(worldId);
+        var world = await _mediator.Send(
+            new CreateWorldCommand(request.Name, request.Description, request.CreatorId))
+            ?? throw new NotFoundException(nameof(World), request.Name);
+        return Ok(_mapper.MapToWorldResponse(world));
     }
 
     [HttpPost("{id}/users/{userId}", Name = "AddUserToWorld")]
-    public async Task<ActionResult<WorldResponse>> AddUserToWorld(Guid id, Guid userId)
+    public async Task<ActionResult> AddUserToWorld(Guid id, Guid userId)
     {
-        var world = await _mediator.Send(
-            new AddUserCommand(id, userId)) ?? throw new NotFoundException(nameof(World), id);
-        return Ok(_mapper.MapToWorldResponse(world));
+        await _mediator.Send(new AddUserCommand(id, userId));
+        return NoContent();
+    }
+
+    [HttpPost("{id}/agents/{agentId}", Name = "AddAgentToWorld")]
+    public async Task<ActionResult> AddAgentToWorld(Guid id, Guid agentId)
+    {
+        await _mediator.Send(new AddAgentCommand(id, agentId));
+        return NoContent();
     }
 
     [HttpGet("{id}", Name = "GetWorld")]
@@ -48,15 +55,11 @@ public class WorldsController : ControllerBase
         return Ok(_mapper.MapToWorldResponse(world));
     }
 
-    [HttpGet("/code/{worldCode}", Name = "GetWorldIdFromWorldCode")]
-    public async Task<ActionResult<IdResponse>> GetWorldIdFromWorldCode(string worldCode)
+    [HttpGet("{code}", Name = "GetWorldIdFromWorldCode")]
+    public async Task<ActionResult<IdResponse>> GetWorldIdFromWorldCode(string code)
     {
-        Guid? worldId = await _mediator.Send(new GetWorldIdFromWorldCodeQuery(worldCode));
-        if (worldId == null)
-        {
-            throw new NotFoundException("World", worldCode);
-        }
-        return new IdResponse(worldId.Value);
+        var worldId = await _mediator.Send(new GetWorldIdFromWorldCodeQuery(code));
+        return new IdResponse(worldId);
     }
 
     [HttpGet("{id}/creator", Name = "GetWorldCreator")]
@@ -112,6 +115,16 @@ public class WorldsController : ControllerBase
         var identityId = User.FindFirst("sub")?.Value
             ?? throw new UnauthorizedAccessException("Error authorizing user");
         await _mediator.Send(new RemoveUserCommand(id, userId, identityId));
+        return NoContent();
+    }
+
+    [Authorize]
+    [HttpDelete("{id}/agents/{agentId}", Name = "RemoveAgentFromWorld")]
+    public async Task<ActionResult> RemoveAgentFromWorld(Guid id, Guid agentId)
+    {
+        var identityId = User.FindFirst("sub")?.Value
+            ?? throw new UnauthorizedAccessException("Error authorizing user");
+        await _mediator.Send(new RemoveAgentCommand(id, agentId, identityId));
         return NoContent();
     }
 }

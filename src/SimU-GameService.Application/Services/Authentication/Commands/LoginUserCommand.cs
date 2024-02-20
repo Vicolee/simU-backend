@@ -2,4 +2,4 @@ using MediatR;
 
 namespace SimU_GameService.Application.Services.Authentication.Commands;
 
-public record LoginUserCommand(string Email, string Password) : IRequest<Tuple<Guid, string>>;
+public record LoginUserCommand(string Email, string Password) : IRequest<(Guid, string)>;

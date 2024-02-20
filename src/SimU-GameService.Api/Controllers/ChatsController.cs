@@ -1,10 +1,13 @@
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using SimU_GameService.Api.Common;
 using SimU_GameService.Application.Common.Exceptions;
 using SimU_GameService.Application.Services.Chats.Commands;
 using SimU_GameService.Application.Services.Chats.Queries;
+using SimU_GameService.Contracts.Requests;
 using SimU_GameService.Contracts.Responses;
+using SimU_GameService.Domain.Models;
 
 namespace SimU_GameService.Api.Controllers;
 
@@ -13,29 +16,27 @@ namespace SimU_GameService.Api.Controllers;
 public class ChatsController : ControllerBase
 {
     private readonly IMediator _mediator;
+    private readonly IMapper _mapper;
 
-    public ChatsController(IMediator mediator) => _mediator = mediator;
+    public ChatsController(IMediator mediator, IMapper mapper)
+    {
+        _mediator = mediator;
+        _mapper = mapper;
+    }
 
     [HttpGet("{chatId}", Name = "GetChat")]
     public async Task<ActionResult<ChatResponse>> GetChat(Guid chatId)
     {
-        var result = await _mediator.Send(new GetChatQuery(chatId))
-            ?? throw new NotFoundException(nameof(Domain.Models.Chat), chatId);
-
-        return Ok(new ChatResponse(
-            result.Id,
-            result.SenderId,
-            result.RecipientId,
-            result.Content,
-            result.IsGroupChat,
-            result.CreatedTime));
+        var chat = await _mediator.Send(new GetChatQuery(chatId))
+            ?? throw new NotFoundException(nameof(Chat), chatId);
+        return Ok(_mapper.MapToChatResponse(chat));
     }
 
     [Authorize]
-    [HttpDelete("{chatId}", Name = "DeleteChat")]
-    public async Task<ActionResult> DeleteChat(Guid chatId)
+    [HttpDelete("{id}", Name = "DeleteChat")]
+    public async Task<ActionResult> DeleteChat(Guid id)
     {
-        await _mediator.Send(new DeleteChatCommand(chatId));
+        await _mediator.Send(new DeleteChatCommand(id));
         return NoContent();
     }
 
@@ -44,44 +45,17 @@ public class ChatsController : ControllerBase
         [FromQuery] Guid senderId)
     {
         var chats = await _mediator.Send(new GetUserChatsQuery(senderId));
-
-        if (chats is null || !chats.Any())
-        {
-            return NotFound(new { message = $"No chats associated with userId {senderId} found." });
-        }
-
-        var response = chats.Select(chat => new ChatResponse(
-            chat.Id,
-            chat.SenderId,
-            chat.RecipientId,
-            chat.Content,
-            chat.IsGroupChat,
-            chat.CreatedTime));
-        return Ok(response);
+        return Ok(chats.Select(_mapper.MapToChatResponse));
     }
 
     [HttpGet("history", Name = "GetChatHistory")]
-    public async Task<ActionResult<IEnumerable<ChatResponse>>> GetChatHistory(
-        [FromQuery] Guid userA_Id, [FromQuery] Guid userB_Id)
+    public async Task<ActionResult<IEnumerable<ChatResponse>>> GetChatHistory(ChatHistoryRequest request)
     {
         var query = new GetChatHistoryQuery(
-            userA_Id,
-            userB_Id);
+            request.ParticipantA_Id,
+            request.ParticipantB_Id);
 
         var chats = await _mediator.Send(query);
-
-        if (chats is null || !chats.Any())
-        {
-            return NotFound(
-                new { message = $"No correspondence between users with IDs {userA_Id} and {userB_Id} found." });
-        }
-
-        return Ok(chats.Select(chat => new ChatResponse(
-            chat.Id,
-            chat.SenderId,
-            chat.RecipientId,
-            chat.Content,
-            chat.IsGroupChat,
-            chat.CreatedTime)));
+        return Ok(chats.Select(_mapper.MapToChatResponse));
     }
 }

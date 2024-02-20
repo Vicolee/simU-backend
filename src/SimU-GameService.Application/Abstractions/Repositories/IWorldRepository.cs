@@ -33,16 +33,16 @@ public interface IWorldRepository
     /// <summary>
     /// Adds a user to world's list of users
     /// </summary>
-    /// <param name="worldId"</param>
-    /// <param name="userId"</param>
+    /// <param name="worldId"></param>
+    /// <param name="userId"></param>
     /// <returns></returns>
-    public Task<World> AddUser(Guid worldId, Guid userId);
+    public Task AddUser(Guid worldId, Guid userId);
 
     /// <summary>
     /// Adds a user to world's list of users
     /// </summary>
-    /// <param name="worldId"</param>
-    /// <param name="agentId"</param>
+    /// <param name="worldId"></param>
+    /// <param name="agentId"></param>
     /// <returns></returns>
     public Task AddAgent(Guid worldId, Guid agentId);
 
@@ -64,20 +64,19 @@ public interface IWorldRepository
     /// Kicks a user from the world
     /// </summary>
     /// <param name="worldId"></param>
+    /// <param name="creatorId"></param>
     /// <param name="userId"></param>
-    /// <param name="ownerId"></param>
     /// <returns></returns>
-    public Task RemoveUser(Guid worldId, Guid userId, Guid ownerId);
+    public Task RemoveUser(Guid worldId, Guid creatorId, Guid userId);
 
     /// <summary>
     /// Deletes an agent from the world
     /// </summary>
     /// <param name="worldId"></param>
+    /// <param name="creatorId"></param>
     /// <param name="agentId"></param>
-    /// <param name="deleterId"></param>
     /// <returns></returns>
-    public Task RemoveAgent(Guid worldId, Guid agentId, Guid deleterId);
-
+    public Task RemoveAgent(Guid worldId, Guid creatorId, Guid agentId);
 
     /// <summary>
     /// Removes a world from the repository
@@ -100,5 +99,5 @@ public interface IWorldRepository
     /// </summary>
     /// <param name="worldCode"></param>
     /// <returns></returns>
-    public  Task<Guid?> MatchWorldCodeToWorldId(string worldCode);
+    public  Task<Guid?> GetWorldIdByWorldCode(string worldCode);
 }
