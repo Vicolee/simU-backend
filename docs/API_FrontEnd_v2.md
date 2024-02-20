@@ -649,11 +649,11 @@ Gets all the chats sent by the user matching given `id`.
     }
 ]
 ```
-### PromptAgentForQuestion
+### PromptForQuestion
 
 #### Description
 
-When this route is pinged, the agent will be prompted by the back-end for a question that it will then ask the user (this is so agents can also initiate conversation).
+When this route is pinged, the AI Service will be prompted by the back-end for a question from either an agent or offline user it is in charge of responding for. The question will be generated and then sent back to the front-end to the user (this is so agents can also initiate conversation).
 
 #### Request
 
