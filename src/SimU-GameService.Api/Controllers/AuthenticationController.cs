@@ -1,6 +1,5 @@
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using SimU_GameService.Application.Common.Exceptions;
 using SimU_GameService.Application.Services.Authentication.Commands;
 using SimU_GameService.Contracts.Requests;
 using SimU_GameService.Contracts.Responses;
@@ -31,7 +30,7 @@ public class AuthenticationController : ControllerBase
         return Ok(new AuthenticationResponse(id, authToken));
     }
 
-    [HttpPost("{id}/logout", Name = "LogoutUser")]
+    [HttpPost("logout/{id}", Name = "LogoutUser")]
     public Task<ActionResult> LogoutUser(Guid id)
     {
         throw new NotImplementedException();

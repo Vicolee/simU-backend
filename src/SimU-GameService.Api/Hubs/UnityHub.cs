@@ -7,6 +7,7 @@ using SimU_GameService.Application.Common.Exceptions;
 using SimU_GameService.Application.Services.Chats.Commands;
 using SimU_GameService.Application.Services.Groups.Commands;
 using SimU_GameService.Application.Services.Users.Commands;
+using SimU_GameService.Domain.Models;
 
 namespace SimU_GameService.Api.Hubs;
 
@@ -14,7 +15,7 @@ namespace SimU_GameService.Api.Hubs;
 /// This class defines the methods on the server that can be invoked by the SignalR Unity client.
 /// </summary>
 [SignalRHub]
-public class UnityHub : Hub<IUnityClient>,  IUnityHub
+public class UnityHub : Hub<IUnityClient>, IUnityServer
 {
     private readonly IMediator _mediator;
     private static readonly ConcurrentDictionary<Guid, string> _connectionMap = new();
@@ -61,7 +62,7 @@ public class UnityHub : Hub<IUnityClient>,  IUnityHub
             throw new NotFoundException($"Connection ID for user", userId);
         }
         await Clients.Client(connectionId)
-            .ReceiveMessage(nameof(UnityHub), $"You have been added to a group with ID {groupId}");
+            .MessageHandler(nameof(UnityHub), $"You have been added to a group with ID {groupId}");
     }
 
     /// <inheritdoc/>
@@ -82,7 +83,7 @@ public class UnityHub : Hub<IUnityClient>,  IUnityHub
             throw new NotFoundException($"Connection ID for group admin", ownerId);
         }
 
-        await Clients.Client(connectionId).AddToGroupRequest(groupId, userId);
+        await Clients.Client(connectionId).JoinGroupRequestHandler(groupId, userId);
     }
 
     /// <inheritdoc/>
@@ -100,7 +101,7 @@ public class UnityHub : Hub<IUnityClient>,  IUnityHub
             throw new NotFoundException($"Connection ID for user", userId);
         }
         await Clients.Client(connectionId)
-            .ReceiveMessage(nameof(UnityHub), $"You have been removed from a group with ID {groupId}");
+            .MessageHandler(nameof(UnityHub), $"You have been removed from a group with ID {groupId}");
     }
 
     /// <inheritdoc/>
@@ -121,7 +122,7 @@ public class UnityHub : Hub<IUnityClient>,  IUnityHub
             throw new NotFoundException($"Connection ID for user", userId);
         }
         await Clients.Client(connectionId)
-            .ReceiveMessage(nameof(UnityHub), $"Your friend request to user with ID {responderId} has been {(accepted ? "accepted" : "rejected")}.");
+            .MessageHandler(nameof(UnityHub), $"Your friend request to user with ID {responderId} has been {(accepted ? "accepted" : "rejected")}.");
     }
 
     /// <inheritdoc/>
@@ -138,7 +139,7 @@ public class UnityHub : Hub<IUnityClient>,  IUnityHub
             throw new NotFoundException($"Connection ID for user", userId);
         }
         await Clients.Client(connectionId)
-            .ReceiveMessage(nameof(UnityHub), $"You have received a friend request from {requesterId}");
+            .MessageHandler(nameof(UnityHub), $"You have received a friend request from {requesterId}");
     }
 
     /// <inheritdoc/>
@@ -152,19 +153,24 @@ public class UnityHub : Hub<IUnityClient>,  IUnityHub
         // TODO: figure out how to implement group notifications
         if (_connectionMap.TryGetValue(receiverId, out string? connectionId))
         {
-            await Clients.Client(connectionId).ReceiveMessage(senderId.ToString(), message);
+            await Clients.Client(connectionId).MessageHandler(senderId.ToString(), message);
         }
     }
 
     /// <inheritdoc/>
-    public async Task UpdateLocation(int x_coord, int y_coord)
+    public async Task UpdateLocation(Location location)
     {
         var senderId = GetUserIdFromConnectionMap() ??
             throw new NotFoundException($"User ID mapping to connection ID {Context.ConnectionId}");
-
-        await _mediator.Send(new UpdateLocationCommand(senderId, x_coord, y_coord));
+        await _mediator.Send(new UpdateLocationCommand(senderId, location.X_coord, location.Y_coord));
 
         // broadcast location update to all users
-        await Clients.All.ReceiveMessage(nameof(UnityHub), $"User {senderId} has moved to ({x_coord}, {y_coord})");
+        await Clients.All.MessageHandler(nameof(UnityHub),
+             $"User {senderId} has moved to ({location.X_coord}, {location.Y_coord})");
+    }
+
+    public Task PingServer()
+    {
+        throw new NotImplementedException();
     }
 }

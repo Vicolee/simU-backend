@@ -9,6 +9,7 @@
 - [Agent Endpoints](#agent-endpoints)
 - [Chat Endpoints](#chat-endpoints)
 - [Question Endpoints](#question-endpoints)
+- [SignalR Endpoints](#signalr-endpoints)
 
 ## Notes
 
@@ -79,7 +80,7 @@ Logs out the user from the game.
 
 #### Request
 
-- `POST /authentication/{id}/logout`
+- `POST /authentication/logout/{id}`
 
 #### Response
 
@@ -109,8 +110,11 @@ Creates a new world.
 
 ```json
 {
-    "id": "00000000-0000-0000-0000-000000000000"
+    "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+    "creatorId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
     "name": "string",
+    "description": "string",
+    "worldCode": "string",
     "thumbnail_URL": "string"
 }
 ```
@@ -129,12 +133,12 @@ Returns an object containing all the information regarding the world with given 
 
 ```json
 {
-    "id": "00000000-0000-0000-0000-000000000000",
-    "creatorId": "00000000-0000-0000-0000-000000000000",
+    "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+    "creatorId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
     "name": "string",
     "description": "string",
-    "privateCode": "5X32AKT6",
-    "thumbnail_URL" : "string"
+    "worldCode": "string",
+    "thumbnail_URL": "string"
 }
 ```
 
@@ -146,7 +150,7 @@ Front-end provides a world's private world code, and the back-end returns the `w
 
 #### Request
 
-`GET /{code}`
+`GET /worlds/{code}`
 
 #### Response
 
@@ -177,6 +181,7 @@ Returns the `id` of the world's creator.
         "y_coord": "int"
     },
     "isOnline": false,
+    "isCreator": false,
     "sprite_URL": "string",
     "sprite_headshot_URL": "string"
 }
@@ -204,6 +209,7 @@ Returns a list of all users that are active in the specified world (both online 
             "y_coord": "int"
         },
         "isOnline": false,
+        "isCreator": false,
         "sprite_URL": "string",
         "sprite_headshot_URL": "string"
     },
@@ -215,6 +221,7 @@ Returns a list of all users that are active in the specified world (both online 
             "y_coord": "int"
         },
         "isOnline": true,
+        "isCreator": true,
         "sprite_URL": "string",
         "sprite_headshot_URL": "string"
     }
@@ -474,7 +481,7 @@ Updates a user's sprite by providing a text description or the URL to a photo th
 
 #### Request
 
-`POST /users/{id}/sprite`
+`PUT /users/{id}/sprite`
 
 ```json
 {
@@ -662,11 +669,11 @@ Returns the questions a user responds to in order to create their own character 
 ```json
 [
     {
-        "id": "int",
+        "id": "string",
         "question": "string"
     },
     {
-        "id": "int",
+        "id": "string",
         "question": "string"
     }
 ]
@@ -731,15 +738,15 @@ Records the users responses to the initial questionnaire or responses to questio
 
 `No Content`
 
-### SendAgentVisualDescription
+### PostDescription
 
 #### Description
 
-Sends the description the user provides when asked, "What does your bot look like?" to the backend.
+Posts an agent's visual description that is provided by the user and returns the URL to the updated agent sprite.
 
 #### Request
 
-`POST /agents/{id}/visual
+`POST /agents/{id}/description`
 
 ```json
 {
@@ -813,6 +820,13 @@ Returns the responses for a specific question regarding a specific user or agent
 
 ## SignalR Endpoints
 
+The SignalR endpoints are defined in the [`IUnityServer`](../src/SimU-GameService.Api/Hubs/Abstractions/IUnityServer.cs) and [`UnityServer`](../src/SimU-GameService.Api/Hubs/UnityServer.cs) files.
+
+- `IUnityServer` defines the contract for methods on the server hub that can be invoked by the client.
+- `IUnityClient` defines the contract for methods (that should be) defined on the client that can be invoked by the server.
+
+As an implementation reference, the `UpdateLocation` method is defined below.
+
 ### UpdateLocation
 
 #### Description
@@ -833,7 +847,7 @@ HubConnection.SendAsync("UpdateLocation", new Location(0, 0))
 
 #### Response
 
-The `UpdateLocation` callback on the server will broadcast the user’s new location to all other clients using the client-side `UpdateLocation` callback as shown below:
+The `UpdateLocation` method on the server will broadcast the user’s new location to all other clients as shown below:
 
 ```csharp
 await Clients.All.SendAsync("UpdateLocation", userId, location);
@@ -859,50 +873,4 @@ HubConnection.SendAsync("SendChat", Guid.NewGuid(), "Example message")
 
 #### Response
 
-The `SendChat` callback on the server will forward the message to the `User` or `Group` matching the `receiverId`.
-
-## Additional endpoints/suggestions
-
-### LogoutUser
-
-#### Description
-
-Allows the front-end to notify the backend that the user has exited the app, so that the back-end can change the users status from online to offline.
-
-#### Request
-
-`PUT /authentication/logout/{userId}`
-
-#### Response
-
-`No Content`
-
-*Note*: `BroadcastUserLogOut` and `BroadcastUserLogin` below are not endpoints but rather service functions that will be implemented using SignalR.
-
-### BroadcastUserLogOut
-
-#### Description
-
-Notify all users in the same world as user X that user X has logged off the server.
-
-### BroadcastUserLogin
-
-#### Description
-
-Notify all users in the same world as user X that user X has logged into the server.
-
-## OnlineStatusChecker Endpoint
-
-### OnlineStatus
-
-#### Description
-
-Signal R - user responds to a Signal R activity status checker message. This status checker message is sent every 5 minutes to the user on the front-end. They have 3 minutes to respond and declare their online status. If they fail to respond within the 3 minute window, they will be marked as offline.
-
-#### Request
-
-TO DO: FILL THIS OUT
-
-#### Response
-
-TO DO: FILL THIS OUT
+The `MessageHandler` method on the server will forward the message to the `User` or `Group` matching the `receiverId`.
