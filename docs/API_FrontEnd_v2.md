@@ -669,11 +669,11 @@ Returns the questions a user responds to in order to create their own character 
 ```json
 [
     {
-        "id": "string",
+        "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
         "question": "string"
     },
     {
-        "id": "string",
+        "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
         "question": "string"
     }
 ]
@@ -694,11 +694,11 @@ Returns the questions used when training an agent.
 ```json
 [
     {
-        "id": "int",
+        "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
         "question": "string"
     },
     {
-        "id": "int",
+        "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
         "question": "string"
     }
 ]
