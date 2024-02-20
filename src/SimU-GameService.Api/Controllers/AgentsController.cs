@@ -4,6 +4,7 @@ using SimU_GameService.Api.Common;
 using SimU_GameService.Application.Common.Exceptions;
 using SimU_GameService.Application.Services.Agents.Commands;
 using SimU_GameService.Application.Services.Agents.Queries;
+using SimU_GameService.Application.Services.Users.Commands;
 using SimU_GameService.Contracts.Requests;
 using SimU_GameService.Contracts.Responses;
 using SimU_GameService.Domain.Models;
@@ -44,5 +45,13 @@ public class AgentsController : ControllerBase
     {
         var agentSummary = await _mediator.Send(new GetAgentSummaryQuery(id));
         return Ok(new SummaryResponse(agentSummary ?? string.Empty));
+    }
+
+    [HttpPost("{id}/description", Name = "PostDescription")]
+    public async Task<ActionResult> PostDescription(Guid id, DescriptionRequest request)
+    {
+        await _mediator.Send(
+            new PostDescriptionCommand(id, request.Description));
+        return NoContent();
     }
 }
