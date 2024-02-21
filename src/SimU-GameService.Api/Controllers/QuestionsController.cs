@@ -65,10 +65,4 @@ public class QuestionsController : ControllerBase
         var responses = await _mediator.Send(new GetResponsesToQuestionQuery(targetId, questionId));
         return Ok(responses.Select(_mapper.MapToAnswersToQuestionResponse));
     }
-
-    [HttpPost("{id}/description", Name = "PostDescription")]
-    public Task<ActionResult<UriResponse>> PostDescription(Guid id, DescriptionRequest request)
-    {
-        throw new NotImplementedException();
-    }
 }

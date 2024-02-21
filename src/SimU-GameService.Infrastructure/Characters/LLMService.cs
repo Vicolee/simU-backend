@@ -29,7 +29,10 @@ public class LLMService : ILLMService
         throw new NotImplementedException();
     }
 
-    public Task<Dictionary<string, Uri>> GenerateSprites(Guid userId, string description, Uri photo_URL)
+    public Task<Dictionary<string, Uri>> GenerateSprites(
+        Guid userId,
+        string description = default!,
+        Uri photo_URL = default!)
     {
         throw new NotImplementedException();
     }

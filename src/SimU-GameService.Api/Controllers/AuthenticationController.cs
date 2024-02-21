@@ -1,6 +1,7 @@
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using SimU_GameService.Application.Services.Authentication.Commands;
+using SimU_GameService.Application.Services.Users.Commands;
 using SimU_GameService.Contracts.Requests;
 using SimU_GameService.Contracts.Responses;
 
@@ -31,8 +32,9 @@ public class AuthenticationController : ControllerBase
     }
 
     [HttpPost("logout/{id}", Name = "LogoutUser")]
-    public Task<ActionResult> LogoutUser(Guid id)
+    public async Task<ActionResult> LogoutUser(Guid id)
     {
-        throw new NotImplementedException();
+        await _mediator.Send(new LogoutUserCommand(id));
+        return NoContent();
     }
 }

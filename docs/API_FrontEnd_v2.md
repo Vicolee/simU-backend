@@ -570,6 +570,31 @@ Grabs the GPT summary generated for an AI agent.
 }
 ```
 
+### PostDescription
+
+#### Description
+
+Posts an agent's visual description that is provided by the user and returns the URL to the updated agent sprite.
+
+#### Request
+
+`POST /agents/{id}/description`
+
+```json
+{
+    "description" : "string"
+}
+```
+
+#### Response
+
+```json
+{
+    "sprite_URL" : "string",
+    "sprite_headshot_URL" : "string"
+}
+```
+
 ## Chat Endpoints
 
 ### DeleteChat
@@ -761,30 +786,6 @@ Records the users responses to the initial questionnaire or responses to questio
 
 `No Content`
 
-### PostDescription
-
-#### Description
-
-Posts an agent's visual description that is provided by the user and returns the URL to the updated agent sprite.
-
-#### Request
-
-`POST /agents/{id}/description`
-
-```json
-{
-    "description" : "string"
-}
-```
-
-#### Response
-
-```json
-{
-    "sprite_URL" : "string"
-}
-```
-
 ### GetResponses
 
 #### Description
@@ -843,7 +844,7 @@ Returns the responses for a specific question regarding a specific user or agent
 
 ## SignalR Endpoints
 
-The SignalR endpoints are defined in the [`IUnityServer`](../src/SimU-GameService.Api/Hubs/Abstractions/IUnityServer.cs) and [`UnityServer`](../src/SimU-GameService.Api/Hubs/UnityServer.cs) files.
+The SignalR endpoints are defined in the [`IUnityServer`](../src/SimU-GameService.Api/Hubs/Abstractions/IUnityServer.cs) and [`IUnityClient`](../src/SimU-GameService.Api/Hubs/Abstractions/IUnityClient.cs) interfaces.
 
 - `IUnityServer` defines the contract for methods on the server hub that can be invoked by the client.
 - `IUnityClient` defines the contract for methods (that should be) defined on the client that can be invoked by the server.
