@@ -570,7 +570,7 @@ Grabs the GPT summary generated for an AI agent.
 }
 ```
 
-### PostDescription
+### PostVisualDescription
 
 #### Description
 
