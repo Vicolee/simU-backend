@@ -1,22 +1,18 @@
-using System.Net.Http.Json;
 using SimU_GameService.Application.Abstractions.Services;
 using SimU_GameService.Application.Abstractions.Repositories;
-using SimU_GameService.Application.Common.Exceptions;
-using SimU_GameService.Domain.Models;
 using Microsoft.Extensions.Hosting;
-using Newtonsoft.Json;
-using System.Text;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace SimU_GameService.Infrastructure.Characters;
 
 public class ConversationStatusService : IHostedService, IConversationStatusService
 {
     private Timer? _timer;
-    private readonly IConversationRepository _conversationRepository;
+    private readonly IServiceScopeFactory _serviceScopeFactory;
 
-    public ConversationStatusService(IConversationRepository conversationRepository)
+    public ConversationStatusService(IServiceScopeFactory serviceScopeFactory)
     {
-        _conversationRepository = conversationRepository;
+        _serviceScopeFactory = serviceScopeFactory;
     }
 
     public Task StartAsync(CancellationToken cancellationToken)
@@ -27,13 +23,17 @@ public class ConversationStatusService : IHostedService, IConversationStatusServ
 
     public async void CheckConversations(object? state)
     {
-        var activeConversations = await _conversationRepository.GetActiveConversations();
-
-        foreach (var conversation in activeConversations)
+        using (var scope = _serviceScopeFactory.CreateScope())
         {
-            if (DateTime.UtcNow - conversation.LastMessageSentAt > TimeSpan.FromMinutes(15))
+            var conversationRepository = scope.ServiceProvider.GetRequiredService<IConversationRepository>();
+            var activeConversations = await conversationRepository.GetActiveConversations();
+
+            foreach (var conversation in activeConversations)
             {
-                await _conversationRepository.MarkConversationAsOver(conversation.Id);
+                if (DateTime.UtcNow - conversation.LastMessageSentAt > TimeSpan.FromMinutes(15))
+                {
+                    await conversationRepository.MarkConversationAsOver(conversation.Id);
+                }
             }
         }
     }

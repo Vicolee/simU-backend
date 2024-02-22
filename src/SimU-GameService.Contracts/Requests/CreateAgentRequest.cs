@@ -4,4 +4,6 @@ public record CreateAgentRequest(
     string Username,
     string Description,
     Guid CreatorId,
-    float IncubationDurationInHours);
+    float IncubationDurationInHours,
+    Uri SpriteURL,
+    Uri SpriteHeadshotURL);

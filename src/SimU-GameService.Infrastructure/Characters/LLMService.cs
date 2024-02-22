@@ -54,7 +54,7 @@ public class LLMService : ILLMService
             isRecipientUser
         };
 
-        var response = await _httpClient.PostAsJsonAsync("", request);
+        var response = await _httpClient.PostAsJsonAsync("/agents/prompt", request);
         var responseContent = await response.Content.ReadAsStringAsync();
 
         // throw exception if the request failed
@@ -79,7 +79,7 @@ public class LLMService : ILLMService
             isRecipientUser
         };
 
-        var response = await _httpClient.PostAsJsonAsync("", request);
+        var response = await _httpClient.PostAsJsonAsync("/agents/question", request);
         var responseContent = await response.Content.ReadAsStringAsync();
 
         // throw exception if the request failed
@@ -124,7 +124,7 @@ public class LLMService : ILLMService
             participants
         };
 
-        var response = await _httpClient.PostAsJsonAsync("", request);
+        var response = await _httpClient.PostAsJsonAsync("/agents/endConversation", request);
 
         // throw exception if the request failed
         if (response.StatusCode != System.Net.HttpStatusCode.OK)
@@ -164,7 +164,7 @@ public class LLMService : ILLMService
             answers
         };
 
-        var response = await _httpClient.PostAsJsonAsync("", request);
+        var response = await _httpClient.PostAsJsonAsync("/agents/generatePersona", request);
         var responseContent = await response.Content.ReadAsStringAsync();
         // throw exception if the request failed
         if (response.StatusCode != System.Net.HttpStatusCode.OK)
@@ -185,7 +185,7 @@ public class LLMService : ILLMService
             description
         };
 
-        var response = await _httpClient.PostAsJsonAsync("", request);
+        var response = await _httpClient.PostAsJsonAsync("/agents/generateAvatar", request);
         Dictionary<string, string>? responseContent = await response.Content.ReadFromJsonAsync<Dictionary<string, string>>();
         // throw exception if the request failed
         if (response.StatusCode != System.Net.HttpStatusCode.OK)
@@ -210,7 +210,7 @@ public class LLMService : ILLMService
             description
         };
 
-        var response = await _httpClient.PostAsJsonAsync("", request);
+        var response = await _httpClient.PostAsJsonAsync("/thumbnails", request);
         var responseContent = await response.Content.ReadAsStringAsync();
         // throw exception if the request failed
         if (response.StatusCode != System.Net.HttpStatusCode.OK)

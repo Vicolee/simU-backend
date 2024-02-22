@@ -59,7 +59,7 @@ public class ChatsController : ControllerBase
         return Ok(chats.Select(_mapper.MapToChatResponse));
     }
 
-    [HttpGet(Name = "AskForQuestion")]
+    [HttpGet("question", Name = "AskForQuestion")]
     public async Task<ActionResult<ChatResponse>> AskForQuestion(AskForQuestionRequest request)
     {
         var question = await _mediator.Send(new AskForQuestionQuery(request.SenderId, request.RecipientId));

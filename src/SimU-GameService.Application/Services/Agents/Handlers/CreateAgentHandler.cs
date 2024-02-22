@@ -17,7 +17,9 @@ public class CreateAgentHandler : IRequestHandler<CreateAgentCommand, Guid>
             request.Username,
             request.CreatorId,
             request.CollabDurationHours,
-            request.Description
+            request.Description,
+            request.SpriteURL,
+            request.SpriteHeadshotURL
         );
         await _agentRepository.AddAgent(agent);
         return agent.Id;

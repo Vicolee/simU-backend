@@ -43,17 +43,6 @@ public static class DependencyInjection
             httpClient.BaseAddress = new Uri(baseUri);
         });
 
-        // Online status service checker - runs in background at all times
-        // GET HELP FROM LEKINA ON THIS - WHAT SHOULD THE URI BE FOR THIS??
-        services.AddHostedService<OnlineStatusService>();
-        services.AddHttpClient<IOnlineStatusService, OnlineStatusService>((sp, httpClient) =>
-        {
-            var configuration = sp.GetRequiredService<IConfiguration>();
-            var baseUri = configuration["OnlineStatusService:BaseUri"]
-                ?? throw new NotFoundException("OnlineStatusService:BaseUri not specified in appsettings.json");
-            httpClient.BaseAddress = new Uri(baseUri);
-        });
-
         // service that checks if ongoing conversations have had recent activity.
         // it checks every 15 minutes.
         services.AddHostedService<ConversationStatusService>();

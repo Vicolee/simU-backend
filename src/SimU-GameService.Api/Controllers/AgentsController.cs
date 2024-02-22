@@ -28,7 +28,7 @@ public class AgentsController : ControllerBase
     public async Task<ActionResult<IdResponse>> CreateAgent(CreateAgentRequest request)
     {
         var agentId = await _mediator.Send(new CreateAgentCommand(
-            request.Username, request.Description, request.CreatorId, request.IncubationDurationInHours));
+            request.Username, request.Description, request.CreatorId, request.IncubationDurationInHours, request.SpriteURL, request.SpriteHeadshotURL));
         return Ok(new IdResponse(agentId));
     }
 
