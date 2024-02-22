@@ -18,9 +18,11 @@ public class QuestionRepository : IQuestionRepository
 
     public async Task<IEnumerable<Question>> GetUserQuestions() => await _dbContext.Questions
         .Where(q => q.QuestionType == QuestionType.UserQuestion || q.QuestionType == QuestionType.UserOrAgentQuestion)
+        .OrderBy(q => q.QuestionNumber)
         .ToListAsync();
 
     public async Task<IEnumerable<Question>> GetAgentQuestions() => await _dbContext.Questions
         .Where(q => q.QuestionType == QuestionType.AgentQuestion || q.QuestionType == QuestionType.UserOrAgentQuestion)
+        .OrderBy(q => q.QuestionNumber)
         .ToListAsync();
 }

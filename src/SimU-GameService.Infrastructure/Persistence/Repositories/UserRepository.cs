@@ -18,7 +18,7 @@ public class UserRepository : IUserRepository
     }
 
     public async Task<User?> GetUser(Guid userId) => await _dbContext.Users
-            .FirstOrDefaultAsync(u => u.Id == userId);
+            .FirstOrDefaultAsync(u => u.Id == userId) ?? throw new NotFoundException(nameof(User), userId);
 
     public async Task<User?> GetUserByEmail(string email)
     {

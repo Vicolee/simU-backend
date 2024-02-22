@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using SimU_GameService.Application.Common.Exceptions;
 using SimU_GameService.Application.Services.Chats.Commands;
 using SimU_GameService.Application.Services.Chats.Queries;
+using SimU_GameService.Contracts.Requests;
 using SimU_GameService.Contracts.Responses;
 
 namespace SimU_GameService.Api.Controllers;
@@ -84,4 +85,18 @@ public class ChatsController : ControllerBase
             chat.IsGroupChat,
             chat.CreatedTime)));
     }
+
+    [HttpGet(Name = "AskForQuestion")]
+    public async Task<ActionResult<ChatResponse>> AskForQuestion(AskForQuestionRequest request)
+    {
+        var question = await _mediator.Send(new AskForQuestionQuery(request.SenderId, request.RecipientId));
+
+        if (question is null)
+        {
+            return NotFound(new { message = "No question generated, probably because the recipient had difficulty creating one." });
+        }
+
+        return Ok(question);
+    }
+
 }

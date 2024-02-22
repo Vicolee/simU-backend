@@ -3,10 +3,11 @@ namespace SimU_GameService.Application.Abstractions.Services;
 public interface ILLMService
 {
     Task<string> SendChat(Guid senderId, Guid recipientId, Guid conversationID, string content, bool streamResponse,
-                          bool respondWithQuestion);
+                          bool isSenderUser, bool isRecipientUser);
+    Task<string> PromptForQuestion(Guid senderId, Guid recipientId, Guid conversationID, bool streamResponse, bool isRecipientUser);
     Task EndConversation(Guid conversationID, IEnumerable<Guid> participants);
-    Task<Dictionary<string, Uri>> GenerateSprites(Guid userId, string description, Uri photo_URL);
     Task<string> GenerateCharacterSummary(Guid characterId, IEnumerable<string> questions,
                                           IEnumerable<IEnumerable<string>> answers);
-    Task<Uri> GenerateWorldThumbnail(Guid worldId, Guid creatorId, string description);
+    Task<Dictionary<string, string>?> GenerateAgentSprite(Guid agentId, string description);
+    Task<string> GenerateWorldThumbnail(Guid worldId, Guid creatorId, string description);
 }
