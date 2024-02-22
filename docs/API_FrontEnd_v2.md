@@ -682,7 +682,7 @@ When this route is pinged, the AI Service will be prompted by the back-end for a
 
 #### Request
 
-`GET /chats/askforquestion`
+`GET /chats/question`
 
 ```json
 {
@@ -756,7 +756,7 @@ Returns the questions used when training an agent.
 
 #### Description
 
-Records the users responses to the initial questionnaire or responses to questions about an incubating agent.
+**CALL THIS FOR WHEN UPLOADING USER RESPONSES** Records the users responses to the initial questionnaire or responses to questions about an incubating agent.
 
 #### Request
 
@@ -776,6 +776,32 @@ Records the users responses to the initial questionnaire or responses to questio
             "response": "string"
         }
     ]
+}
+```
+
+- `responderId` : ID of the user who is answering a question (either about themselves or an incubating agent).
+- `targetId` : ID of the user or agent who is having questions answered about them. If a user is answering questions about themselves, the `responderId` and `targetId` is the same.
+
+#### Response
+
+`No Content`
+
+### PostResponse
+
+#### Description
+
+**CALL THIS FOR WHEN UPLOADING AGENT RESPONSE BECAUSE YOU UPLOAD ONE AT A TIME FOR AGENT** Records the users responses to the initial questionnaire or responses to questions about an incubating agent.
+
+#### Request
+
+`POST /questions/response`
+
+```json
+{
+    "targetId": "00000000-0000-0000-0000-000000000000",
+    "responderId": "00000000-0000-0000-0000-000000000000",
+    "questionId": "00000000-0000-0000-0000-000000000000",
+    "response": "string"
 }
 ```
 
