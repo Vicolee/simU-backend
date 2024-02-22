@@ -27,4 +27,11 @@ public interface IQuestionRepository
     /// </summary>
     /// <returns></returns>
     public Task<IEnumerable<Question>> GetAgentQuestions();
+
+    /// <summary>
+    /// Gets a question from the repository by ID.
+    /// </summary>
+    /// <param name="questionId"></param>
+    /// <returns></returns>
+    public Task<string> GetQuestion(Guid questionId);
 }

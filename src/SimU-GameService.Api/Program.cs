@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.OpenApi.Models;
 using SimU_GameService.Api.Common;
-using SimU_GameService.Api.Filters;
+using SimU_GameService.Api.Middleware;
 using SimU_GameService.Api.Hubs;
 using SimU_GameService.Application;
 using SimU_GameService.Infrastructure.Persistence;
@@ -28,10 +28,10 @@ builder.Services.AddInfrastructure(builder.Configuration);
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(options =>
 {
-    options.SwaggerDoc("v1", new OpenApiInfo 
-    {    
+    options.SwaggerDoc("v1", new OpenApiInfo
+    {
         Title = "SimU-GameService API",
-        Version = "v1" 
+        Version = "v1"
     });
     options.AddSignalRSwaggerGen();
 });
@@ -45,6 +45,8 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+app.UseMiddleware<HubAuthenticationMiddleware>();
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();

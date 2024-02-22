@@ -9,8 +9,8 @@ using SimU_GameService.Application.Services.Groups.Commands;
 using SimU_GameService.Application.Services.Groups.Queries;
 using SimU_GameService.Application.Services.Users.Commands;
 using SimU_GameService.Application.Services.Users.Queries;
-using SimU_GameService.Application.Services.Worlds.Queries;
 using SimU_GameService.Domain.Models;
+using SimU_GameService.Application.Services.Worlds.Queries;
 
 namespace SimU_GameService.Api.Hubs;
 

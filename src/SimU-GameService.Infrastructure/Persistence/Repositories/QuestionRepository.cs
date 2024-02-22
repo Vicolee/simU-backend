@@ -17,10 +17,15 @@ public class QuestionRepository : IQuestionRepository
     }
 
     public async Task<IEnumerable<Question>> GetUserQuestions() => await _dbContext.Questions
-        .Where(q => q.QuestionType == QuestionType.UserQuestion || q.QuestionType == QuestionType.UserOrAgentQuestion)
-        .ToListAsync();
+            .Where(q => q.QuestionType == QuestionType.UserQuestion || q.QuestionType == QuestionType.UserOrAgentQuestion)
+            .ToListAsync();
 
     public async Task<IEnumerable<Question>> GetAgentQuestions() => await _dbContext.Questions
-        .Where(q => q.QuestionType == QuestionType.AgentQuestion || q.QuestionType == QuestionType.UserOrAgentQuestion)
-        .ToListAsync();
+            .Where(q => q.QuestionType == QuestionType.AgentQuestion || q.QuestionType == QuestionType.UserOrAgentQuestion)
+            .ToListAsync();
+
+    public async Task<string> GetQuestion(Guid questionId) => await _dbContext.Questions
+            .Where(q => q.Id == questionId)
+            .Select(q => q.Content)
+            .FirstOrDefaultAsync() ?? default!;
 }

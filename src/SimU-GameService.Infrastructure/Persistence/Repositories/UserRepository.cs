@@ -116,7 +116,7 @@ public class UserRepository : IUserRepository
         await _dbContext.SaveChangesAsync();
     }
 
-    public Task<Guid> GetUserFromIdentityId(string identityId) => _dbContext.Users
+    public Task<Guid> GetUserIdFromIdentityId(string identityId) => _dbContext.Users
             .Where(u => u.IdentityId == identityId)
             .Select(u => u.Id)
             .FirstOrDefaultAsync();
@@ -137,5 +137,11 @@ public class UserRepository : IUserRepository
         var user = await GetUser(userId) ?? throw new NotFoundException(nameof(User), userId);
         user.Logout();
         await _dbContext.SaveChangesAsync();
+    }
+
+    public async Task<string> GetIdentityIdFromUserId(Guid userId)
+    {
+        var user = await GetUser(userId) ?? throw new NotFoundException(nameof(User), userId);
+        return user.IdentityId;
     }
 }
