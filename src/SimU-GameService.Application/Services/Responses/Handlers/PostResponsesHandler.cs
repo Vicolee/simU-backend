@@ -13,7 +13,6 @@ public class PostResponsesHandler : IRequestHandler<PostResponsesCommand, Unit>
     public async Task<Unit> Handle(PostResponsesCommand request, CancellationToken cancellationToken)
     {
         await _responseRepository.PostResponses(request.Responses);
-        
         return Unit.Value;
     }
 }

@@ -1,4 +1,3 @@
-using MediatR;
 using Microsoft.EntityFrameworkCore;
 using SimU_GameService.Application.Abstractions.Repositories;
 using SimU_GameService.Application.Common.Exceptions;
@@ -10,16 +9,12 @@ public class WorldRepository : IWorldRepository
 {
     private readonly SimUDbContext _dbContext;
 
-    public WorldRepository(SimUDbContext dbContext)
-    {
-        _dbContext = dbContext;
-    }
+    public WorldRepository(SimUDbContext dbContext) => _dbContext = dbContext;
 
-    public Task CreateWorld(World world)
+    public async Task CreateWorld(World world)
     {
-        _dbContext.Add(world);
-        _dbContext.SaveChangesAsync();
-        return Task.CompletedTask;
+        await _dbContext.AddAsync(world);
+        await _dbContext.SaveChangesAsync();
     }
 
     public async Task<World?> GetWorld(Guid worldId)
@@ -30,23 +25,16 @@ public class WorldRepository : IWorldRepository
 
     public async Task<User?> GetCreator(Guid worldId)
     {
-        var world = await GetWorld(worldId);
-
-        if (world == null)
-        {
-            return null;
-        }
-
+        var world = await GetWorld(worldId) ?? throw new NotFoundException(nameof(World), worldId);
         return await _dbContext.Users
             .FirstOrDefaultAsync(u => u.Id == world.CreatorId);
     }
 
-    public async Task<World> AddUser(Guid worldId, Guid userId)
+    public async Task AddUser(Guid worldId, Guid userId)
     {
         var world = await GetWorld(worldId) ?? throw new NotFoundException(nameof(World), worldId);
         world.WorldUsers.Add(userId);
         await _dbContext.SaveChangesAsync();
-        return world;
     }
 
     public async Task AddAgent(Guid worldId, Guid agentId)
@@ -90,14 +78,13 @@ public class WorldRepository : IWorldRepository
 
     public async Task RemoveUser(Guid worldId, Guid creatorId, Guid userId)
     {
-         var world = await GetWorld(worldId) ?? throw new NotFoundException(nameof(World), worldId);
+        var world = await GetWorld(worldId) ?? throw new NotFoundException(nameof(World), worldId);
 
         if (world.CreatorId != creatorId)
         {
             throw new BadRequestException("Only the creator of the world can remove users");
         }
 
-        // if user being removed is the owner, throw an error
         if (world.CreatorId == userId)
         {
             throw new BadRequestException("The creator of the world cannot be removed");
@@ -106,25 +93,24 @@ public class WorldRepository : IWorldRepository
         _dbContext.SaveChanges();
     }
 
-    public async Task RemoveAgent(Guid worldId, Guid agentId, Guid deleterId) {
+    public async Task RemoveAgent(Guid worldId, Guid creatorId, Guid agentId)
+    {
         var world = await GetWorld(worldId) ?? throw new NotFoundException(nameof(World), worldId);
+        var agent = await _dbContext.Agents.FirstOrDefaultAsync(a => a.Id == agentId)
+            ?? throw new NotFoundException(nameof(Agent), agentId);
 
-        // grabs the agent so we can gets its creator's ID
-        var agent = await _dbContext.Agents
-            .FirstOrDefaultAsync(a => a.Id == agentId);
-
-        // the user who requests the removal of an agent must either be:
-        // 1. the creator of the agent OR
-        // 2. the owner of world.
-        if (world.CreatorId != deleterId || agent?.CreatorId != deleterId)
+        // the user who requests the removal of an agent must either be
+        // the creator of the agent or the owner of world.
+        if (world.CreatorId != creatorId || agent?.CreatorId != creatorId)
         {
-            throw new UnauthorizedAccessException("You lack the necessary permissions to remove this agent from the world; only the creator of the agent or owner of the world may remove it");
+            throw new BadRequestException("Only the creator of the world or the creator of the agent can remove the agent");
         }
         world.WorldAgents.Remove(agentId);
         _dbContext.SaveChanges();
     }
 
-    public async Task DeleteWorld(Guid worldId, Guid ownerId) {
+    public async Task DeleteWorld(Guid worldId, Guid ownerId)
+    {
         var world = await GetWorld(worldId) ?? throw new NotFoundException(nameof(World), worldId);
         if (world.CreatorId != ownerId)
         {
@@ -136,21 +122,12 @@ public class WorldRepository : IWorldRepository
     }
 
     public async Task<bool> WorldCodeExists(string worldCode)
-    {
-        return await _dbContext.Worlds
-            .AnyAsync(w => w.WorldCode == worldCode);
-    }
+        => await _dbContext.Worlds.AnyAsync(w => w.WorldCode == worldCode);
 
-    public async Task<Guid?> MatchWorldCodeToWorldId(string worldCode)
+    public async Task<Guid?> GetWorldIdByWorldCode(string worldCode)
     {
-        var world = await _dbContext.Worlds
-            .FirstOrDefaultAsync(w => w.WorldCode == worldCode);
-        if (world == null)
-        {
-            return null;
-        } else {
-            return world.Id;
-        }
+        var world = await _dbContext.Worlds.FirstOrDefaultAsync(w => w.WorldCode == worldCode)
+            ?? throw new NotFoundException(nameof(World), worldCode);
+        return world.Id;
     }
-
 }

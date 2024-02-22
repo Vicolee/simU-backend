@@ -49,9 +49,9 @@ public interface IUserRepository
     /// Updates a user's sprite.
     /// </summary>
     /// <param name="userId"></param>
-    /// <param name="summary"></param>
+    /// <param name="animations"></param>
     /// <returns></returns>
-    public Task UpdateUserSprite(Guid userId, Uri spriteURL, Uri spriteHeadshotURL);
+    public Task UpdateUserSprite(Guid userId, List<int> animations);
 
     /// <summary>
     /// Get's the list of worlds a user belongs to
@@ -83,28 +83,9 @@ public interface IUserRepository
     /// <param name="worldId"></param>
     /// <returns></returns>
     public Task RemoveWorldFromList(Guid userId, Guid worldId);
+    Task RemoveFriend(Guid userId, Guid friendId);
+    Task AddFriend(Guid requesterId, Guid requesteeId);
+    Task<Guid> GetUserFromIdentityId(string identityId);
+    Task Logout(Guid userId);
 
-    public Task RemoveFriend(Guid userId, Guid friendId);
-    public Task AddFriend(Guid requesterId, Guid requesteeId);
-    public Task<Guid> GetUserFromIdentityId(string identityId);
-
-    /// <summary>
-    /// Returns a list of online users
-    /// </summary>
-    /// <returns></returns>
-    public Task<IEnumerable<Guid>> GetOnlineUsers();
-
-    /// <summary>
-    /// Marks a user online
-    /// <param name="userId"></param>
-    /// </summary>
-    /// <returns></returns>
-    public Task MarkOnline(Guid userId);
-
-    /// <summary>
-    /// Marks a user offline
-    /// <param name="userId"></param>
-    /// </summary>
-    /// <returns></returns>
-    public Task MarkOffline(Guid userId);
 }

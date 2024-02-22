@@ -9,8 +9,6 @@ public class Character : Entity
     public string? Summary { get; set; }
     public DateTime CreatedTime { get; set; }
     public Location? Location { get; set; }
-    public Uri? SpriteURL { get; set; }
-    public Uri? SpriteHeadshotURL { get; set; }
     public List<Response> QuestionResponses { get; set; }
 
     protected Character() : base()
@@ -18,14 +16,12 @@ public class Character : Entity
         QuestionResponses = new();
     }
 
-    protected Character(string username, string summary, Uri spriteURL, Uri spriteHeadshotURL)
+    protected Character(string username, string summary)
         : this()
     {
         Username = username;
         Summary = summary;
         CreatedTime = DateTime.UtcNow;
-        SpriteURL = spriteURL;
-        SpriteHeadshotURL = spriteHeadshotURL;
     }
 
     public void UpdateLocation(int xCoord, int yCoord)

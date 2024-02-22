@@ -6,7 +6,7 @@ using SimU_GameService.Application.Services.Authentication.Commands;
 
 namespace SimU_GameService.Application.Services.Authentication.Handlers;
 
-public class LoginUserHandler : IRequestHandler<LoginUserCommand, Tuple<Guid, string>>
+public class LoginUserHandler : IRequestHandler<LoginUserCommand, (Guid, string)>
 {
     private readonly IUserRepository _userRepository;
     private readonly IAuthenticationService _authenticationService;
@@ -17,12 +17,11 @@ public class LoginUserHandler : IRequestHandler<LoginUserCommand, Tuple<Guid, st
         _authenticationService = authenticationService;
     }
 
-    public async Task<Tuple<Guid, string>> Handle(LoginUserCommand request, CancellationToken cancellationToken)
+    public async Task<(Guid, string)> Handle(LoginUserCommand request, CancellationToken cancellationToken)
     {
         var user = await _userRepository.GetUserByEmail(request.Email)
             ?? throw new BadRequestException("Invalid login credentials.");
         var authToken = await _authenticationService.LoginUser(request.Email, request.Password);
-        await _userRepository.MarkOnline(user.Id);
-        return new Tuple<Guid, string>(user.Id, authToken);
+        return (user.Id, authToken);
     }
 }
