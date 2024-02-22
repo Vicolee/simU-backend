@@ -17,7 +17,7 @@ public class DeleteWorldHandler : IRequestHandler<DeleteWorldCommand, Unit>
 
     public async Task<Unit> Handle(DeleteWorldCommand request, CancellationToken cancellationToken)
     {
-        var ownerId = await _userRepository.GetUserFromIdentityId(request.CreatorIdentityId);
+        var ownerId = await _userRepository.GetUserIdFromIdentityId(request.CreatorIdentityId);
         await _worldRepository.DeleteWorld(request.WorldId, ownerId);
         return Unit.Value;
     }

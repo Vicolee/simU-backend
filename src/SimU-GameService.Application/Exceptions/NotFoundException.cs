@@ -11,8 +11,8 @@ public class NotFoundException : Exception
     {
     }
 
-    public NotFoundException(string entity, string worldCode)
-        : base($"{entity} with join code {worldCode} was not found.")
+    public NotFoundException(string entity, string identifier)
+        : base($"{entity} with identifier {identifier} was not found.")
     {
     }
 }

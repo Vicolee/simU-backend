@@ -38,6 +38,13 @@ public interface IUserRepository
     public Task<User?> GetUserByEmail(string email);
 
     /// <summary>
+    /// Gets a user's summary.
+    /// </summary>
+    /// <param name="userId"></param>
+    /// <returns></returns>
+    public Task<string?> GetUserSummary(Guid userId);
+
+    /// <summary>
     /// Updates a user's summary.
     /// </summary>
     /// <param name="userId"></param>
@@ -85,7 +92,8 @@ public interface IUserRepository
     public Task RemoveWorldFromList(Guid userId, Guid worldId);
     Task RemoveFriend(Guid userId, Guid friendId);
     Task AddFriend(Guid requesterId, Guid requesteeId);
-    Task<Guid> GetUserFromIdentityId(string identityId);
+    Task<Guid> GetUserIdFromIdentityId(string identityId);
+    Task<string> GetIdentityIdFromUserId(Guid userId);
     Task Logout(Guid userId);
 
 }

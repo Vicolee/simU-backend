@@ -37,19 +37,20 @@ public class QuestionsController : ControllerBase
     }
 
     [HttpPost("responses", Name = "PostResponses")]
-    public async Task<ActionResult> PostResponses(ResponsesRequest request)
+    public async Task<ActionResult<SummaryResponse>> PostResponses(ResponsesRequest request)
     {
         var command = _mapper.MapToPostResponsesCommand(request);
-        await _mediator.Send(command);
-        return NoContent();
+        var summary = await _mediator.Send(command);
+        return Ok(new SummaryResponse(summary));
     }
 
     [HttpPost("response", Name = "PostResponse")]
-    public async Task<ActionResult> PostResponse(ResponseRequest request)
+    public async Task<ActionResult<SummaryResponse>> PostResponse(ResponseRequest request)
     {
-        var command = new PostResponseCommand(request.TargetId, request.ResponderId, request.QuestionId, request.Response);
-        await _mediator.Send(command);
-        return NoContent();
+        var command = new PostResponseCommand(
+            request.TargetId, request.ResponderId, request.QuestionId, request.Response);
+        var summary = await _mediator.Send(command);
+        return Ok(new SummaryResponse(summary));
     }
 
     [HttpGet("responses/{targetId}", Name = "GetResponses")]

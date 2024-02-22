@@ -115,7 +115,7 @@ public class UserRepository : IUserRepository
         await _dbContext.SaveChangesAsync();
     }
 
-    public Task<Guid> GetUserFromIdentityId(string identityId) => _dbContext.Users
+    public Task<Guid> GetUserIdFromIdentityId(string identityId) => _dbContext.Users
             .Where(u => u.IdentityId == identityId)
             .Select(u => u.Id)
             .FirstOrDefaultAsync();
@@ -138,24 +138,9 @@ public class UserRepository : IUserRepository
         await _dbContext.SaveChangesAsync();
     }
 
-    public async Task<IEnumerable<Guid>> GetOnlineUsers()
-    {
-        return await _dbContext.Users
-            .Where(u => u.IsOnline)
-            .Select(u => u.Id)
-            .ToListAsync();
-    }
-    public async Task MarkOnline(Guid userId)
+    public async Task<string> GetIdentityIdFromUserId(Guid userId)
     {
         var user = await GetUser(userId) ?? throw new NotFoundException(nameof(User), userId);
-        user.IsOnline = true;
-        await _dbContext.SaveChangesAsync();
-    }
-
-    public async Task MarkOffline(Guid userId)
-    {
-        var user = await GetUser(userId) ?? throw new NotFoundException(nameof(User), userId);
-        user.IsOnline = false;
-        await _dbContext.SaveChangesAsync();
+        return user.IdentityId;
     }
 }

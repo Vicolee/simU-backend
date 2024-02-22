@@ -17,9 +17,9 @@ public class RemoveUserHandler : IRequestHandler<RemoveUserCommand, Unit>
 
     public async Task<Unit> Handle(RemoveUserCommand request, CancellationToken cancellationToken)
     {
-        var creatorId = await _userRepository.GetUserFromIdentityId(request.CreatorIdentityId);
+        var ownerId = await _userRepository.GetUserIdFromIdentityId(request.CreatorIdentityId);
         await _userRepository.RemoveUserFromWorld(request.UserId, request.Id);
-        await _worldRepository.RemoveUser(request.Id, creatorId, request.UserId);
+        await _worldRepository.RemoveUser(request.Id, ownerId, request.UserId);
         return Unit.Value;
     }
 }
