@@ -95,4 +95,5 @@ public interface IUserRepository
     Task AddFriend(Guid requesterId, Guid requesteeId);
     Task<Guid> GetUserIdFromIdentityId(string identityId);
     Task<string> GetIdentityIdFromUserId(Guid userId);
+    Task Logout(Guid userId);
 }

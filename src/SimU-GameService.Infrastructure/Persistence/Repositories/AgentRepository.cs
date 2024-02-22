@@ -33,7 +33,14 @@ public class AgentRepository : IAgentRepository
         await _dbContext.SaveChangesAsync();
     }
 
-    public async Task UpdateAgentSprite(Guid agentId, Uri spriteURL, Uri spriteHeadshotURL)
+    public async Task UpdateDescription(Guid agentId, string description)
+    {
+        var agent = await GetAgent(agentId) ?? throw new NotFoundException(nameof(Agent), agentId);
+        agent.Description = description;
+        await _dbContext.SaveChangesAsync();
+    }
+
+    public async Task UpdateSprite(Guid agentId, Uri spriteURL, Uri spriteHeadshotURL)
     {
         var agent = await GetAgent(agentId) ?? throw new NotFoundException(nameof(Agent), agentId);
 

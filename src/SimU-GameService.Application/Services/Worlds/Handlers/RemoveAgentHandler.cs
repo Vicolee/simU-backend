@@ -4,22 +4,21 @@ using SimU_GameService.Application.Services.Worlds.Commands;
 
 namespace SimU_GameService.Application.Services.Worlds.Handlers;
 
-public class AddUserHandler : IRequestHandler<AddUserCommand, Unit>
+public class RemoveAgentHandler : IRequestHandler<RemoveAgentCommand, Unit>
 {
     private readonly IWorldRepository _worldRepository;
     private readonly IUserRepository _userRepository;
 
-    public AddUserHandler(IWorldRepository worldRepository, IUserRepository userRepository)
+    public RemoveAgentHandler(IWorldRepository worldRepository, IUserRepository userRepository)
     {
         _worldRepository = worldRepository;
         _userRepository = userRepository;
     }
 
-    public async Task<Unit> Handle(AddUserCommand request,
-    CancellationToken cancellationToken)
+    public async Task<Unit> Handle(RemoveAgentCommand request, CancellationToken cancellationToken)
     {
-        await _worldRepository.AddUser(request.WorldId, request.UserId);
-        await _userRepository.AddUserToWorld(request.UserId, request.WorldId, false);
+        var creatorId = await _userRepository.GetUserFromIdentityId(request.CreatorIdentityId);
+        await _worldRepository.RemoveAgent(request.Id, creatorId, request.AgentId);
         return Unit.Value;
     }
 }

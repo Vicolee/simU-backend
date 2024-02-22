@@ -15,7 +15,7 @@ public class UpdateAgentSpriteHandler : IRequestHandler<UpdateAgentSpriteCommand
     public async Task<Unit> Handle(UpdateAgentSpriteCommand request,
         CancellationToken cancellationToken)
     {
-        await _agentRepository.UpdateAgentSprite(request.AgentId, request.SpriteURL, request.SpriteHeadshotURL);
+        await _agentRepository.UpdateSprite(request.AgentId, request.SpriteURL, request.SpriteHeadshotURL);
         return Unit.Value;
     }
 }

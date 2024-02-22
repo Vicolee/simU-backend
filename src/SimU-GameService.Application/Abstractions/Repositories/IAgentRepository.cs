@@ -26,23 +26,31 @@ public interface IAgentRepository
     /// <summary>
     /// Gets an agent from the repository by ID.
     /// </summary>
-    /// <param name="agentId"</param>
+    /// <param name="agentId"></param>
     /// <returns></returns>
     public Task<Agent?> GetAgent(Guid agentId);
 
     /// <summary>
     /// Gets an agent's summary from the repository by ID.
     /// </summary>
-    /// <param name="agentId"</param>
+    /// <param name="agentId"></param>
     /// <returns></returns>
     public Task<string?> GetSummary(Guid agentId);
 
     /// <summary>
     /// Updates an agent's sprite in the repository.
     /// </summary>
-    /// <param name="agentId"</param>
-    /// <param name="spriteURL"</param>
-    /// <param name="spriteHeadshotURL"</param>
+    /// <param name="agentId"></param>
+    /// <param name="spriteURL"></param>
+    /// <param name="spriteHeadshotURL"></param>
     /// <returns></returns>
-    public Task UpdateAgentSprite(Guid agentId, Uri spriteURL, Uri spriteHeadshotURL);
+    public Task UpdateSprite(Guid agentId, Uri spriteURL, Uri spriteHeadshotURL);
+    
+    /// <summary>
+    /// Updates an agent's description in the repository.
+    /// </summary>
+    /// <param name="agentId"></param>
+    /// <param name="description"></param>
+    /// <returns></returns>
+    public Task UpdateDescription(Guid agentId, string description);
 }

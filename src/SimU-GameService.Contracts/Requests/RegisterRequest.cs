@@ -2,5 +2,5 @@
 
 public record RegisterRequest(
     string Username,
-    string Password,
-    string Email);
+    string Email,
+    string Password);

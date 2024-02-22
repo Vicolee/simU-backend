@@ -20,11 +20,8 @@ public class UserRepository : IUserRepository
     public async Task<User?> GetUser(Guid userId) => await _dbContext.Users
             .FirstOrDefaultAsync(u => u.Id == userId);
 
-    public async Task<User?> GetUserByEmail(string email)
-    {
-        return await _dbContext.Users
+    public async Task<User?> GetUserByEmail(string email) => await _dbContext.Users
             .FirstOrDefaultAsync(u => u.Email == email);
-    }
 
     public async Task AddUserToWorld(Guid userId, Guid worldId, bool isOwner)
     {
@@ -34,6 +31,7 @@ public class UserRepository : IUserRepository
             user.WorldsCreated.Add(worldId);
         }
         user.WorldsJoined.Add(worldId);
+        user.ActiveWorldId = worldId;
         await _dbContext.SaveChangesAsync();
     }
 
@@ -127,6 +125,17 @@ public class UserRepository : IUserRepository
     {
         var user = await GetUser(userId) ?? throw new NotFoundException(nameof(User), userId);
         user.WorldsJoined.Remove(worldId);
+        if (user.ActiveWorldId == worldId)
+        {
+            user.ActiveWorldId = default;
+        }
+        await _dbContext.SaveChangesAsync();
+    }
+
+    public async Task Logout(Guid userId)
+    {
+        var user = await GetUser(userId) ?? throw new NotFoundException(nameof(User), userId);
+        user.Logout();
         await _dbContext.SaveChangesAsync();
     }
 

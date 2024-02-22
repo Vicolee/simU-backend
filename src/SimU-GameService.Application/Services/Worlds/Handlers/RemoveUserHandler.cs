@@ -19,7 +19,7 @@ public class RemoveUserHandler : IRequestHandler<RemoveUserCommand, Unit>
     {
         var ownerId = await _userRepository.GetUserIdFromIdentityId(request.CreatorIdentityId);
         await _userRepository.RemoveUserFromWorld(request.UserId, request.Id);
-        await _worldRepository.RemoveUser(request.Id, ownerId, request.UserId);
+        await _worldRepository.RemoveUser(request.Id, creatorId, request.UserId);
         return Unit.Value;
     }
 }

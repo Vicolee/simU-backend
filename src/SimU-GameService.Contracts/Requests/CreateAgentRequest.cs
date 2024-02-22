@@ -4,4 +4,4 @@ public record CreateAgentRequest(
     string Username,
     string Description,
     Guid CreatorId,
-    float IncubationTimeInHours);
+    float IncubationDurationInHours);
