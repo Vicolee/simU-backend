@@ -674,7 +674,7 @@ Gets all the chats sent by the user matching given `id`.
     }
 ]
 ```
-### GetQuestion
+### AskForQuestion
 
 #### Description
 
@@ -682,7 +682,7 @@ When this route is pinged, the AI Service will be prompted by the back-end for a
 
 #### Request
 
-`GET /chats/question`
+`GET /chats/askforquestion`
 
 ```json
 {
