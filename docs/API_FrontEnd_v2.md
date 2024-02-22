@@ -682,7 +682,7 @@ When this route is pinged, the AI Service will be prompted by the back-end for a
 
 #### Request
 
-`GET /chats/askforquestion`
+`GET /chats/question`
 
 ```json
 {
