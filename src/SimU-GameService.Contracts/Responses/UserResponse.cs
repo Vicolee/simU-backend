@@ -7,7 +7,6 @@ public record UserResponse(
     string Username,
     string? Email,
     string? Summary,
-    string? Description,
     Location? Location,
     DateTime CreatedTime,
     bool IsOnline,
