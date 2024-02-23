@@ -28,7 +28,7 @@ public class AgentsController : ControllerBase
     public async Task<ActionResult<IdResponse>> CreateAgent(CreateAgentRequest request)
     {
         var agentId = await _mediator.Send(new CreateAgentCommand(
-            request.Username, request.Description, request.CreatorId, request.IncubationDurationInHours));
+            request.Username, request.Description, request.CreatorId, request.IncubationDurationInHours, request.SpriteURL, request.SpriteHeadshotURL));
         return Ok(new IdResponse(agentId));
     }
 
@@ -47,11 +47,11 @@ public class AgentsController : ControllerBase
         return Ok(new SummaryResponse(agentSummary ?? string.Empty));
     }
 
-    [HttpPost("{id}/description", Name = "PostDescription")]
-    public async Task<ActionResult<SpriteURLsResponse>> PostDescription(Guid id, DescriptionRequest request)
+    [HttpPost("{id}/description", Name = "PostVisualDescription")]
+    public async Task<ActionResult<SpriteURLsResponse>> PostVisualDescription(Guid id, DescriptionRequest request)
     {
-        var (sprite_URL, sprite_headshot_URL) = await _mediator.Send(
-            new PostDescriptionCommand(id, request.Description));
-        return Ok(new SpriteURLsResponse(sprite_URL, sprite_headshot_URL));
+        var (spriteURL, spriteHeadshotURL) = await _mediator.Send(
+            new PostVisualDescriptionCommand(id, request.Description));
+        return Ok(new SpriteURLsResponse(spriteURL, spriteHeadshotURL));
     }
 }

@@ -13,7 +13,7 @@ public class AuthenticationService : IAuthenticationService
 
     public async Task<string> LoginUser(string email, string password)
     {
-        var request = new 
+        var request = new
         {
             email,
             password,

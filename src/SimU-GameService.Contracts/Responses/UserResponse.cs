@@ -11,5 +11,4 @@ public record UserResponse(
     Location? Location,
     DateTime CreatedTime,
     bool IsOnline,
-    Uri? Sprite_URL,
-    Uri? Sprite_Headshot_URL);
+    List<int> SpriteAnimations);

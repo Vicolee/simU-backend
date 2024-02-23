@@ -8,5 +8,7 @@ public interface IConversationRepository
     Task<Guid?> IsConversationOnGoing(Guid senderId, Guid receiverId);
     Task<Conversation?> GetConversation(Guid conversationId);
     Task<IEnumerable<Guid>> GetConversations(Guid senderId, Guid receiverId);
-    Task UpdateLastMessageTime(Guid conversationId);
+    Task UpdateLastMessageSentAt(Guid conversationId);
+    Task<IEnumerable<Conversation>> GetActiveConversations();
+    Task MarkConversationAsOver(Guid conversationId);
 }

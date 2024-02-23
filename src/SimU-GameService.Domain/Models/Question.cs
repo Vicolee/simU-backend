@@ -6,8 +6,7 @@ public class Question : Entity
 {
     public string Content { get; set; } = default!;
     public QuestionType QuestionType { get; set; }
-
-
+    public int QuestionNumber { get; set; }
     public Question() : base()
     {
     }

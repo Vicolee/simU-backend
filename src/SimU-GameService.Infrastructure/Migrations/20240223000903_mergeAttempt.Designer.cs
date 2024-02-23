@@ -13,8 +13,8 @@ using SimU_GameService.Infrastructure.Persistence;
 namespace SimU_GameService.Infrastructure.Migrations
 {
     [DbContext(typeof(SimUDbContext))]
-    [Migration("20240223000115_SpriteAnimationsEditToUser")]
-    partial class SpriteAnimationsEditToUser
+    [Migration("20240223000903_mergeAttempt")]
+    partial class mergeAttempt
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -108,7 +108,7 @@ namespace SimU_GameService.Infrastructure.Migrations
                     b.Property<bool>("IsGroupChat")
                         .HasColumnType("boolean");
 
-                    b.Property<DateTime>("LastMessageTime")
+                    b.Property<DateTime>("LastMessageSentAt")
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<List<Guid>>("Participants")
@@ -153,6 +153,9 @@ namespace SimU_GameService.Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<int>("QuestionNumber")
+                        .HasColumnType("integer");
+
                     b.Property<int>("QuestionType")
                         .HasColumnType("integer");
 
@@ -185,11 +188,9 @@ namespace SimU_GameService.Infrastructure.Migrations
                     b.Property<bool>("IsOnline")
                         .HasColumnType("boolean");
 
-                    b.Property<string>("SpriteHeadshotURL")
-                        .HasColumnType("text");
-
-                    b.Property<string>("SpriteURL")
-                        .HasColumnType("text");
+                    b.Property<List<int>>("SpriteAnimations")
+                        .IsRequired()
+                        .HasColumnType("integer[]");
 
                     b.Property<string>("Summary")
                         .HasColumnType("text");

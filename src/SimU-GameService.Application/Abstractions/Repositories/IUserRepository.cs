@@ -56,9 +56,9 @@ public interface IUserRepository
     /// Updates a user's sprite.
     /// </summary>
     /// <param name="userId"></param>
-    /// <param name="summary"></param>
+    /// <param name="animations"></param>
     /// <returns></returns>
-    public Task UpdateUserSprite(Guid userId, Uri spriteURL, Uri spriteHeadshotURL);
+    public Task UpdateUserSprite(Guid userId, List<int> animations);
 
     /// <summary>
     /// Get's the list of worlds a user belongs to
@@ -90,10 +90,10 @@ public interface IUserRepository
     /// <param name="worldId"></param>
     /// <returns></returns>
     public Task RemoveWorldFromList(Guid userId, Guid worldId);
-    
     Task RemoveFriend(Guid userId, Guid friendId);
     Task AddFriend(Guid requesterId, Guid requesteeId);
     Task<Guid> GetUserIdFromIdentityId(string identityId);
     Task<string> GetIdentityIdFromUserId(Guid userId);
     Task Logout(Guid userId);
+
 }

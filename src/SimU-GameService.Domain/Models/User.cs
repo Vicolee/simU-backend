@@ -9,12 +9,14 @@ public class User : Character
     public List<Friend> Friends { get; set; }
     public List<Guid> WorldsJoined { get; set; }
     public List<Guid> WorldsCreated { get; set; }
+    public List<int> SpriteAnimations { get; set; }
 
     public User() : base()
     {
         Friends = new();
         WorldsJoined = new();
         WorldsCreated = new();
+        SpriteAnimations = new List<int> { 0, 0, 0, 0};
     }
 
     public User(string identityId, string username, string email, bool isOnline)

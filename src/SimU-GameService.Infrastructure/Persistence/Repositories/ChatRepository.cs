@@ -42,4 +42,5 @@ public class ChatRepository : IChatRepository
     public Task<IEnumerable<Chat>> GetChatsByUserId(Guid userId) => Task.FromResult(_dbContext.Chats
             .Where(c => c.SenderId == userId || c.RecipientId == userId)
             .AsEnumerable());
+
 }

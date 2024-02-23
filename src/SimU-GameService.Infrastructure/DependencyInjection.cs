@@ -9,7 +9,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using SimU_GameService.Infrastructure.Persistence.Repositories;
 using SimU_GameService.Infrastructure.Authentication;
 using SimU_GameService.Application.Common.Exceptions;
-using SimU_GameService.Agents;
+using SimU_GameService.Infrastructure.Characters;
 
 namespace SimU_GameService.Infrastructure.Persistence;
 
@@ -42,6 +42,10 @@ public static class DependencyInjection
                 ?? throw new NotFoundException("AgentService:BaseUri not specified in appsettings.json");
             httpClient.BaseAddress = new Uri(baseUri);
         });
+
+        // service that checks if ongoing conversations have had recent activity.
+        // it checks every 15 minutes.
+        services.AddHostedService<ConversationStatusService>();
 
         // authentication
         FirebaseApp.Create(new AppOptions()

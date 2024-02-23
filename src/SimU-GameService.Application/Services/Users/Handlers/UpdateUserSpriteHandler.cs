@@ -18,14 +18,7 @@ public class UpdateUserSpriteHandler : IRequestHandler<UpdateUserSpriteCommand, 
 
     public async Task<Unit> Handle(UpdateUserSpriteCommand request, CancellationToken cancellationToken)
     {
-        Dictionary<string, Uri> spriteURLs = request.IsURL ?
-            await _llmService.GenerateSprites(request.UserId, request.Description) :
-            await _llmService.GenerateSprites(request.UserId, photo_URL: new Uri(request.Description));
-
-        Uri spriteURL = spriteURLs["sprite_URL"];
-        Uri spriteHeadshotURL = spriteURLs["sprite_headshot_URL"];
-
-        await _userRepository.UpdateUserSprite(request.UserId, spriteURL, spriteHeadshotURL);
+        await _userRepository.UpdateUserSprite(request.UserId, request.Animations);
         return Unit.Value;
     }
 }

@@ -58,4 +58,18 @@ public class ChatsController : ControllerBase
         var chats = await _mediator.Send(query);
         return Ok(chats.Select(_mapper.MapToChatResponse));
     }
+
+    [HttpGet("question", Name = "AskForQuestion")]
+    public async Task<ActionResult<ChatResponse>> AskForQuestion(AskForQuestionRequest request)
+    {
+        var question = await _mediator.Send(new AskForQuestionQuery(request.SenderId, request.RecipientId));
+
+        if (question is null)
+        {
+            return NotFound(new { message = "No question generated, probably because the recipient had difficulty creating one." });
+        }
+
+        return Ok(question);
+    }
+
 }

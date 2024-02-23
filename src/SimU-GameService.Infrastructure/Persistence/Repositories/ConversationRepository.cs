@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using SimU_GameService.Application.Abstractions.Repositories;
+using SimU_GameService.Application.Abstractions.Services;
 using SimU_GameService.Domain.Models;
 
 namespace SimU_GameService.Infrastructure.Persistence.Repositories;
@@ -11,7 +12,13 @@ public class ConversationRepository : IConversationRepository
 {
     private readonly SimUDbContext _dbContext;
 
-    public ConversationRepository(SimUDbContext dbContext) => _dbContext = dbContext;
+    private readonly ILLMService LLMService;
+
+    public ConversationRepository(SimUDbContext dbContext, ILLMService llmService)
+    {
+        _dbContext = dbContext;
+        LLMService = llmService;
+    }
 
     public async Task<Guid?> AddConversation(Guid senderId, Guid receiverId, bool isGroupChat = false)
     {
@@ -31,7 +38,7 @@ public class ConversationRepository : IConversationRepository
     {
         var conversation = await _dbContext.Conversations
             .Where(c => c.Participants.Contains(senderId) && c.Participants.Contains(receiverId))
-            .OrderByDescending(c => c.LastMessageTime)
+            .OrderByDescending(c => c.LastMessageSentAt)
             .FirstOrDefaultAsync();
 
         if (conversation is null)
@@ -44,12 +51,11 @@ public class ConversationRepository : IConversationRepository
             return null;
         }
 
-        if (conversation.LastMessageTime < DateTime.UtcNow.AddMinutes(-15))
+        if (conversation.LastMessageSentAt < DateTime.UtcNow.AddMinutes(-15))
         {
-            conversation.IsConversationOver = true;
+            await MarkConversationAsOver(conversation.Id);
             return null;
         }
-
         return conversation.Id;
     }
     public async Task<Conversation?> GetConversation(Guid conversationId) {
@@ -66,12 +72,30 @@ public class ConversationRepository : IConversationRepository
             .ToListAsync();
     }
 
-    public async Task UpdateLastMessageTime(Guid conversationId)
+    public async Task UpdateLastMessageSentAt(Guid conversationId)
     {
         var conversation = await _dbContext.Conversations
             .Where(c => c.Id == conversationId)
             .FirstOrDefaultAsync() ?? throw new InvalidOperationException("Conversation not found");
-        conversation.LastMessageTime = DateTime.UtcNow;
+        conversation.LastMessageSentAt = DateTime.UtcNow;
+        await _dbContext.SaveChangesAsync();
+    }
+
+    public async Task<IEnumerable<Conversation>> GetActiveConversations()
+    {
+        return await _dbContext.Conversations
+            .Where(c => c.IsConversationOver == false)
+            .ToListAsync();
+    }
+
+    public async Task MarkConversationAsOver(Guid conversationId)
+    {
+        var conversation = await _dbContext.Conversations
+            .Where(c => c.Id == conversationId)
+            .FirstOrDefaultAsync() ?? throw new InvalidOperationException("Conversation not found");
+        conversation.IsConversationOver = true;
+        // make call to LLM to let them know the conversation ended.
+        await LLMService.EndConversation(conversationId, conversation.Participants);
         await _dbContext.SaveChangesAsync();
     }
 }

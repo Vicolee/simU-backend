@@ -27,8 +27,7 @@ public class Mapper : IMapper
             user.Location,
             user.CreatedTime,
             user.IsOnline,
-            user.SpriteURL,
-            user.SpriteHeadshotURL
+            user.SpriteAnimations
         );
 
     public AgentResponse MapToAgentResponse(Agent agent) => new

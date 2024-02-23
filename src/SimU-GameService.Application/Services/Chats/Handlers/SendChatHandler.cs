@@ -59,9 +59,15 @@ public class SendChatHandler : IRequestHandler<SendChatCommand, string?>
         }
 
         Entity? receiver;
+        bool receiverIsOfflineUser = false;
         if (receiverAsUser != null)
         {
             receiver = receiverAsUser;
+            if (!receiverAsUser.IsOnline)
+            {
+                // if the receiver is not online, the AI Service must respond for them
+                receiverIsOfflineUser = true;
+            }
         }
         else if (receiverAsAgent != null)
         {
@@ -76,8 +82,7 @@ public class SendChatHandler : IRequestHandler<SendChatCommand, string?>
         Chat chat;
 
         if (senderIsUser) {
-            // if the sender is user, checks whether user was online or offline
-            // when message was sent (sender.IsOnline)
+            // if the sender is user, checks whether user was online or offline when message was sent (sender.IsOnline)
             User senderAsUser = (User) sender;
             chat = new Chat(request.SenderId, request.ReceiverId, conversationId.Value, request.Content, senderAsUser.IsOnline, receiver is Group);
         } else {
@@ -87,13 +92,21 @@ public class SendChatHandler : IRequestHandler<SendChatCommand, string?>
 
         await _chatRepository.AddChat(chat);
 
-        await _conversationRepository.UpdateLastMessageTime(conversationId.Value);
+        await _conversationRepository.UpdateLastMessageSentAt(conversationId.Value);
 
-        if (receiverAsAgent != null)
+        if (receiverAsAgent != null || receiverIsOfflineUser)
         {
+            var AIResponse = "";
             // send the chat to the LLM agent and save its response
-            var AIResponse = await _agentService.SendChat(
-                chat.SenderId, chat.RecipientId, chat.ConversationId, chat.Content, false, false);
+            if (receiverIsOfflineUser) {
+                // if the recipient is an offline user, we make the last parameter "isRecipientUser" = true.
+                AIResponse = await _agentService.SendChat(
+                    chat.SenderId, chat.RecipientId, chat.ConversationId, chat.Content, false, senderIsUser, true);
+            } else {
+                // if the recipient is an agent, we make the last parameter "isRecipientUser" = false.
+                AIResponse = await _agentService.SendChat(
+                    chat.SenderId, chat.RecipientId, chat.ConversationId, chat.Content, false, senderIsUser, false);
+            }
 
             // TODO: create chat object from string response and save it to the database
             var chatResponse = new Chat(chat.RecipientId, chat.SenderId, chat.ConversationId, AIResponse, false, false);
