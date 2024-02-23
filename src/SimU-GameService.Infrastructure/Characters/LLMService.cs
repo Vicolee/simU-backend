@@ -123,16 +123,16 @@ public class LLMService : ILLMService
             conversationID,
             participants
         };
+        // uncomment this once their route is live
+        // var response = await _httpClient.PostAsJsonAsync("/agents/endConversation", request);
 
-        var response = await _httpClient.PostAsJsonAsync("/agents/endConversation", request);
-
-        // throw exception if the request failed
-        if (response.StatusCode != System.Net.HttpStatusCode.OK)
-        {
-            throw new ServiceErrorException(
-                response.StatusCode,
-                $"Failed to send finished conversation with ID: {conversationID} to LLM service.");
-        }
+        // // throw exception if the request failed
+        // if (response.StatusCode != System.Net.HttpStatusCode.OK)
+        // {
+        //     throw new ServiceErrorException(
+        //         response.StatusCode,
+        //         $"Failed to send finished conversation with ID: {conversationID} to LLM service.");
+        // }
     }
 
     public async Task<string> GenerateCharacterSummary(Guid characterId, IEnumerable<string> questions, IEnumerable<IEnumerable<string>> answers)

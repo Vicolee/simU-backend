@@ -19,7 +19,7 @@ public class GroupsController : ControllerBase
     public async Task<ActionResult<IdResponse>> CreateGroup(CreateGroupRequest request)
     {
         var groupId = await _mediator.Send(new CreateGroupCommand(request.Name, request.OwnerId));
-        return new IdResponse(groupId);  
+        return new IdResponse(groupId);
     }
 
     [HttpDelete("{groupId}", Name = "DeleteGroup")]
