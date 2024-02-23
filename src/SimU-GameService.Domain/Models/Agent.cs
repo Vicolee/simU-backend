@@ -3,6 +3,7 @@ namespace SimU_GameService.Domain.Models;
 public class Agent : Character
 {
     public Guid CreatorId { get; set; }
+    public string? Description { get; set; }
     public DateTime HatchTime { get; set; }
     public Uri? SpriteURL { get; set; }
     public Uri? SpriteHeadshotURL { get; set; }

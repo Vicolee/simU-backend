@@ -23,7 +23,6 @@ public class Mapper : IMapper
             user.Username,
             user.Email,
             user.Summary,
-            user.Description,
             user.Location,
             user.CreatedTime,
             user.IsOnline,
