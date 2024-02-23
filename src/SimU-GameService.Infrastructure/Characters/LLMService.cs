@@ -123,7 +123,7 @@ public class LLMService : ILLMService
             conversationID,
             participants
         };
-
+        // uncomment this once their route is live
         // var response = await _httpClient.PostAsJsonAsync("/agents/endConversation", request);
 
         // // throw exception if the request failed
