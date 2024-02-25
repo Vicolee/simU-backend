@@ -45,7 +45,7 @@ public interface IAgentRepository
     /// <param name="spriteHeadshotURL"></param>
     /// <returns></returns>
     public Task UpdateSprite(Guid agentId, Uri spriteURL, Uri spriteHeadshotURL);
-    
+
     /// <summary>
     /// Updates an agent's description in the repository.
     /// </summary>

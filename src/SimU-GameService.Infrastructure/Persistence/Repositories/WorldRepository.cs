@@ -33,6 +33,11 @@ public class WorldRepository : IWorldRepository
     public async Task AddUser(Guid worldId, Guid userId)
     {
         var world = await GetWorld(worldId) ?? throw new NotFoundException(nameof(World), worldId);
+        // checks to see if the user is already added in the world
+        if (world.WorldUsers.Contains(userId))
+        {
+            throw new BadRequestException("User is already added to the world");
+        }
         world.WorldUsers.Add(userId);
         await _dbContext.SaveChangesAsync();
     }
@@ -129,5 +134,12 @@ public class WorldRepository : IWorldRepository
         var world = await _dbContext.Worlds.FirstOrDefaultAsync(w => w.WorldCode == worldCode)
             ?? throw new NotFoundException(nameof(World), worldCode);
         return world.Id;
+    }
+
+    public async Task UpdateWorldThumbnail(Guid worldId, Uri thumbnailURL)
+    {
+        var world = await GetWorld(worldId) ?? throw new NotFoundException(nameof(World), worldId);
+        world.ThumbnailURL = thumbnailURL;
+        await _dbContext.SaveChangesAsync();
     }
 }
