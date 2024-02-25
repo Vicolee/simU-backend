@@ -619,7 +619,7 @@ Gets the chat history between the current client and another user/group with `re
 
 #### Request
 
-`GET /chats/history`
+`GET /chats/history?participantA_Id&participantB_Id`
 
 ```json
 {
