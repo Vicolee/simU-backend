@@ -23,17 +23,15 @@ public class ConversationStatusService : IHostedService, IConversationStatusServ
 
     public async void CheckConversations(object? state)
     {
-        using (var scope = _serviceScopeFactory.CreateScope())
-        {
-            var conversationRepository = scope.ServiceProvider.GetRequiredService<IConversationRepository>();
-            var activeConversations = await conversationRepository.GetActiveConversations();
+        using var scope = _serviceScopeFactory.CreateScope();
+        var conversationRepository = scope.ServiceProvider.GetRequiredService<IConversationRepository>();
+        var activeConversations = await conversationRepository.GetActiveConversations();
 
-            foreach (var conversation in activeConversations)
+        foreach (var conversation in activeConversations)
+        {
+            if (DateTime.UtcNow - conversation.LastMessageSentAt > TimeSpan.FromMinutes(15))
             {
-                if (DateTime.UtcNow - conversation.LastMessageSentAt > TimeSpan.FromMinutes(15))
-                {
-                    await conversationRepository.MarkConversationAsOver(conversation.Id);
-                }
+                await conversationRepository.MarkConversationAsOver(conversation.Id);
             }
         }
     }

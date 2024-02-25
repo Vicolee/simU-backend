@@ -15,11 +15,19 @@ namespace SimU_GameService.Infrastructure.Persistence;
 
 public static class DependencyInjection
 {
-	public static IServiceCollection AddInfrastructure(this IServiceCollection services, IConfiguration configuration)
+    public static IServiceCollection AddInfrastructure(this IServiceCollection services, IConfiguration configuration)
     {
         /// add DB context for EF Core + Postgres SQL
-        services.AddDbContext<SimUDbContext>(options =>
-            options.UseNpgsql(configuration.GetConnectionString("SimUDbCloud")));
+        if (Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "Testing")
+        {
+            services.AddDbContext<SimUDbContext>(options =>
+                options.UseNpgsql(configuration.GetConnectionString("SimUDbDev")));
+        }
+        else
+        {
+            services.AddDbContext<SimUDbContext>(options =>
+                options.UseNpgsql(configuration.GetConnectionString("SimUDbCloud")));
+        }
 
         // add repository abstractions
         services.AddScoped<IUserRepository, UserRepository>();
@@ -45,7 +53,7 @@ public static class DependencyInjection
 
         // service that checks if ongoing conversations have had recent activity.
         // it checks every 15 minutes.
-        services.AddHostedService<ConversationStatusService>();
+        // services.AddHostedService<ConversationStatusService>();
 
         // authentication
         FirebaseApp.Create(new AppOptions()
@@ -73,5 +81,5 @@ public static class DependencyInjection
             });
 
         return services;
-	}
+    }
 }
