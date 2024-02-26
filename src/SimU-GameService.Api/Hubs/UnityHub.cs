@@ -21,13 +21,13 @@ namespace SimU_GameService.Api.Hubs;
 public class UnityHub : Hub<IUnityClient>, IUnityServer
 {
     private readonly IMediator _mediator;
-    private readonly Timer _timer;
-    private static readonly TimeSpan _pingInterval = TimeSpan.FromMinutes(3);
+    // private readonly Timer _timer;
+    // private static readonly TimeSpan _pingInterval = TimeSpan.FromMinutes(3);
 
     public UnityHub(IMediator mediator)
     {
         _mediator = mediator;
-        _timer = new Timer(PingClient, null, TimeSpan.Zero, _pingInterval);
+        // _timer = new Timer(PingClient, null, TimeSpan.Zero, _pingInterval);
     }
 
     /// <summary>
@@ -64,7 +64,7 @@ public class UnityHub : Hub<IUnityClient>, IUnityServer
     public override async Task OnConnectedAsync()
     {
         // create mapping between identity ID and connection ID
-        var identityId = Context.User?.FindFirst("sub")?.Value 
+        var identityId = (Context.User?.FindFirst("user_id")?.Value)
             ?? throw new UnauthorizedAccessException("User not authenticated");
         _connectionIdMap[identityId] = Context.ConnectionId;
 
@@ -153,10 +153,11 @@ public class UnityHub : Hub<IUnityClient>, IUnityServer
 
     public async Task UpdateLocation(Location location)
     {
-        var senderId = GetIdentityIdFromConnectionMap() ??
+        var identityId = GetIdentityIdFromConnectionMap() ??
             throw new NotFoundException(nameof(User), Context.ConnectionId);
-        await _mediator.Send(new UpdateLocationCommand(
-            await GetUserIdFromIdentityId(senderId), location.X_coord, location.Y_coord));
+        var senderId = await GetUserIdFromIdentityId(identityId);
+        _ = await _mediator.Send(new UpdateLocationCommand(
+            senderId, location.X_coord, location.Y_coord));
 
         // broadcast location update to all users
         await Clients.All.MessageHandler(nameof(UnityHub),
@@ -181,10 +182,10 @@ public class UnityHub : Hub<IUnityClient>, IUnityServer
         // logout users who have not pinged the server since the last ping
         foreach (var (identityId, lastPing) in _lastPingMap)
         {
-            if (DateTime.Now - lastPing > _pingInterval)
-            {
-                await LogoutUser(identityId);
-            }
+            // if (DateTime.Now - lastPing > _pingInterval)
+            // {
+            //     await LogoutUser(identityId);
+            // }
         }
 
         // for each logged-in user, send a ping request to the client
@@ -192,9 +193,17 @@ public class UnityHub : Hub<IUnityClient>, IUnityServer
         {
             if (_connectionIdMap.TryGetValue(identityId, out string? connectionId))
             {
-                await Clients.Client(connectionId).UserOnlineCheckHandler();
+                try
+                {
+                    await Clients.Client(connectionId).UserOnlineCheckHandler();
+                }
+                catch (Exception)
+                {
+                    // if the client is not logged in, remove the user from the server
+                    await LogoutUser(identityId);
+                }
             }
-        }  
+        }
     }
 
     /// <summary>

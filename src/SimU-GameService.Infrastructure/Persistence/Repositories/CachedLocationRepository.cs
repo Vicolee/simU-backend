@@ -10,14 +10,14 @@ public class CachedLocationRepository : ILocationRepository
     private readonly ILocationRepository _decorated;
     private readonly IMemoryCache _cache;
     private readonly ConcurrentDictionary<string, Location> _laskKnownLocations;
-    private readonly Timer _timer;
+    // private readonly Timer _timer;
 
     public CachedLocationRepository(ILocationRepository decorated, IMemoryCache cache)
     {
         _decorated = decorated;
         _cache = cache;
         _laskKnownLocations = new();
-        _timer = new Timer(PersistLastKnownLocations, null, TimeSpan.Zero, TimeSpan.FromMinutes(1));
+        // _timer = new Timer(PersistLastKnownLocations, null, TimeSpan.Zero, TimeSpan.FromMinutes(1));
     }
 
     public Task<Location?> GetLocation(Guid characterId, bool isAgent = false)
@@ -30,15 +30,14 @@ public class CachedLocationRepository : ILocationRepository
         });
     }
 
-    public Task UpdateLocation(Guid characterId, int x_coord, int y_coord, bool isAgent = false)
+    public async Task UpdateLocation(Guid characterId, int x_coord, int y_coord, bool isAgent = false)
     {
         string key = isAgent ? $"Agent_{characterId}" : $"User_{characterId}";
         var location = new Location(x_coord, y_coord);
 
         _cache.Set(key, location, TimeSpan.FromMinutes(2));
         _laskKnownLocations.TryAdd(key, location);
-
-        return Task.CompletedTask;
+        await _decorated.UpdateLocation(characterId, x_coord, y_coord, isAgent);
     }
 
     /// <summary>
