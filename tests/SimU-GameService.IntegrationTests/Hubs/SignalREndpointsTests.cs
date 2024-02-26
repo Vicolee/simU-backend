@@ -27,9 +27,10 @@ public class SignalREndpointsTests : IClassFixture<TestWebApplicationFactory<Pro
         HttpMessageHandler handler, string hubURL, string authToken)
     {
         var hubConnection = new HubConnectionBuilder()
-            .WithUrl($"{hubURL}?access_token={authToken}", o =>
+            .WithUrl(hubURL, options =>
             {
-                o.HttpMessageHandlerFactory = _ => handler;
+                options.HttpMessageHandlerFactory = _ => handler;
+                options.AccessTokenProvider = () => Task.FromResult(authToken ?? default);
             })
             .Build();
 
