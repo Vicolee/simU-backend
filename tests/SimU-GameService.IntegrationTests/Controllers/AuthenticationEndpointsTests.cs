@@ -6,12 +6,12 @@ using SimU_GameService.Contracts.Responses;
 
 namespace SimU_GameService.IntegrationTests.Controllers;
 
-public class AuthenticationTests : IClassFixture<TestWebApplicationFactory<Program>>
+public class AuthenticationEndpointsTests : IClassFixture<TestWebApplicationFactory<Program>>
 {
     private readonly HttpClient _client;
     private readonly TestWebApplicationFactory<Program> _factory;
     
-    public AuthenticationTests(TestWebApplicationFactory<Program> factory)
+    public AuthenticationEndpointsTests(TestWebApplicationFactory<Program> factory)
     {
         Environment.SetEnvironmentVariable("ASPNETCORE_ENVIRONMENT", "Testing");
 

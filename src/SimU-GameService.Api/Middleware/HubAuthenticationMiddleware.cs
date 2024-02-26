@@ -10,8 +10,10 @@ public class HubAuthenticationMiddleware
     {
         var request = context.Request;
 
-        if (request.Path.StartsWithSegments("/unity", StringComparison.OrdinalIgnoreCase)
-            && request.Query.TryGetValue("access_token", out var accessToken))
+        bool isUnityHub = request.Path.StartsWithSegments("/unity", StringComparison.OrdinalIgnoreCase);
+        bool hasAccessToken = request.Query.TryGetValue("access_token", out var accessToken);
+
+        if (isUnityHub && hasAccessToken)
         {
             request.Headers.Add("Authorization", $"Bearer {accessToken}");
         }

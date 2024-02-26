@@ -39,7 +39,8 @@ public static class DependencyInjection
         services.AddScoped<IConversationRepository, ConversationRepository>();
         services.AddScoped<IAgentRepository, AgentRepository>();
         services.AddScoped<ILocationRepository, LocationRepository>();
-        services.Decorate<ILocationRepository, CachedLocationRepository>();
+        services.Decorate<ILocationRepository, CachedLocationRepository>();        
+        services.AddMemoryCache();
 
         // AI agent service
         services.AddScoped<ILLMService, LLMService>();
@@ -78,7 +79,22 @@ public static class DependencyInjection
                 jwtOptions.Audience = configuration["Authentication:Audience"];
                 jwtOptions.TokenValidationParameters.ValidIssuer =
                     configuration["Authentication:ValidIssuer"];
+                jwtOptions.Events = new JwtBearerEvents
+                {
+                    OnMessageReceived = context =>
+                    {
+                        var accessToken = context.Request.Query["access_token"];
+                        var path = context.HttpContext.Request.Path;
+                        if (!string.IsNullOrEmpty(accessToken) &&
+                            path.StartsWithSegments("/unity"))
+                        {
+                            context.Token = accessToken;
+                        }
+                        return Task.CompletedTask;
+                    }
+                };
             });
+        services.AddAuthorization();
 
         return services;
     }

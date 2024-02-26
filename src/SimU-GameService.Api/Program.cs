@@ -32,7 +32,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.UseMiddleware<HubAuthenticationMiddleware>();
+// app.UseMiddleware<HubAuthenticationMiddleware>();
 app.UseAuthentication();
 app.UseAuthorization();
 

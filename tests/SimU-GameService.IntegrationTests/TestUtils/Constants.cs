@@ -31,12 +31,25 @@ public static class Constants
 
     public static class Routes
     {
+        public const string BaseUri = "http://localhost:5000";
+
+        public static class UnityHub
+        {
+            public const string Route = "/unity";
+        }
+
         public static class Authentication
         {
             public const string BaseUri = "/authentication";
             public const string RegisterUser = $"{BaseUri}/register";
             public const string LoginUser = $"{BaseUri}/login";
             public const string LogoutUserPrefix = $"{BaseUri}/logout";
+        }
+
+        public static class Users
+        {
+            public const string BaseUri = "/users";
+            public const string GetUserPrefix = $"{BaseUri}";
         }
     }
 }
