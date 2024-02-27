@@ -578,7 +578,7 @@ Posts an agent's visual description that is provided by the user and returns the
 
 #### Request
 
-`POST /agents/{id}/description`
+`POST /agents/description`
 
 ```json
 {
