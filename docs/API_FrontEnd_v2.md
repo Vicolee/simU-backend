@@ -578,7 +578,7 @@ Posts an agent's visual description that is provided by the user and returns the
 
 #### Request
 
-`POST /agents/{id}/description`
+`POST /agents/description`
 
 ```json
 {
@@ -619,7 +619,7 @@ Gets the chat history between the current client and another user/group with `re
 
 #### Request
 
-`GET /chats/history`
+`GET /chats/history?participantA_Id={idA}&participantB_Id={idB}`
 
 ```json
 {
@@ -682,7 +682,7 @@ When this route is pinged, the AI Service will be prompted by the back-end for a
 
 #### Request
 
-`GET /chats/question`
+`GET /chats/question?senderId={idSender}&recipientId={idRecipient}`
 
 ```json
 {

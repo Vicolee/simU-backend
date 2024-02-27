@@ -1,6 +1,4 @@
-using Microsoft.AspNetCore.SignalR;
 using Microsoft.OpenApi.Models;
-using SimU_GameService.Api.Common;
 using SimU_GameService.Api.Middleware;
 using SimU_GameService.Api.Hubs;
 using SimU_GameService.Application;
@@ -8,19 +6,8 @@ using SimU_GameService.Infrastructure.Persistence;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// mapping
-builder.Services.AddScoped<IMapper, Mapper>();
-
-builder.Services.AddSignalR(options =>
-{
-    options.AddFilter<ErrorHandlingHubFilter>();
-});
-builder.Services.AddControllers(options =>
-{
-    options.Filters.Add<ErrorHandlingFilterAttribute>();
-});
-
 // Dependency injection by layer
+builder.Services.AddWebAPI();
 builder.Services.AddApplication();
 builder.Services.AddInfrastructure(builder.Configuration);
 
@@ -45,7 +32,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.UseMiddleware<HubAuthenticationMiddleware>();
+// app.UseMiddleware<HubAuthenticationMiddleware>();
 app.UseAuthentication();
 app.UseAuthorization();
 
@@ -53,3 +40,5 @@ app.MapControllers();
 app.MapHub<UnityHub>("/unity");
 
 app.Run();
+
+public partial class Program { }

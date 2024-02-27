@@ -13,7 +13,7 @@ public class ErrorHandlingHubFilter : IHubFilter
         }
         catch (Exception ex)
         {
-            await invocationContext.Hub.Clients.Caller.SendAsync("HandleError", ex.Message);
+            await invocationContext.Hub.Clients.Caller.SendAsync("ErrorHandler", ex.Message);
             return null;
         }
     }
