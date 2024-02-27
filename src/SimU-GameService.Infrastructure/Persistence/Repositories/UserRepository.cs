@@ -28,9 +28,19 @@ public class UserRepository : IUserRepository
         var user = await GetUser(userId) ?? throw new NotFoundException(nameof(User), userId);
         if (isOwner)
         {
+            // checks to see if the worldId is already added to the user's list of worlds created or joined to avoid adding duplicates
+            if (user.WorldsCreated.Contains(worldId))
+            {
+                throw new BadRequestException("The user (owner of the world) already has the world added to their list of worlds created.");
+            }
             user.WorldsCreated.Add(worldId);
+        } else {
+            // checks to see if the worldId is already added to the user's list of worlds created or joined to avoid adding duplicates
+            if (user.WorldsJoined.Contains(worldId)) {
+                throw new BadRequestException("The user already has the world added to their list of worlds joined.");
+            }
+            user.WorldsJoined.Add(worldId);
         }
-        user.WorldsJoined.Add(worldId);
         user.ActiveWorldId = worldId;
         await _dbContext.SaveChangesAsync();
     }

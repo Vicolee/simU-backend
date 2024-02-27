@@ -100,4 +100,11 @@ public interface IWorldRepository
     /// <param name="worldCode"></param>
     /// <returns></returns>
     public  Task<Guid?> GetWorldIdByWorldCode(string worldCode);
+
+    /// <summary>
+    /// Updates the World's thumbnail URL
+    /// </summary>
+    /// <param name="worldId"></param>
+    /// <returns></returns>
+    public Task UpdateWorldThumbnail(Guid worldId, Uri thumbnailURL);
 }

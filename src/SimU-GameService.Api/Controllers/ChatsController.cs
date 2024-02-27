@@ -49,20 +49,24 @@ public class ChatsController : ControllerBase
     }
 
     [HttpGet("history", Name = "GetChatHistory")]
-    public async Task<ActionResult<IEnumerable<ChatResponse>>> GetChatHistory(ChatHistoryRequest request)
+    public async Task<ActionResult<IEnumerable<ChatResponse>>> GetChatHistory(
+        [FromQuery] Guid participantA_Id,
+        [FromQuery] Guid participantB_Id)
     {
         var query = new GetChatHistoryQuery(
-            request.ParticipantA_Id,
-            request.ParticipantB_Id);
+            participantA_Id,
+            participantB_Id);
 
         var chats = await _mediator.Send(query);
         return Ok(chats.Select(_mapper.MapToChatResponse));
     }
 
     [HttpGet("question", Name = "AskForQuestion")]
-    public async Task<ActionResult<ChatResponse>> AskForQuestion(AskForQuestionRequest request)
+    public async Task<ActionResult<ChatResponse>> AskForQuestion(
+        [FromQuery] Guid senderId,
+        [FromQuery] Guid recipientId)
     {
-        var question = await _mediator.Send(new AskForQuestionQuery(request.SenderId, request.RecipientId));
+        var question = await _mediator.Send(new AskForQuestionQuery(senderId, recipientId));
 
         if (question is null)
         {
