@@ -163,7 +163,7 @@ public class UnityHub : Hub<IUnityClient>, IUnityServer
             senderId, location.X_coord, location.Y_coord));
 
         // broadcast location update to all users
-        await Clients.All.MessageHandler($"User {senderId} has moved to ({location.X_coord}, {location.Y_coord})");
+        await Clients.All.UpdateLocationHandler(senderId, location);
     }
 
     public void PingServer()
