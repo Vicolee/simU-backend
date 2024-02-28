@@ -30,7 +30,7 @@ public class AuthenticationEndpointsTests : IClassFixture<TestWebApplicationFact
 
         // act
         HttpResponseMessage result = await _client.PostAsJsonAsync(
-            Constants.Routes.Authentication.RegisterUser, request);
+            Constants.Routes.AuthenticationEndpoints.RegisterUser, request);
 
         // handle case where test user already exists in database
         if (result.StatusCode != HttpStatusCode.OK)
@@ -64,9 +64,9 @@ public class AuthenticationEndpointsTests : IClassFixture<TestWebApplicationFact
 
         // act
         _ = await _client.PostAsJsonAsync(
-            Constants.Routes.Authentication.RegisterUser, request);
+            Constants.Routes.AuthenticationEndpoints.RegisterUser, request);
         var result = await _client.PostAsJsonAsync(
-            Constants.Routes.Authentication.RegisterUser, request);
+            Constants.Routes.AuthenticationEndpoints.RegisterUser, request);
 
         var response = await result.Content.ReadAsStringAsync();
 
@@ -91,14 +91,14 @@ public class AuthenticationEndpointsTests : IClassFixture<TestWebApplicationFact
             password);
 
         _ = await _client.PostAsJsonAsync(
-            Constants.Routes.Authentication.RegisterUser, registerRequest);
+            Constants.Routes.AuthenticationEndpoints.RegisterUser, registerRequest);
         
         // act
 
         // send login request
         var request = new LoginRequest(email, password);
         var result = await _client.PostAsJsonAsync(
-            Constants.Routes.Authentication.LoginUser, request);
+            Constants.Routes.AuthenticationEndpoints.LoginUser, request);
         var response = await result.Content.ReadFromJsonAsync<AuthenticationResponse>();
 
         // assert
@@ -117,7 +117,7 @@ public class AuthenticationEndpointsTests : IClassFixture<TestWebApplicationFact
 
         // act
         var result = await _client.PostAsJsonAsync(
-            Constants.Routes.Authentication.LoginUser, request);
+            Constants.Routes.AuthenticationEndpoints.LoginUser, request);
         var response = await result.Content.ReadAsStringAsync();
 
         // assert
@@ -141,14 +141,14 @@ public class AuthenticationEndpointsTests : IClassFixture<TestWebApplicationFact
             password);
 
         var registerResult = await _client.PostAsJsonAsync(
-            Constants.Routes.Authentication.RegisterUser, registerRequest);
+            Constants.Routes.AuthenticationEndpoints.RegisterUser, registerRequest);
         var registerResponse = await registerResult.Content.ReadFromJsonAsync<AuthenticationResponse>();
 
         // act
 
         // send logout request
         var result = await _client.PostAsync(
-            $"{Constants.Routes.Authentication.LogoutUserPrefix}/{registerResponse!.Id}", null);
+            $"{Constants.Routes.AuthenticationEndpoints.LogoutUserPrefix}/{registerResponse!.Id}", null);
 
         // assert
         Assert.Equal(HttpStatusCode.NoContent, result.StatusCode);

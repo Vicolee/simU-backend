@@ -1,4 +1,6 @@
-﻿namespace SimU_GameService.Api.Hubs.Abstractions;
+﻿using SimU_GameService.Domain.Models;
+
+namespace SimU_GameService.Api.Hubs.Abstractions;
 
 /// <summary>
 /// Defines the methods on the client-side that can be invoked by the <see cref="UnityHub"/> (server).
@@ -12,6 +14,14 @@ public interface IUnityClient
     /// <param name="message">The content of the message</param>
     /// <returns></returns>
     Task MessageHandler(string sender, string message);
+
+    /// <summary>
+    /// Handles a server request that updates the location of a user.
+    /// </summary>
+    /// <param name="userId"></param>
+    /// <param name="location"></param>
+    /// <returns></returns>
+    Task UpdateLocationHandler(Guid userId, Location location);
 
     /// <summary>
     /// Handles a request to join a group.

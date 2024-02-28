@@ -29,16 +29,32 @@ public static class Constants
         public const string TestPassword = "TestPassword";
     }
 
+    public static class Agent
+    {
+        public const string TestAgentName = "TestAgent";
+        public const string TestAgentDescription = "TestAgentDescription";
+        public const float TestMaxIncubationPeriodInHours = 24;
+        public const float TestMinIncubationPeriodInHours = 0;
+        public const string TestSpriteUri = "https://TestSpriteUri.SimU.com";
+        public const string TestSpriteHeadshotUri = "https://TestSpriteHeadshotUri.SimU.com";
+    }
+
+    public static class World
+    {
+        public const string TestWorldName = "TestWorld";
+        public const string TestWorldDescription = "TestWorldDescription";
+    }
+
     public static class Routes
     {
         public const string BaseUri = "http://localhost:5000";
 
         public static class UnityHub
         {
-            public const string Route = "/unity";
+            public const string BaseUri = "/unity";
         }
 
-        public static class Authentication
+        public static class AuthenticationEndpoints
         {
             public const string BaseUri = "/authentication";
             public const string RegisterUser = $"{BaseUri}/register";
@@ -46,10 +62,19 @@ public static class Constants
             public const string LogoutUserPrefix = $"{BaseUri}/logout";
         }
 
-        public static class Users
+        public static class UsersEndpoints
         {
             public const string BaseUri = "/users";
-            public const string GetUserPrefix = $"{BaseUri}";
+        }
+
+        public static class AgentsEndpoints
+        {
+            public const string BaseUri = "/agents";
+        }
+
+        public static class WorldsEndpoints
+        {
+            public const string BaseUri = "/worlds";
         }
     }
 }

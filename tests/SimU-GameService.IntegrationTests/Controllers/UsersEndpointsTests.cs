@@ -34,12 +34,12 @@ public class UsersEndpointsTests : IClassFixture<TestWebApplicationFactory<Progr
             password);
 
         var registerResult = await _client.PostAsJsonAsync(
-            Constants.Routes.Authentication.RegisterUser, registerRequest);
+            Constants.Routes.AuthenticationEndpoints.RegisterUser, registerRequest);
         var registerResponse = await registerResult.Content.ReadFromJsonAsync<AuthenticationResponse>();
 
         // act
         var result = await _client.GetAsync(
-            $"{Constants.Routes.Users.GetUserPrefix}/{registerResponse!.Id}");
+            $"{Constants.Routes.UsersEndpoints.BaseUri}/{registerResponse!.Id}");
         var response = await result.Content.ReadFromJsonAsync<UserResponse>();
 
         // assert

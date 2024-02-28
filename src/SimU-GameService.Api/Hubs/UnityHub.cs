@@ -153,15 +153,23 @@ public class UnityHub : Hub<IUnityClient>, IUnityServer
 
     public async Task UpdateLocation(Location location)
     {
+        // update user location in the database 
         var identityId = GetIdentityIdFromConnectionMap() ??
             throw new NotFoundException(nameof(User), Context.ConnectionId);
         var senderId = await GetUserIdFromIdentityId(identityId);
-        _ = await _mediator.Send(new UpdateLocationCommand(
+        await _mediator.Send(new UpdateLocationCommand(
             senderId, location.X_coord, location.Y_coord));
 
-        // broadcast location update to all users
-        await Clients.All.MessageHandler(nameof(UnityHub),
-            $"User {senderId} has moved to ({location.X_coord}, {location.Y_coord})");
+        // broadcast updated location to users in the same world
+        var (worldName, worldUserIdentities) = await _mediator.Send(new GetUsersInSameWorldQuery(senderId));
+        foreach (var userIdentityId in worldUserIdentities)
+        {
+            if (_connectionIdMap.TryGetValue(userIdentityId, out string? connectionId))
+            {
+                await Groups.AddToGroupAsync(connectionId!, $"world_{worldName}");
+            }
+        }
+        await Clients.Group(worldName).UpdateLocationHandler(senderId, location);
     }
 
     public void PingServer()

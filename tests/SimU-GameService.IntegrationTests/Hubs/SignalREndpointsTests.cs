@@ -46,9 +46,7 @@ public class SignalREndpointsTests : IClassFixture<TestWebApplicationFactory<Pro
         // register user to get ID and auth token
         var registerResponse = await TestUserUtils.RegisterUser(
             _client,
-            Constants.User.TestUsername,
-            Constants.User.TestEmail,
-            Constants.User.TestPassword);
+            Constants.User.TestEmail);
 
         var userId = registerResponse!.Id;
         var authToken = registerResponse!.AuthToken;
@@ -59,7 +57,7 @@ public class SignalREndpointsTests : IClassFixture<TestWebApplicationFactory<Pro
 
         // act
         // initialize SignalR connection
-        var hubURL = new Uri($"{Constants.Routes.BaseUri}{Constants.Routes.UnityHub.Route}");
+        var hubURL = new Uri($"{Constants.Routes.BaseUri}{Constants.Routes.UnityHub.BaseUri}");
         _connection = await StartConnectionAsync(_factory.Server.CreateHandler(), hubURL!.ToString(), authToken);
         
         // handle connection closed event

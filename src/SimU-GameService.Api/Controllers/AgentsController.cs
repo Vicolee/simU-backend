@@ -4,7 +4,6 @@ using SimU_GameService.Api.Common;
 using SimU_GameService.Application.Common.Exceptions;
 using SimU_GameService.Application.Services.Agents.Commands;
 using SimU_GameService.Application.Services.Agents.Queries;
-using SimU_GameService.Application.Services.Users.Commands;
 using SimU_GameService.Contracts.Requests;
 using SimU_GameService.Contracts.Responses;
 using SimU_GameService.Domain.Models;
