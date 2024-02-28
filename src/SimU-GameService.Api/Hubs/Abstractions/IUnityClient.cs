@@ -1,4 +1,7 @@
-﻿namespace SimU_GameService.Api.Hubs.Abstractions;
+﻿using SimU_GameService.Contracts.Responses;
+using SimU_GameService.Domain.Models;
+
+namespace SimU_GameService.Api.Hubs.Abstractions;
 
 /// <summary>
 /// Defines the methods on the client-side that can be invoked by the <see cref="UnityHub"/> (server).
@@ -8,10 +11,16 @@ public interface IUnityClient
     /// <summary>
     /// Handles a message received from another client through the server.
     /// </summary>
-    /// <param name="sender">The client (can also be the server) sending the message</param>
-    /// <param name="message">The content of the message</param>
+    /// <param name="message">The message sent by the client</param>
     /// <returns></returns>
-    Task MessageHandler(string sender, string message);
+    Task ChatHandler(ChatResponse? message);
+
+    /// <summary>
+    /// Handles a message received from the server.
+    /// </summary>
+    /// <param name="message">The message sent by the server</param>
+    /// <returns></returns>
+    Task MessageHandler(string message);
 
     /// <summary>
     /// Handles a request to join a group.

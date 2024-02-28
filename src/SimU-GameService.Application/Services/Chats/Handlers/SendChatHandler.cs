@@ -8,7 +8,7 @@ using SimU_GameService.Domain.Primitives;
 
 namespace SimU_GameService.Application.Services.Chats.Handlers;
 
-public class SendChatHandler : IRequestHandler<SendChatCommand, string?>
+public class SendChatHandler : IRequestHandler<SendChatCommand, Chat?>
 {
     private readonly IChatRepository _chatRepository;
     private readonly IUserRepository _userRepository;
@@ -27,7 +27,7 @@ public class SendChatHandler : IRequestHandler<SendChatCommand, string?>
         _conversationRepository = conversationRepository;
     }
 
-    public async Task<string?> Handle(SendChatCommand request, CancellationToken cancellationToken)
+    public async Task<Chat?> Handle(SendChatCommand request, CancellationToken cancellationToken)
     {
         bool senderIsUser;
         Character? sender = await _userRepository.GetUser(request.SenderId);
@@ -113,10 +113,10 @@ public class SendChatHandler : IRequestHandler<SendChatCommand, string?>
             await _chatRepository.AddChat(chatResponse);
 
             // is this return value correct? Should we not be returning the chat response?
-            return chatResponse.Content;
+            return chatResponse;
         } else {
             // review this: what should we return in the case where the chat is just sent to another online user?
-            return chat.Content;
+            return chat;
         }
     }
 }
