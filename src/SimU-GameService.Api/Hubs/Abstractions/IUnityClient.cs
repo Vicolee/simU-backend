@@ -1,4 +1,5 @@
-﻿using SimU_GameService.Domain.Models;
+﻿using SimU_GameService.Contracts.Responses;
+using SimU_GameService.Domain.Models;
 
 namespace SimU_GameService.Api.Hubs.Abstractions;
 
@@ -10,16 +11,22 @@ public interface IUnityClient
     /// <summary>
     /// Handles a message received from another client through the server.
     /// </summary>
-    /// <param name="sender">The client (can also be the server) sending the message</param>
-    /// <param name="message">The content of the message</param>
+    /// <param name="message">The message sent by the client</param>
     /// <returns></returns>
-    Task MessageHandler(string sender, string message);
+    Task ChatHandler(ChatResponse? message);
 
     /// <summary>
-    /// Handles a server request that updates the location of a user.
+    /// Handles a message received from the server.
     /// </summary>
-    /// <param name="userId"></param>
-    /// <param name="location"></param>
+    /// <param name="message">The message sent by the server</param>
+    /// <returns></returns>
+    Task MessageHandler(string message);
+
+    /// <summary>
+    /// Handles a message that notifies the client when a user moves to a new location.
+    /// </summary>
+    /// <param name="userId">The ID of the user who moved</param>
+    /// <param name="location">The new location of the user</param>
     /// <returns></returns>
     Task UpdateLocationHandler(Guid userId, Location location);
 

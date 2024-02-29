@@ -19,7 +19,9 @@ public class SignalREndpointsTests : IClassFixture<TestWebApplicationFactory<Pro
     }
 
     private static async Task<HubConnection> StartConnectionAsync(
-        HttpMessageHandler handler, string hubURL, string authToken)
+        HttpMessageHandler handler,
+        string authToken,
+        string hubURL = $"{Constants.Routes.BaseUri}{Constants.Routes.UnityHub.BaseUri}")
     {
         var hubConnection = new HubConnectionBuilder()
             .WithUrl(hubURL, options =>
@@ -51,8 +53,7 @@ public class SignalREndpointsTests : IClassFixture<TestWebApplicationFactory<Pro
         var location = new Location(random.Next(0, 100), random.Next(0, 100));
 
         // initialize SignalR connection
-        var hubURL = new Uri($"{Constants.Routes.BaseUri}{Constants.Routes.UnityHub.BaseUri}");
-        _connection = await StartConnectionAsync(_factory.Server.CreateHandler(), hubURL!.ToString(), authToken);
+        _connection = await StartConnectionAsync(_factory.Server.CreateHandler(), authToken);
         
         // handle connection closed event
         _connection.Closed += async error =>
@@ -88,22 +89,14 @@ public class SignalREndpointsTests : IClassFixture<TestWebApplicationFactory<Pro
         // arrange
 
         // register sender and receiver
-        var senderResponse = await TestUserUtils.RegisterUser(_client,
-            Constants.User.TestUsername,
-            Constants.User.TestEmail,
-            Constants.User.TestPassword);
-
-        var receiverResponse = await TestUserUtils.RegisterUser(_client,
-            Constants.User.TestUsername,
-            Constants.User.TestEmail,
-            Constants.User.TestPassword);
+        var senderResponse = await TestUserUtils.RegisterUser(_client, Constants.User.TestEmail);
+        var receiverResponse = await TestUserUtils.RegisterUser(_client, Constants.User.TestEmail);
 
         // initialize connection for sender and receiver        
-        var hubURL = new Uri($"{Constants.Routes.BaseUri}{Constants.Routes.UnityHub.Route}");
         _connection = await StartConnectionAsync(
-            _factory.Server.CreateHandler(), hubURL!.ToString(), senderResponse!.AuthToken);
+            _factory.Server.CreateHandler(), senderResponse!.AuthToken);
         var receiverConnection = await StartConnectionAsync(
-            _factory.Server.CreateHandler(), hubURL!.ToString(), receiverResponse!.AuthToken);
+            _factory.Server.CreateHandler(), receiverResponse!.AuthToken);
 
         // register handler for message received and closed connecting events
         _connection.Closed += async error =>
@@ -111,7 +104,6 @@ public class SignalREndpointsTests : IClassFixture<TestWebApplicationFactory<Pro
             await Task.Delay(new Random().Next(0, 5) * 1000);
             await _connection.StartAsync();
         };
-
         receiverConnection.Closed += async error =>
         {
             await Task.Delay(new Random().Next(0, 5) * 1000);
@@ -119,14 +111,15 @@ public class SignalREndpointsTests : IClassFixture<TestWebApplicationFactory<Pro
         };
         
         var senderTcs = new TaskCompletionSource<(Guid, Location)>();
-        _connection.On<Guid, Location>("UpdateLocationHandler", (sender, location) => senderTcs.SetResult((sender, location)));
-
         var receiverTcs = new TaskCompletionSource<(Guid, Location)>();
+
+        _connection.On<Guid, Location>("UpdateLocationHandler", (sender, location) => senderTcs.SetResult((sender, location)));
         receiverConnection.On<Guid, Location>("UpdateLocationHandler", (sender, location) => receiverTcs.SetResult((sender, location)));
         
 
         // act
         // send chat message from sender to receiver
+        await _connection.SendAsync("SendChat", receiverResponse!.Id, "Hey buddy!");
         
 
         // assert

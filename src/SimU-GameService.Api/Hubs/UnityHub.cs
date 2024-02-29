@@ -11,6 +11,7 @@ using SimU_GameService.Application.Services.Users.Commands;
 using SimU_GameService.Application.Services.Users.Queries;
 using SimU_GameService.Domain.Models;
 using SimU_GameService.Application.Services.Worlds.Queries;
+using SimU_GameService.Api.Common;
 
 namespace SimU_GameService.Api.Hubs;
 
@@ -21,12 +22,14 @@ namespace SimU_GameService.Api.Hubs;
 public class UnityHub : Hub<IUnityClient>, IUnityServer
 {
     private readonly IMediator _mediator;
+    private readonly IMapper _mapper;
     // private readonly Timer _timer;
     // private static readonly TimeSpan _pingInterval = TimeSpan.FromMinutes(3);
 
-    public UnityHub(IMediator mediator)
+    public UnityHub(IMediator mediator, IMapper mapper)
     {
         _mediator = mediator;
+        _mapper = mapper;
         // _timer = new Timer(PingClient, null, TimeSpan.Zero, _pingInterval);
     }
 
@@ -58,7 +61,7 @@ public class UnityHub : Hub<IUnityClient>, IUnityServer
             throw new NotFoundException($"Connection ID for user", userId);
         }
         await Clients.Client(connectionId)
-            .MessageHandler(nameof(UnityHub), message);
+            .MessageHandler(message);
     }
 
     public override async Task OnConnectedAsync()
@@ -147,29 +150,20 @@ public class UnityHub : Hub<IUnityClient>, IUnityServer
         // notify receiver of message
         if (_connectionIdMap.TryGetValue(await GetIdentityIdFromUserId(receiverId), out string? connectionId))
         {
-            await Clients.Client(connectionId).MessageHandler(senderId.ToString(), message);
+            await Clients.Client(connectionId).ChatHandler(_mapper.MapToChatResponse(chatResponse!));
         }
     }
 
     public async Task UpdateLocation(Location location)
     {
-        // update user location in the database 
         var identityId = GetIdentityIdFromConnectionMap() ??
             throw new NotFoundException(nameof(User), Context.ConnectionId);
         var senderId = await GetUserIdFromIdentityId(identityId);
-        await _mediator.Send(new UpdateLocationCommand(
+        _ = await _mediator.Send(new UpdateLocationCommand(
             senderId, location.X_coord, location.Y_coord));
 
-        // broadcast updated location to users in the same world
-        var (worldName, worldUserIdentities) = await _mediator.Send(new GetUsersInSameWorldQuery(senderId));
-        foreach (var userIdentityId in worldUserIdentities)
-        {
-            if (_connectionIdMap.TryGetValue(userIdentityId, out string? connectionId))
-            {
-                await Groups.AddToGroupAsync(connectionId!, $"world_{worldName}");
-            }
-        }
-        await Clients.Group(worldName).UpdateLocationHandler(senderId, location);
+        // broadcast location update to all users
+        await Clients.All.UpdateLocationHandler(senderId, location);
     }
 
     public void PingServer()
