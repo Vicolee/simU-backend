@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using SimU_GameService.Infrastructure.Persistence;
@@ -12,9 +13,11 @@ using SimU_GameService.Infrastructure.Persistence;
 namespace SimU_GameService.Infrastructure.Migrations
 {
     [DbContext(typeof(SimUDbContext))]
-    partial class SimUDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240223213334_bugfix")]
+    partial class bugfix
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -93,6 +96,7 @@ namespace SimU_GameService.Infrastructure.Migrations
             modelBuilder.Entity("SimU_GameService.Domain.Models.Conversation", b =>
                 {
                     b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
                     b.Property<DateTime>("CreatedTime")
@@ -107,9 +111,9 @@ namespace SimU_GameService.Infrastructure.Migrations
                     b.Property<DateTime>("LastMessageSentAt")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<string>("Participants")
+                    b.Property<List<Guid>>("Participants")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasColumnType("uuid[]");
 
                     b.HasKey("Id");
 
