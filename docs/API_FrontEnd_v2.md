@@ -150,7 +150,7 @@ Front-end provides a world's private world code, and the back-end returns the `w
 
 #### Request
 
-`GET /worlds/{code}`
+`GET /worlds/code/{code}`
 
 #### Response
 
