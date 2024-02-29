@@ -472,6 +472,20 @@ Returns the list of worlds that a user belongs to.
 ]
 ```
 
+### UpdateUserSummary
+
+#### Description
+
+Updates a user's summary
+
+#### Request
+
+`PUT /users/{id}/summary`
+
+#### Response
+
+`200 OK`
+
 ### UpdateSprite
 
 #### Description
