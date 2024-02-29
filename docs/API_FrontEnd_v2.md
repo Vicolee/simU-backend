@@ -621,13 +621,6 @@ Gets the chat history between the current client and another user/group with `re
 
 `GET /chats/history?participantA_Id={idA}&participantB_Id={idB}`
 
-```json
-{
-    "senderId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
-    "recipientId": "3fa85f64-5717-4562-b3fc-2c963f66afa6"
-}
-```
-
 #### Response
 
 ```json
@@ -683,13 +676,6 @@ When this route is pinged, the AI Service will be prompted by the back-end for a
 #### Request
 
 `GET /chats/question?senderId={idSender}&recipientId={idRecipient}`
-
-```json
-{
-    "senderId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
-    "recipientId": "3fa85f64-5717-4562-b3fc-2c963f66afa6"
-}
-```
 
 #### Response
 
