@@ -22,11 +22,10 @@ public class PostVisualDescriptionHandler : IRequestHandler<PostVisualDescriptio
     public async Task<(Uri, Uri)> Handle(PostVisualDescriptionCommand request,
         CancellationToken cancellationToken)
     {
-        Dictionary<string, string>? spriteUrls = await _agentService.GenerateAgentSprite(request.AgentId, request.Description) ?? throw new BadRequestException("Failed to generate agent sprite URLs on LLM Service.");
+        Dictionary<string, string>? spriteUrls = await _agentService.GenerateAgentSprite(request.Description) ?? throw new BadRequestException("Failed to generate agent sprite URLs on LLM Service.");
         Uri avatarURL = new(spriteUrls["avatarURL"]);
         Uri headshotURL = new(spriteUrls["headshotURL"]);
 
-        await _agentRepository.UpdateSprite(request.AgentId, avatarURL, headshotURL);
         return (avatarURL, headshotURL);
     }
 }

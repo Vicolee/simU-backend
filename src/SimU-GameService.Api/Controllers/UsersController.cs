@@ -66,4 +66,11 @@ public class UsersController : ControllerBase
         await _mediator.Send(new UpdateUserSpriteCommand(id, request.Animations));
         return Ok();
     }
+
+    [HttpPut("{id}/summary", Name = "UpdateUserSummary")]
+    public async Task<ActionResult> UpdateUserSummary(Guid id, UpdateSummaryRequest request)
+    {
+        await _mediator.Send(new UpdateUserSummaryCommand(id, request.Summary));
+        return Ok();
+    }
 }

@@ -39,7 +39,7 @@ public static class DependencyInjection
         services.AddScoped<IConversationRepository, ConversationRepository>();
         services.AddScoped<IAgentRepository, AgentRepository>();
         services.AddScoped<ILocationRepository, LocationRepository>();
-        services.Decorate<ILocationRepository, CachedLocationRepository>();        
+        services.Decorate<ILocationRepository, CachedLocationRepository>();
         services.AddMemoryCache();
 
         // AI agent service

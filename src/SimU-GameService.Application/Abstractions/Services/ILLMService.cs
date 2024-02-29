@@ -8,6 +8,6 @@ public interface ILLMService
     Task EndConversation(Guid conversationID, IEnumerable<Guid> participants);
     Task<string> GenerateCharacterSummary(Guid characterId, IEnumerable<string> questions,
                                           IEnumerable<IEnumerable<string>> answers);
-    Task<Dictionary<string, string>?> GenerateAgentSprite(Guid agentId, string description);
+    Task<Dictionary<string, string>?> GenerateAgentSprite(string description);
     Task<string> GenerateWorldThumbnail(Guid worldId, Guid creatorId, string description);
 }
