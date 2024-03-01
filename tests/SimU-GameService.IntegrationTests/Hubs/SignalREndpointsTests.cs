@@ -43,7 +43,7 @@ public class SignalREndpointsTests : IClassFixture<TestWebApplicationFactory<Pro
             
 
     [Fact]
-    public async void UpdateLocation_WhenUserExists_ShouldWork()
+    public async Task UpdateLocation_WhenUserExists_ShouldWorkAsync()
     {
         // arrange        
         // register user to get ID and auth token
@@ -83,7 +83,7 @@ public class SignalREndpointsTests : IClassFixture<TestWebApplicationFactory<Pro
     }
 
     [Fact]
-    public async Task SendChat_WhenSenderAndReceiverExist_ShouldWorkAsync()
+    public async Task SendChat_WhenSenderAndReceiverAreUsers_ShouldWorkAsync()
     {
         // arrange
         // register sender and receiver
@@ -103,7 +103,7 @@ public class SignalREndpointsTests : IClassFixture<TestWebApplicationFactory<Pro
         
         // act
         // send chat message from sender to receiver
-        var message = "Hey buddy!";
+        var message = "This is a test message.";
         await _connection.SendAsync("SendChat", receiver!.Id, message);
         
         var senderChatResponse = await senderTcs.Task;
@@ -119,5 +119,51 @@ public class SignalREndpointsTests : IClassFixture<TestWebApplicationFactory<Pro
         Assert.Equal(sender.Id, receiverChatResponse.SenderId);
         Assert.Equal(receiver.Id, receiverChatResponse.ReceiverId);
         Assert.Equal(message, receiverChatResponse.Content);
+    }
+
+    [Fact]
+    public async Task SendChat_WhenReceiverIsAgent_ShouldWorkAsync()
+    {
+        // arrange
+        // register sender as user and receiver as an agent
+        var sender = await TestUserUtils.RegisterUser(_client, Constants.User.TestEmail);
+        var receiver = await TestAgentUtils.CreateAgent(_client, sender!.Id);
+
+        // initialize connection for sender
+        _connection = await StartConnectionAsync(_factory.Server.CreateHandler(), sender!.AuthToken);
+
+        // register handler for message received event
+        var sentChatTcs = new TaskCompletionSource<ChatResponse>();
+        var agentResponseTcs = new TaskCompletionSource<ChatResponse>();
+
+        _connection.On<ChatResponse>("ChatHandler", response =>
+        {
+            if (sentChatTcs.Task.IsCompleted)
+            {
+                agentResponseTcs.SetResult(response);
+            }
+            else
+            {
+                sentChatTcs.SetResult(response);
+            }
+        });
+        
+        // act
+        // send chat message from sender to receiver
+        var message = "This is a test message.";
+        await _connection.SendAsync("SendChat", receiver!.Id, message);
+        
+        var sentChatResponse = await sentChatTcs.Task;
+        var receivedChatResponse = await agentResponseTcs.Task;
+
+        // assert
+        Assert.NotNull(sentChatResponse);
+        Assert.Equal(sender.Id, sentChatResponse.SenderId);
+        Assert.Equal(receiver.Id, sentChatResponse.ReceiverId);
+        Assert.Equal(message, sentChatResponse.Content);
+
+        Assert.NotNull(receivedChatResponse);
+        Assert.Equal(receiver.Id, receivedChatResponse.SenderId);
+        Assert.Equal(sender.Id, receivedChatResponse.ReceiverId);
     }
 }

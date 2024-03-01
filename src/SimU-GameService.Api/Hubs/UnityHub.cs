@@ -47,7 +47,7 @@ public class UnityHub : Hub<IUnityClient>, IUnityServer
     private async Task<Guid> GetUserIdFromIdentityId(string identityId)
         => await _mediator.Send(new GetUserIdFromIdentityIdQuery(identityId));
 
-    private async Task<string> GetIdentityIdFromUserId(Guid userId)
+    private async Task<string?> GetIdentityIdFromUserId(Guid userId)
         => await _mediator.Send(new GetIdentityIdFromUserIdQuery(userId));
 
     public override async Task OnConnectedAsync()
@@ -79,7 +79,7 @@ public class UnityHub : Hub<IUnityClient>, IUnityServer
 
         // send chat to receiver
         var receiverIdentityId = await GetIdentityIdFromUserId(receiverId);
-        if (_connectionIdMap.TryGetValue(receiverIdentityId, out string? connectionId))
+        if (receiverIdentityId is not null && _connectionIdMap.TryGetValue(receiverIdentityId, out string? connectionId))
         {
             await Clients.Client(connectionId).ChatHandler(_mapper.MapToChatResponse(chat));
         }

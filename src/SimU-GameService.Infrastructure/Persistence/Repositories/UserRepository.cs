@@ -17,8 +17,8 @@ public class UserRepository : IUserRepository
         await _dbContext.SaveChangesAsync();
     }
 
-    public async Task<User?> GetUser(Guid userId) => await _dbContext.Users
-            .FirstOrDefaultAsync(u => u.Id == userId) ?? throw new NotFoundException(nameof(User), userId);
+    public async Task<User?> GetUser(Guid userId) 
+        => await _dbContext.Users.FirstOrDefaultAsync(u => u.Id == userId);
 
     public async Task<User?> GetUserByEmail(string email) => await _dbContext.Users
             .FirstOrDefaultAsync(u => u.Email == email);
@@ -148,9 +148,9 @@ public class UserRepository : IUserRepository
         await _dbContext.SaveChangesAsync();
     }
 
-    public async Task<string> GetIdentityIdFromUserId(Guid userId)
+    public async Task<string?> GetIdentityIdFromUserId(Guid userId)
     {
-        var user = await GetUser(userId) ?? throw new NotFoundException(nameof(User), userId);
-        return user.IdentityId;
+        var user = await GetUser(userId);
+        return user?.IdentityId ?? default;
     }
 }

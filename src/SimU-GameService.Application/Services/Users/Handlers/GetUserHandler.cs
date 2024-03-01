@@ -1,5 +1,6 @@
 using MediatR;
 using SimU_GameService.Application.Abstractions.Repositories;
+using SimU_GameService.Application.Common.Exceptions;
 using SimU_GameService.Application.Services.Users.Queries;
 using SimU_GameService.Domain.Models;
 
@@ -11,6 +12,7 @@ public class GetUserHandler : IRequestHandler<GetUserQuery, User?>
 
     public GetUserHandler(IUserRepository userRepository) => _userRepository = userRepository;
 
-    public async Task<User?> Handle(GetUserQuery request,
-        CancellationToken cancellationToken) => await _userRepository.GetUser(request.UserId);
+    public async Task<User?> Handle(GetUserQuery request, CancellationToken cancellationToken)
+        => await _userRepository.GetUser(request.UserId)
+        ?? throw new NotFoundException(nameof(User), request.UserId);
 }

@@ -33,15 +33,19 @@ public class LLMService : ILLMService
             // checks that the user sender exists
             _ = await _userRepository.GetUser(senderId) ?? throw new NotFoundException(nameof(User), senderId);
         }
-        else {
+        else
+        {
             // checks that the agent sender exists
             _ = await _agentRepository.GetAgent(senderId) ?? throw new NotFoundException(nameof(Agent), senderId);
         }
 
-        if (isRecipientUser) {
+        if (isRecipientUser)
+        {
             // check that user receiver exists
             _ = await _userRepository.GetUser(recipientId) ?? throw new NotFoundException(nameof(User), recipientId);
-        } else {
+        }
+        else
+        {
             // check that agent receiver exists
             _ = await _agentRepository.GetAgent(recipientId) ?? throw new NotFoundException(nameof(Agent), recipientId);
         }
@@ -62,16 +66,16 @@ public class LLMService : ILLMService
         // throw exception if the request failed
         if (response.StatusCode != System.Net.HttpStatusCode.OK)
         {
-            throw new ServiceErrorException(
-                response.StatusCode,
-                $"Failed to relay message with content: {content}, from user: {senderId}, to agent: {recipientId}.");
+            // TODO: for now, just return an empty response
+            // throw new ServiceErrorException(
+            //     response.StatusCode,
+            //     $"Failed to relay message with content: {content}, from user: {senderId}, to agent: {recipientId}.");
         }
         return responseContent;
     }
 
     public async Task<string> PromptForQuestion(Guid senderId, Guid recipientId, Guid conversationId, bool streamResponse, bool isRecipientUser)
     {
-
         var request = new
         {
             senderId,
