@@ -21,6 +21,7 @@ public class Character : Entity
         Username = username;
         Summary = summary;
         CreatedTime = DateTime.UtcNow;
+        Location = new Location(0, 0);
     }
 
     public void UpdateLocation(int xCoord, int yCoord)

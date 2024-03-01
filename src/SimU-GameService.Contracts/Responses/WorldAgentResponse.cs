@@ -8,8 +8,9 @@ public record WorldAgentResponse(
     string? Description,
     string? Summary,
     Location? Location,
+    DateTime CreatedTime,
     bool IsHatched,
     DateTime HatchTime,
     Uri? Sprite_URL,
-    Uri? Sprite_Headshot_URL    
+    Uri? Sprite_Headshot_URL
 );
