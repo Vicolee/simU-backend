@@ -66,10 +66,9 @@ public class LLMService : ILLMService
         // throw exception if the request failed
         if (response.StatusCode != System.Net.HttpStatusCode.OK)
         {
-            // TODO: for now, just return an empty response
-            // throw new ServiceErrorException(
-            //     response.StatusCode,
-            //     $"Failed to relay message with content: {content}, from user: {senderId}, to agent: {recipientId}.");
+            throw new ServiceErrorException(
+                response.StatusCode,
+                $"Failed to relay message with content: {content}, from user: {senderId}, to agent: {recipientId}.");
         }
         return responseContent;
     }
