@@ -87,29 +87,37 @@ public class SignalREndpointsTests : IClassFixture<TestWebApplicationFactory<Pro
     {
         // arrange
         // register sender and receiver
-        var senderResponse = await TestUserUtils.RegisterUser(_client, Constants.User.TestEmail);
-        var receiverResponse = await TestUserUtils.RegisterUser(_client, $"TestReceiver{DateTime.Now.Ticks}@SimU.com");
+        var sender = await TestUserUtils.RegisterUser(_client, Constants.User.TestEmail);
+        var receiver = await TestUserUtils.RegisterUser(_client, $"TestReceiver{DateTime.Now.Ticks}@SimU.com");
 
         // initialize connection for sender and receiver
-        _connection = await StartConnectionAsync(
-            _factory.Server.CreateHandler(), senderResponse!.AuthToken);
-        var receiverConnection = await StartConnectionAsync(
-            _factory.Server.CreateHandler(), receiverResponse!.AuthToken);
+        _connection = await StartConnectionAsync(_factory.Server.CreateHandler(), sender!.AuthToken);
+        var receiverConnection = await StartConnectionAsync(_factory.Server.CreateHandler(), receiver!.AuthToken);
 
-        // register handler for message received event     
-        var tcs = new TaskCompletionSource<ChatResponse>();
-        receiverConnection.On<ChatResponse>("ChatHandler", tcs.SetResult);
+        // register handlers for message received event        
+        var senderTcs = new TaskCompletionSource<ChatResponse>();
+        var receiverTcs = new TaskCompletionSource<ChatResponse>();
+
+        _connection.On<ChatResponse>("ChatHandler", senderTcs.SetResult);
+        receiverConnection.On<ChatResponse>("ChatHandler", receiverTcs.SetResult);
         
         // act
         // send chat message from sender to receiver
         var message = "Hey buddy!";
-        await _connection.SendAsync("SendChat", receiverResponse!.Id, message);
-        var chatResponse = await tcs.Task;
+        await _connection.SendAsync("SendChat", receiver!.Id, message);
+        
+        var senderChatResponse = await senderTcs.Task;
+        var receiverChatResponse = await receiverTcs.Task;
 
         // assert
-        Assert.NotNull(chatResponse);
-        Assert.Equal(senderResponse!.Id, chatResponse.SenderId);
-        Assert.Equal(receiverResponse!.Id, chatResponse.ReceiverId);
-        Assert.Equal(message, chatResponse.Content);
+        Assert.NotNull(senderChatResponse);
+        Assert.Equal(sender.Id, senderChatResponse.SenderId);
+        Assert.Equal(receiver.Id, senderChatResponse.ReceiverId);
+        Assert.Equal(message, senderChatResponse.Content);
+
+        Assert.NotNull(receiverChatResponse);
+        Assert.Equal(sender.Id, receiverChatResponse.SenderId);
+        Assert.Equal(receiver.Id, receiverChatResponse.ReceiverId);
+        Assert.Equal(message, receiverChatResponse.Content);
     }
 }

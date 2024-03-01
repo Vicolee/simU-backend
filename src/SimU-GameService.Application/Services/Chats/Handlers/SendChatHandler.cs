@@ -7,7 +7,7 @@ using SimU_GameService.Domain.Models;
 
 namespace SimU_GameService.Application.Services.Chats.Handlers;
 
-public class SendChatHandler : IRequestHandler<SendChatCommand, Chat?>
+public class SendChatHandler : IRequestHandler<SendChatCommand, (Chat, Chat?)>
 {
     private readonly IChatRepository _chatRepository;
     private readonly IUserRepository _userRepository;
@@ -28,7 +28,7 @@ public class SendChatHandler : IRequestHandler<SendChatCommand, Chat?>
         _conversationRepository = conversationRepository;
     }
 
-    public async Task<Chat?> Handle(SendChatCommand request, CancellationToken cancellationToken)
+    public async Task<(Chat, Chat?)> Handle(SendChatCommand request, CancellationToken cancellationToken)
     {
         // retrieve sender and receiver as User or Agent
         Character? sender = await _userRepository.GetUser(request.SenderId);
@@ -79,10 +79,10 @@ public class SendChatHandler : IRequestHandler<SendChatCommand, Chat?>
         {
             var chatResponse = new Chat(chat.RecipientId, chat.SenderId, chat.ConversationId, response, false);
             await _chatRepository.AddChat(chatResponse);
-            return chatResponse;
+            return (chat, chatResponse);
         }
 
         // no response is expected here (the recipient is an online user)
-        return null;
+        return (chat, null);
     }
 }

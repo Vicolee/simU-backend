@@ -19,7 +19,7 @@ public class User : Character
         SpriteAnimations = new();
     }
 
-    public User(string identityId, string username, string email, bool isOnline)
+    public User(string identityId, string username, string email, bool isOnline = true)
         : base(username, string.Empty)
     {
         IdentityId = identityId;

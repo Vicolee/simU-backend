@@ -71,19 +71,26 @@ public class UnityHub : Hub<IUnityClient>, IUnityServer
 
     public async Task SendChat(Guid receiverId, string message)
     {
-        var senderId = GetIdentityIdFromConnectionMap() ??
+        // save chat to database and send chat to LLM agent if the receiver is an agent
+        var senderIdentityId = GetIdentityIdFromConnectionMap() ??
             throw new NotFoundException(nameof(User), Context.ConnectionId);
-        var chatResponse = await _mediator.Send(
-            new SendChatCommand(await GetUserIdFromIdentityId(senderId), receiverId, message));
+        var (chat, response) = await _mediator.Send(
+            new SendChatCommand(await GetUserIdFromIdentityId(senderIdentityId), receiverId, message));
 
-        if (chatResponse is null)
+        // send chat to receiver
+        var receiverIdentityId = await GetIdentityIdFromUserId(receiverId);
+        if (_connectionIdMap.TryGetValue(receiverIdentityId, out string? connectionId))
         {
-            return;
+            await Clients.Client(connectionId).ChatHandler(_mapper.MapToChatResponse(chat));
         }
 
-        if (_connectionIdMap.TryGetValue(await GetIdentityIdFromUserId(receiverId), out string? connectionId))
+        // send chat back to sender
+        await Clients.Caller.ChatHandler(_mapper.MapToChatResponse(chat));
+
+        // send agent response to sender
+        if (response is not null)
         {
-            await Clients.Client(connectionId).ChatHandler(_mapper.MapToChatResponse(chatResponse));
+            await Clients.Caller.ChatHandler(_mapper.MapToChatResponse(response));
         }
     }
 
