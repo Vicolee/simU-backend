@@ -3,7 +3,7 @@ namespace SimU_GameService.Domain.Models;
 public class User : Character
 {
     public string? Email { get; set; }
-    public bool IsOnline { get; set; } = false;
+    public bool IsOnline { get; set; } = true;
     public string IdentityId { get; set; } = default!;
     public Guid ActiveWorldId { get; set; } = default;
     public List<Friend> Friends { get; set; }

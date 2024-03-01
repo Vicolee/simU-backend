@@ -20,7 +20,7 @@ public class ConversationRepository : IConversationRepository
         LLMService = llmService;
     }
 
-    public async Task<Guid?> AddConversation(Guid senderId, Guid receiverId, bool isGroupChat = false)
+    public async Task<Guid> AddConversation(Guid senderId, Guid receiverId, bool isGroupChat = false)
     {
         var conversation = new Conversation
         {

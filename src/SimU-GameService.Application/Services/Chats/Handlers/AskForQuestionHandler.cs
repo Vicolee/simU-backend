@@ -59,11 +59,12 @@ public class AskForQuestionHandler : IRequestHandler<AskForQuestionQuery, string
             isRecipientUser = false;
         }
 
-        var conversationId = await _conversationRepository.IsConversationOnGoing(request.SenderId, request.RecipientId) ?? await _conversationRepository.AddConversation(request.SenderId, request.RecipientId);
-        string chatResponse = await _agentService.PromptForQuestion(request.SenderId, request.RecipientId, conversationId.Value, false, isRecipientUser);
-        Chat question = new(request.RecipientId, request.SenderId, conversationId.Value, chatResponse, false, false);
+        var conversationId = await _conversationRepository.IsConversationOnGoing(request.SenderId, request.RecipientId)
+            ?? await _conversationRepository.AddConversation(request.SenderId, request.RecipientId);
+        string chatResponse = await _agentService.PromptForQuestion(request.SenderId, request.RecipientId, conversationId, false, isRecipientUser);
+        Chat question = new(request.RecipientId, request.SenderId, conversationId, chatResponse, false);
         await _chatRepository.AddChat(question);
-        await _conversationRepository.UpdateLastMessageSentAt(conversationId.Value);
+        await _conversationRepository.UpdateLastMessageSentAt(conversationId);
         return question.Content;
     }
 }

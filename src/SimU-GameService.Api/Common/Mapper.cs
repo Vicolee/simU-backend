@@ -89,7 +89,7 @@ public class Mapper : IMapper
         chat.SenderId,
         chat.RecipientId,
         chat.Content,
-        chat.IsGroupChat,
+        chat.IsSenderOnline,
         chat.CreatedTime
     );
 }

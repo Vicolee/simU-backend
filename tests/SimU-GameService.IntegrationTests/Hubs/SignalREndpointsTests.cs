@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.SignalR.Client;
+using SimU_GameService.Contracts.Responses;
 using SimU_GameService.Domain.Models;
 using SimU_GameService.IntegrationTests.TestUtils;
 
@@ -31,7 +32,12 @@ public class SignalREndpointsTests : IClassFixture<TestWebApplicationFactory<Pro
             })
             .Build();
 
-        await hubConnection.StartAsync();    
+        await hubConnection.StartAsync();
+        hubConnection.Closed += async error =>
+        {
+            await Task.Delay(new Random().Next(0, 5) * 1000);
+            await hubConnection.StartAsync();
+        };
         return hubConnection;
     }
             
@@ -54,13 +60,6 @@ public class SignalREndpointsTests : IClassFixture<TestWebApplicationFactory<Pro
 
         // initialize SignalR connection
         _connection = await StartConnectionAsync(_factory.Server.CreateHandler(), authToken);
-        
-        // handle connection closed event
-        _connection.Closed += async error =>
-        {
-            await Task.Delay(new Random().Next(0, 5) * 1000);
-            await _connection.StartAsync();
-        };
 
         // handle message received event
         var tcs = new TaskCompletionSource<(Guid, Location)>();
@@ -87,42 +86,30 @@ public class SignalREndpointsTests : IClassFixture<TestWebApplicationFactory<Pro
     public async Task SendChat_WhenSenderAndReceiverExist_ShouldWorkAsync()
     {
         // arrange
-
         // register sender and receiver
         var senderResponse = await TestUserUtils.RegisterUser(_client, Constants.User.TestEmail);
-        var receiverResponse = await TestUserUtils.RegisterUser(_client, Constants.User.TestEmail);
+        var receiverResponse = await TestUserUtils.RegisterUser(_client, $"TestReceiver{DateTime.Now.Ticks}@SimU.com");
 
-        // initialize connection for sender and receiver        
+        // initialize connection for sender and receiver
         _connection = await StartConnectionAsync(
             _factory.Server.CreateHandler(), senderResponse!.AuthToken);
         var receiverConnection = await StartConnectionAsync(
             _factory.Server.CreateHandler(), receiverResponse!.AuthToken);
 
-        // register handler for message received and closed connecting events
-        _connection.Closed += async error =>
-        {
-            await Task.Delay(new Random().Next(0, 5) * 1000);
-            await _connection.StartAsync();
-        };
-        receiverConnection.Closed += async error =>
-        {
-            await Task.Delay(new Random().Next(0, 5) * 1000);
-            await receiverConnection.StartAsync();
-        };
+        // register handler for message received event     
+        var tcs = new TaskCompletionSource<ChatResponse>();
+        receiverConnection.On<ChatResponse>("ChatHandler", tcs.SetResult);
         
-        var senderTcs = new TaskCompletionSource<(Guid, Location)>();
-        var receiverTcs = new TaskCompletionSource<(Guid, Location)>();
-
-        _connection.On<Guid, Location>("UpdateLocationHandler", (sender, location) => senderTcs.SetResult((sender, location)));
-        receiverConnection.On<Guid, Location>("UpdateLocationHandler", (sender, location) => receiverTcs.SetResult((sender, location)));
-        
-
         // act
         // send chat message from sender to receiver
-        await _connection.SendAsync("SendChat", receiverResponse!.Id, "Hey buddy!");
-        
+        var message = "Hey buddy!";
+        await _connection.SendAsync("SendChat", receiverResponse!.Id, message);
+        var chatResponse = await tcs.Task;
 
         // assert
-        // check if receiver received the message
+        Assert.NotNull(chatResponse);
+        Assert.Equal(senderResponse!.Id, chatResponse.SenderId);
+        Assert.Equal(receiverResponse!.Id, chatResponse.ReceiverId);
+        Assert.Equal(message, chatResponse.Content);
     }
 }
