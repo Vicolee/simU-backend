@@ -77,6 +77,7 @@ public class Mapper : IMapper
             agent.Description,
             agent.Summary,
             agent.Location,
+            agent.CreatedTime,
             agent.IsHatched,
             agent.HatchTime,
             agent.SpriteURL,
