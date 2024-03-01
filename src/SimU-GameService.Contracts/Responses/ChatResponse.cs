@@ -5,6 +5,5 @@ public record ChatResponse(
     Guid SenderId,
     Guid ReceiverId,
     string Content,
-    bool IsGroupChat,
-    DateTime CreatedTime,
-    bool IsOnline = true);
+    bool IsSenderOnline,
+    DateTime CreatedTime);
