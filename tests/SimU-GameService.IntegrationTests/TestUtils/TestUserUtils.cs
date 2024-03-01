@@ -10,13 +10,13 @@ public static class TestUserUtils
 {
     internal static async Task<AuthenticationResponse?> RegisterUser(
         HttpClient client,
-        string username,
         string email,
-        string password)
+        string username = Constants.User.TestUsername,
+        string password = Constants.User.TestPassword)
     {
         var request = new RegisterRequest(username, email, password);
         var result = await client.PostAsJsonAsync(
-            Constants.Routes.Authentication.RegisterUser, request);
+            Constants.Routes.AuthenticationEndpoints.RegisterUser, request);
 
         return result.StatusCode == HttpStatusCode.OK
             ? await result.Content.ReadFromJsonAsync<AuthenticationResponse>()
@@ -25,8 +25,8 @@ public static class TestUserUtils
 
     internal static async Task<Location?> GetUserLocation(HttpClient client, Guid userId)
     {
-        var user = await client.GetFromJsonAsync<UserResponse>(
-            $"{Constants.Routes.Users.GetUserPrefix}/{userId}");
+        var route = $"{Constants.Routes.UsersEndpoints.BaseUri}/{userId}";
+        var user = await client.GetFromJsonAsync<UserResponse>(route);
         return user!.Location;
     }
 }

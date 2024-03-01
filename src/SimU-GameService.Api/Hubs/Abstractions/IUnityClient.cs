@@ -16,27 +16,12 @@ public interface IUnityClient
     Task ChatHandler(ChatResponse? message);
 
     /// <summary>
-    /// Handles a message received from the server.
-    /// </summary>
-    /// <param name="message">The message sent by the server</param>
-    /// <returns></returns>
-    Task MessageHandler(string message);
-
-    /// <summary>
     /// Handles a message that notifies the client when a user moves to a new location.
     /// </summary>
     /// <param name="userId">The ID of the user who moved</param>
     /// <param name="location">The new location of the user</param>
     /// <returns></returns>
     Task UpdateLocationHandler(Guid userId, Location location);
-
-    /// <summary>
-    /// Handles a request to join a group.
-    /// </summary>
-    /// <param name="groupId">The ID of the group to which the join request is being made</param>
-    /// <param name="userId">The ID of the user requesting to join the group</param>
-    /// <returns></returns>
-    Task JoinGroupRequestHandler(Guid groupId, Guid userId);
 
     /// <summary>
     /// Handles a server request that checks if the user is online.

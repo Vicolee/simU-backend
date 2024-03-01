@@ -5,8 +5,6 @@ using SignalRSwaggerGen.Attributes;
 using SimU_GameService.Api.Hubs.Abstractions;
 using SimU_GameService.Application.Common.Exceptions;
 using SimU_GameService.Application.Services.Chats.Commands;
-using SimU_GameService.Application.Services.Groups.Commands;
-using SimU_GameService.Application.Services.Groups.Queries;
 using SimU_GameService.Application.Services.Users.Commands;
 using SimU_GameService.Application.Services.Users.Queries;
 using SimU_GameService.Domain.Models;
@@ -21,10 +19,10 @@ namespace SimU_GameService.Api.Hubs;
 [SignalRHub]
 public class UnityHub : Hub<IUnityClient>, IUnityServer
 {
+    // private readonly Timer _timer;
     private readonly IMediator _mediator;
     private readonly IMapper _mapper;
-    // private readonly Timer _timer;
-    // private static readonly TimeSpan _pingInterval = TimeSpan.FromMinutes(3);
+    private static readonly TimeSpan _pingInterval = TimeSpan.FromMinutes(3);
 
     public UnityHub(IMediator mediator, IMapper mapper)
     {
@@ -48,21 +46,9 @@ public class UnityHub : Hub<IUnityClient>, IUnityServer
 
     private async Task<Guid> GetUserIdFromIdentityId(string identityId)
         => await _mediator.Send(new GetUserIdFromIdentityIdQuery(identityId));
-    
+
     private async Task<string> GetIdentityIdFromUserId(Guid userId)
         => await _mediator.Send(new GetIdentityIdFromUserIdQuery(userId));
-
-    private async Task NotifyUser(Guid userId, string message)
-    {
-        var identityId = await GetIdentityIdFromUserId(userId);
-        if (!_connectionIdMap.TryGetValue(identityId, out string? connectionId))
-        {
-            // TODO: maybe implement a notification system for offline users
-            throw new NotFoundException($"Connection ID for user", userId);
-        }
-        await Clients.Client(connectionId)
-            .MessageHandler(message);
-    }
 
     public override async Task OnConnectedAsync()
     {
@@ -83,74 +69,28 @@ public class UnityHub : Hub<IUnityClient>, IUnityServer
         await base.OnDisconnectedAsync(exception);
     }
 
-    public async Task AddUserToGroup(Guid groupId, Guid userId)
-    {
-        var requesterIdentifier = GetIdentityIdFromConnectionMap() ??
-            throw new NotFoundException(nameof(User), Context.ConnectionId);
-        var requesterId = await GetUserIdFromIdentityId(requesterIdentifier);
-
-        await _mediator.Send(new AddUserToGroupCommand(groupId, userId, requesterId));
-        await NotifyUser(userId, $"You have been added to a group with ID {groupId}");
-    }
-
-    public async Task RequestToJoinGroup(Guid groupId)
-    {
-        var ownerId = await _mediator.Send(
-            new GetGroupOwnerQuery(groupId));
-
-        if (!_connectionIdMap.TryGetValue(await GetIdentityIdFromUserId(ownerId), out string? connectionId))
-        {
-            throw new NotFoundException($"Connection ID for group admin", ownerId);
-        }
-
-        var userId = GetIdentityIdFromConnectionMap() ??
-            throw new NotFoundException(nameof(User), Context.ConnectionId);
-        await Clients.Client(connectionId).JoinGroupRequestHandler(groupId, await GetUserIdFromIdentityId(userId));
-    }
-
-    public async Task RemoveUserFromGroup(Guid groupId, Guid userId)
-    {
-        var requesterIdentityId = GetIdentityIdFromConnectionMap() ??
-            throw new NotFoundException(nameof(User), Context.ConnectionId);
-        await _mediator.Send(
-            new RemoveUserFromGroupCommand(groupId, await GetUserIdFromIdentityId(requesterIdentityId), userId));
-        await NotifyUser(userId, $"You have been removed from a group with ID {groupId}");
-    }
-
-    public async Task RespondToFriendRequest(Guid userId, bool accepted)
-    {
-       var responderIdentityId = GetIdentityIdFromConnectionMap() ??
-            throw new NotFoundException($"User ID mapping to connection ID {Context.ConnectionId}");
-
-        if (accepted)
-        {
-            await _mediator.Send(new AcceptFriendRequestCommand(
-                await GetUserIdFromIdentityId(responderIdentityId), userId));
-        }
-
-        await NotifyUser(userId, 
-            $"Your friend request to user with ID {responderIdentityId} has been {(accepted ? "accepted" : "rejected")}.");
-    }
-
-    public async Task SendFriendRequest(Guid userId)
-    {
-        var requesterId = GetIdentityIdFromConnectionMap() ??
-            throw new NotFoundException(nameof(User), Context.ConnectionId);
-        await _mediator.Send(new SendFriendRequestCommand(await GetUserIdFromIdentityId(requesterId), userId));
-        await NotifyUser(userId, $"You have received a friend request from user with ID {requesterId}");
-    }
-
     public async Task SendChat(Guid receiverId, string message)
     {
-        var senderId = GetIdentityIdFromConnectionMap() ??
+        // save chat to database and send chat to LLM agent if the receiver is an agent
+        var senderIdentityId = GetIdentityIdFromConnectionMap() ??
             throw new NotFoundException(nameof(User), Context.ConnectionId);
-        var chatResponse = await _mediator.Send(
-            new SendChatCommand(await GetUserIdFromIdentityId(senderId), receiverId, message));
+        var (chat, response) = await _mediator.Send(
+            new SendChatCommand(await GetUserIdFromIdentityId(senderIdentityId), receiverId, message));
 
-        // notify receiver of message
-        if (_connectionIdMap.TryGetValue(await GetIdentityIdFromUserId(receiverId), out string? connectionId))
+        // send chat to receiver
+        var receiverIdentityId = await GetIdentityIdFromUserId(receiverId);
+        if (_connectionIdMap.TryGetValue(receiverIdentityId, out string? connectionId))
         {
-            await Clients.Client(connectionId).ChatHandler(_mapper.MapToChatResponse(chatResponse!));
+            await Clients.Client(connectionId).ChatHandler(_mapper.MapToChatResponse(chat));
+        }
+
+        // send chat back to sender
+        await Clients.Caller.ChatHandler(_mapper.MapToChatResponse(chat));
+
+        // send agent response to sender
+        if (response is not null)
+        {
+            await Clients.Caller.ChatHandler(_mapper.MapToChatResponse(response));
         }
     }
 
@@ -184,10 +124,10 @@ public class UnityHub : Hub<IUnityClient>, IUnityServer
         // logout users who have not pinged the server since the last ping
         foreach (var (identityId, lastPing) in _lastPingMap)
         {
-            // if (DateTime.Now - lastPing > _pingInterval)
-            // {
-            //     await LogoutUser(identityId);
-            // }
+            if (DateTime.Now - lastPing > _pingInterval)
+            {
+                await LogoutUser(identityId);
+            }
         }
 
         // for each logged-in user, send a ping request to the client
@@ -195,15 +135,7 @@ public class UnityHub : Hub<IUnityClient>, IUnityServer
         {
             if (_connectionIdMap.TryGetValue(identityId, out string? connectionId))
             {
-                try
-                {
-                    await Clients.Client(connectionId).UserOnlineCheckHandler();
-                }
-                catch (Exception)
-                {
-                    // if the client is not logged in, remove the user from the server
-                    await LogoutUser(identityId);
-                }
+                await Clients.Client(connectionId).UserOnlineCheckHandler();
             }
         }
     }

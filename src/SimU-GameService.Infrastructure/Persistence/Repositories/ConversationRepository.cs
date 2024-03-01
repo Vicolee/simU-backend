@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using SimU_GameService.Application.Abstractions.Repositories;
 using SimU_GameService.Application.Abstractions.Services;
+using SimU_GameService.Application.Common.Exceptions;
 using SimU_GameService.Domain.Models;
 
 namespace SimU_GameService.Infrastructure.Persistence.Repositories;
@@ -20,14 +21,9 @@ public class ConversationRepository : IConversationRepository
         LLMService = llmService;
     }
 
-    public async Task<Guid?> AddConversation(Guid senderId, Guid receiverId, bool isGroupChat = false)
+    public async Task<Guid> AddConversation(Guid senderId, Guid receiverId, bool isGroupChat = false)
     {
-        var conversation = new Conversation
-        {
-            ParticipantA = senderId,
-            ParticipantB = receiverId,
-            IsGroupChat = isGroupChat
-        };
+        var conversation = new Conversation(senderId, receiverId, isGroupChat);
 
         await _dbContext.Conversations.AddAsync(conversation);
         await _dbContext.SaveChangesAsync();
@@ -39,17 +35,12 @@ public class ConversationRepository : IConversationRepository
     {
         var conversation = await _dbContext.Conversations
             .Where(c =>
-            (c.ParticipantA == senderId && c.ParticipantB == receiverId) ||
-            (c.ParticipantA == receiverId && c.ParticipantB == senderId))
+                (c.ParticipantA == senderId && c.ParticipantB == receiverId) ||
+                (c.ParticipantA == receiverId && c.ParticipantB == senderId))
             .OrderByDescending(c => c.LastMessageSentAt)
             .FirstOrDefaultAsync();
 
-        if (conversation is null)
-        {
-            return null;
-        }
-
-        if (conversation.IsConversationOver is true)
+        if (conversation is null || conversation.IsConversationOver)
         {
             return null;
         }
@@ -61,7 +52,9 @@ public class ConversationRepository : IConversationRepository
         }
         return conversation.Id;
     }
-    public async Task<Conversation?> GetConversation(Guid conversationId) {
+
+    public async Task<Conversation?> GetConversation(Guid conversationId)
+    {
         return await _dbContext.Conversations
             .Where(c => c.Id == conversationId)
             .FirstOrDefaultAsync();
@@ -81,7 +74,7 @@ public class ConversationRepository : IConversationRepository
     {
         var conversation = await _dbContext.Conversations
             .Where(c => c.Id == conversationId)
-            .FirstOrDefaultAsync() ?? throw new InvalidOperationException("Conversation not found");
+            .FirstOrDefaultAsync() ?? throw new NotFoundException(nameof(Conversation), conversationId);
         conversation.LastMessageSentAt = DateTime.UtcNow;
         await _dbContext.SaveChangesAsync();
     }
