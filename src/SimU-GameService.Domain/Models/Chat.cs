@@ -18,6 +18,7 @@ public class Chat : Entity
 
     public Chat() : base()
     {
+        CreatedTime = DateTime.UtcNow;
     }
 
     public Chat(Guid senderId, Guid receiverId, Guid conversationId, string content, bool wasSenderOnline, bool isGroupChat) : this()

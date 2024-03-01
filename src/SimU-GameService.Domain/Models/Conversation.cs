@@ -13,6 +13,8 @@ public class Conversation : Entity
 
     public Conversation() : base()
     {
+        CreatedTime = DateTime.UtcNow;
+        LastMessageSentAt = DateTime.UtcNow;
     }
 
     public Conversation(Guid participant_A, Guid participant_B, bool isGroupChat) : this()

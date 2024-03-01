@@ -16,16 +16,20 @@ public class User : Character
         Friends = new();
         WorldsJoined = new();
         WorldsCreated = new();
-        SpriteAnimations = new List<int> { 0, 0, 0, 0};
+        SpriteAnimations = new();
     }
 
     public User(string identityId, string username, string email, bool isOnline)
-        : this()
+        : base(username, string.Empty)
     {
         IdentityId = identityId;
         Username = username;
         Email = email;
         IsOnline = isOnline;
+        Friends = new();
+        WorldsJoined = new();
+        WorldsCreated = new();
+        SpriteAnimations = new List<int> { 0, 0, 0, 0};
     }
 
     public void Logout() => IsOnline = false;
