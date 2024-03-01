@@ -54,7 +54,7 @@ public static class DependencyInjection
 
         // service that checks if ongoing conversations have had recent activity.
         // it checks every 15 minutes.
-        services.AddHostedService<ConversationStatusService>();
+        // services.AddHostedService<ConversationStatusService>();
 
         // authentication
         FirebaseApp.Create(new AppOptions()
