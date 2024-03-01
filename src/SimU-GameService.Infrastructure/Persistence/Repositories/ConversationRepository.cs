@@ -24,7 +24,8 @@ public class ConversationRepository : IConversationRepository
     {
         var conversation = new Conversation
         {
-            Participants = new List<Guid> { senderId, receiverId },
+            ParticipantA = senderId,
+            ParticipantB = receiverId,
             IsGroupChat = isGroupChat
         };
 
@@ -37,7 +38,9 @@ public class ConversationRepository : IConversationRepository
     public async Task<Guid?> IsConversationOnGoing(Guid senderId, Guid receiverId)
     {
         var conversation = await _dbContext.Conversations
-            .Where(c => c.Participants.Contains(senderId) && c.Participants.Contains(receiverId))
+            .Where(c =>
+            (c.ParticipantA == senderId && c.ParticipantB == receiverId) ||
+            (c.ParticipantA == receiverId && c.ParticipantB == senderId))
             .OrderByDescending(c => c.LastMessageSentAt)
             .FirstOrDefaultAsync();
 
@@ -51,7 +54,7 @@ public class ConversationRepository : IConversationRepository
             return null;
         }
 
-        if (conversation.LastMessageSentAt < DateTime.UtcNow.AddMinutes(-15))
+        if (conversation.LastMessageSentAt == DateTime.MinValue || conversation.LastMessageSentAt < DateTime.UtcNow.AddMinutes(-15))
         {
             await MarkConversationAsOver(conversation.Id);
             return null;
@@ -67,7 +70,9 @@ public class ConversationRepository : IConversationRepository
     public async Task<IEnumerable<Guid>> GetConversations(Guid senderId, Guid receiverId)
     {
         return await _dbContext.Conversations
-            .Where(c => c.Participants.Contains(senderId) && c.Participants.Contains(receiverId))
+            .Where(c =>
+            (c.ParticipantA == senderId && c.ParticipantB == receiverId) ||
+            (c.ParticipantA == receiverId && c.ParticipantB == senderId))
             .Select(c => c.Id)
             .ToListAsync();
     }
@@ -95,7 +100,7 @@ public class ConversationRepository : IConversationRepository
             .FirstOrDefaultAsync() ?? throw new InvalidOperationException("Conversation not found");
         conversation.IsConversationOver = true;
         // make call to LLM to let them know the conversation ended.
-        await LLMService.EndConversation(conversationId, conversation.Participants);
+        await LLMService.EndConversation(conversationId, conversation.ParticipantA, conversation.ParticipantB);
         await _dbContext.SaveChangesAsync();
     }
 }

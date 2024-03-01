@@ -94,36 +94,76 @@ public class LLMService : ILLMService
         return responseContent;
     }
 
-    public async Task EndConversation(Guid conversationId, IEnumerable<Guid> participants)
+    public async Task EndConversation(Guid conversationId, Guid participantA, Guid participantB)
     {
-        // check that all participants exist
-        foreach (var participant in participants)
+
+        // code checks if the recipient is an offline user or an agent.
+        User? userA = null;
+        Agent? agentA = null;
+        User? userB = null;
+        Agent? agentB = null;
+        bool isParticipantUserA;
+        bool isParticipantUserB;
+
+        // check if Participant A is a user or not
+        try
         {
-            User? user = null;
-            Agent? agent = null;
+            userA = await _userRepository.GetUser(participantA);
+        }
+        catch (NotFoundException) { /* Ignore the exception */ }
 
-            try
-            {
-                user = await _userRepository.GetUser(participant);
-            }
-            catch (NotFoundException) { /* Ignore the exception */ }
+        try
+        {
+            agentA = await _agentRepository.GetAgent(participantA);
+        }
+        catch (NotFoundException) { /* Ignore the exception */ }
 
-            try
-            {
-                agent = await _agentRepository.GetAgent(participant);
-            }
-            catch (NotFoundException) { /* Ignore the exception */ }
+        if (userA == null && agentA == null)
+        {
+            throw new NotFoundException("The provided recipient Id does not exist: " + participantA);
+        }
+        else if (userA != null)
+        {
+            isParticipantUserA = true;
+        }
+        else
+        {
+            isParticipantUserA = false;
+        }
 
-            if (user == null && agent == null)
-            {
-                throw new NotFoundException("The provided character Id does not exist: " + participant);
-            }
+        // check if Participant B is a user or not
+        try
+        {
+            userB = await _userRepository.GetUser(participantB);
+        }
+        catch (NotFoundException) { /* Ignore the exception */ }
+
+        try
+        {
+            agentB = await _agentRepository.GetAgent(participantB);
+        }
+        catch (NotFoundException) { /* Ignore the exception */ }
+
+        if (userB == null && agentB == null)
+        {
+            throw new NotFoundException("The provided recipient Id does not exist: " + participantA);
+        }
+        else if (userB != null)
+        {
+            isParticipantUserB = true;
+        }
+        else
+        {
+            isParticipantUserB = false;
         }
 
         var request = new
         {
             conversationId,
-            participants
+            participantA,
+            participantB,
+            isParticipantUserA,
+            isParticipantUserB
         };
         var response = await _httpClient.PostAsJsonAsync("/api/agents/endConversation", request);
 

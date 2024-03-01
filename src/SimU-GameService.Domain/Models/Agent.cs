@@ -25,5 +25,7 @@ public class Agent : Character
     public bool IsHatched => DateTime.UtcNow > HatchTime;
 
     private DateTime ComputeHatchTime(float collabDurationInHours)
-        => CreatedTime.AddHours(collabDurationInHours);
+    {
+        return DateTime.SpecifyKind(CreatedTime.AddHours(collabDurationInHours), DateTimeKind.Utc);
+    }
 }
