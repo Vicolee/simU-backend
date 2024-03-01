@@ -150,7 +150,7 @@ Front-end provides a world's private world code, and the back-end returns the `w
 
 #### Request
 
-`GET /worlds/{code}`
+`GET /worlds/code/{code}`
 
 #### Response
 
@@ -472,6 +472,20 @@ Returns the list of worlds that a user belongs to.
 ]
 ```
 
+### UpdateUserSummary
+
+#### Description
+
+Updates a user's summary
+
+#### Request
+
+`PUT /users/{id}/summary`
+
+#### Response
+
+`200 OK`
+
 ### UpdateSprite
 
 #### Description
@@ -621,13 +635,6 @@ Gets the chat history between the current client and another user/group with `re
 
 `GET /chats/history?participantA_Id={idA}&participantB_Id={idB}`
 
-```json
-{
-    "senderId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
-    "recipientId": "3fa85f64-5717-4562-b3fc-2c963f66afa6"
-}
-```
-
 #### Response
 
 ```json
@@ -683,13 +690,6 @@ When this route is pinged, the AI Service will be prompted by the back-end for a
 #### Request
 
 `GET /chats/question?senderId={idSender}&recipientId={idRecipient}`
-
-```json
-{
-    "senderId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
-    "recipientId": "3fa85f64-5717-4562-b3fc-2c963f66afa6"
-}
-```
 
 #### Response
 

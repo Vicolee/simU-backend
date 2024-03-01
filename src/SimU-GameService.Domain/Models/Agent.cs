@@ -13,7 +13,7 @@ public class Agent : Character
     }
 
     public Agent(string username,
-     Guid creatorId, float collabDurationInHours, string description, Uri spriteURL, Uri spriteHeadshotUrl) : this()
+     Guid creatorId, float collabDurationInHours, string description, Uri spriteURL, Uri spriteHeadshotUrl) : base(username, string.Empty)
     {
         Username = username;
         CreatorId = creatorId;
@@ -25,5 +25,7 @@ public class Agent : Character
     public bool IsHatched => DateTime.UtcNow > HatchTime;
 
     private DateTime ComputeHatchTime(float collabDurationInHours)
-        => CreatedTime.AddHours(collabDurationInHours);
+    {
+        return DateTime.SpecifyKind(CreatedTime.AddHours(collabDurationInHours), DateTimeKind.Utc);
+    }
 }

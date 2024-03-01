@@ -6,13 +6,15 @@ public class Conversation : Entity
 {
     public DateTime CreatedTime { get; set; }
     public DateTime LastMessageSentAt { get; set; }
-    public List<Guid> Participants { get; set; }
+    public Guid ParticipantA { get; set; }
+    public Guid ParticipantB { get; set; }
     public bool IsGroupChat { get; set; }
     public bool IsConversationOver { get; set; } = false;
 
     public Conversation() : base()
     {
-        Participants = new();
+        CreatedTime = DateTime.UtcNow;
+        LastMessageSentAt = DateTime.UtcNow;
     }
 
     public Conversation(Guid participant_A, Guid participant_B, bool isGroupChat) : this()
@@ -20,7 +22,7 @@ public class Conversation : Entity
         IsGroupChat = isGroupChat;
         CreatedTime = DateTime.UtcNow;
         LastMessageSentAt = DateTime.UtcNow;
-        Participants.Add(participant_A);
-        Participants.Add(participant_B);
+        ParticipantA = participant_A;
+        ParticipantB = participant_B;
     }
 }

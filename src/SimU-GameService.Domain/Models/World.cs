@@ -13,10 +13,11 @@ public class World : Entity
     public List<Guid> WorldAgents { get; set; }
     public Uri? ThumbnailURL { get; set; }
 
-    public World()
+    public World() : base()
     {
         WorldUsers = new List<Guid>();
         WorldAgents = new List<Guid>();
+        CreatedTime = DateTime.UtcNow;
     }
     public World(string name, string description, Guid ownerId, string worldCode) : this()
     {

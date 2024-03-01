@@ -3,6 +3,8 @@ using SimU_GameService.Application.Abstractions.Services;
 using SimU_GameService.Application.Abstractions.Repositories;
 using SimU_GameService.Application.Common.Exceptions;
 using SimU_GameService.Domain.Models;
+using System.Text.Json;
+
 
 namespace SimU_GameService.Infrastructure.Characters;
 
@@ -23,7 +25,7 @@ public class LLMService : ILLMService
         _httpClient = httpClient;
     }
 
-    public async Task<string> SendChat(Guid senderId, Guid recipientId, Guid conversationID, string content,
+    public async Task<string> SendChat(Guid senderId, Guid recipientId, Guid conversationId, string content,
         bool streamResponse, bool isSenderUser, bool isRecipientUser)
     {
         if (isSenderUser)
@@ -48,13 +50,13 @@ public class LLMService : ILLMService
         {
             senderId,
             recipientId,
-            conversationID,
+            conversationId,
             content,
             streamResponse,
             isRecipientUser
         };
 
-        var response = await _httpClient.PostAsJsonAsync("/agents/prompt", request);
+        var response = await _httpClient.PostAsJsonAsync("/api/agents/prompt", request);
         var responseContent = await response.Content.ReadAsStringAsync();
 
         // throw exception if the request failed
@@ -67,19 +69,19 @@ public class LLMService : ILLMService
         return responseContent;
     }
 
-    public async Task<string> PromptForQuestion(Guid senderId, Guid recipientId, Guid conversationID, bool streamResponse, bool isRecipientUser)
+    public async Task<string> PromptForQuestion(Guid senderId, Guid recipientId, Guid conversationId, bool streamResponse, bool isRecipientUser)
     {
 
         var request = new
         {
             senderId,
             recipientId,
-            conversationID,
+            isRecipientUser,
+            conversationId,
             streamResponse,
-            isRecipientUser
         };
 
-        var response = await _httpClient.PostAsJsonAsync("/agents/question", request);
+        var response = await _httpClient.PostAsJsonAsync("/api/agents/question", request);
         var responseContent = await response.Content.ReadAsStringAsync();
 
         // throw exception if the request failed
@@ -92,47 +94,86 @@ public class LLMService : ILLMService
         return responseContent;
     }
 
-    public async Task EndConversation(Guid conversationID, IEnumerable<Guid> participants)
+    public async Task EndConversation(Guid conversationId, Guid participantA, Guid participantB)
     {
-        // check that all participants exist
-        foreach (var participant in participants)
+
+        // code checks if the recipient is an offline user or an agent.
+        User? userA = null;
+        Agent? agentA = null;
+        User? userB = null;
+        Agent? agentB = null;
+        bool isParticipantUserA;
+        bool isParticipantUserB;
+
+        // check if Participant A is a user or not
+        try
         {
-            User? user = null;
-            Agent? agent = null;
+            userA = await _userRepository.GetUser(participantA);
+        }
+        catch (NotFoundException) { /* Ignore the exception */ }
 
-            try
-            {
-                user = await _userRepository.GetUser(participant);
-            }
-            catch (NotFoundException) { /* Ignore the exception */ }
+        try
+        {
+            agentA = await _agentRepository.GetAgent(participantA);
+        }
+        catch (NotFoundException) { /* Ignore the exception */ }
 
-            try
-            {
-                agent = await _agentRepository.GetAgent(participant);
-            }
-            catch (NotFoundException) { /* Ignore the exception */ }
+        if (userA == null && agentA == null)
+        {
+            throw new NotFoundException("The provided recipient Id does not exist: " + participantA);
+        }
+        else if (userA != null)
+        {
+            isParticipantUserA = true;
+        }
+        else
+        {
+            isParticipantUserA = false;
+        }
 
-            if (user == null && agent == null)
-            {
-                throw new NotFoundException("The provided character Id does not exist: " + participant);
-            }
+        // check if Participant B is a user or not
+        try
+        {
+            userB = await _userRepository.GetUser(participantB);
+        }
+        catch (NotFoundException) { /* Ignore the exception */ }
+
+        try
+        {
+            agentB = await _agentRepository.GetAgent(participantB);
+        }
+        catch (NotFoundException) { /* Ignore the exception */ }
+
+        if (userB == null && agentB == null)
+        {
+            throw new NotFoundException("The provided recipient Id does not exist: " + participantA);
+        }
+        else if (userB != null)
+        {
+            isParticipantUserB = true;
+        }
+        else
+        {
+            isParticipantUserB = false;
         }
 
         var request = new
         {
-            conversationID,
-            participants
+            conversationId,
+            participantA,
+            participantB,
+            isParticipantUserA,
+            isParticipantUserB
         };
-        // uncomment this once their route is live
-        // var response = await _httpClient.PostAsJsonAsync("/agents/endConversation", request);
+        var response = await _httpClient.PostAsJsonAsync("/api/agents/endConversation", request);
 
-        // // throw exception if the request failed
-        // if (response.StatusCode != System.Net.HttpStatusCode.OK)
-        // {
-        //     throw new ServiceErrorException(
-        //         response.StatusCode,
-        //         $"Failed to send finished conversation with ID: {conversationID} to LLM service.");
-        // }
+        // throw exception if the request failed
+        if (response.StatusCode != System.Net.HttpStatusCode.OK)
+        {
+            throw new ServiceErrorException(
+                response.StatusCode,
+                $"Failed to send finished conversation with ID: {conversationId} to LLM service.");
+        }
     }
 
     public async Task<string> GenerateCharacterSummary(Guid characterId, IEnumerable<string> questions, IEnumerable<IEnumerable<string>> answers)
@@ -164,7 +205,7 @@ public class LLMService : ILLMService
             answers
         };
 
-        var response = await _httpClient.PostAsJsonAsync("/agents/generatePersona", request);
+        var response = await _httpClient.PostAsJsonAsync("/api/agents/generatePersona", request);
         var responseContent = await response.Content.ReadAsStringAsync();
         // throw exception if the request failed
         if (response.StatusCode != System.Net.HttpStatusCode.OK)
@@ -176,50 +217,54 @@ public class LLMService : ILLMService
         return responseContent;
     }
 
-    public async Task<Dictionary<string, string>?> GenerateAgentSprite(Guid agentId, string description)
+    public async Task<Dictionary<string, string>?> GenerateAgentSprite(string description)
     {
-        _ = await _agentRepository.GetAgent(agentId) ?? throw new NotFoundException(nameof(Agent), agentId);
+        string appearanceDescription = description;
         var request = new
         {
-            agentId,
-            description
+            appearanceDescription
         };
 
-        var response = await _httpClient.PostAsJsonAsync("/agents/generateAvatar", request);
+        var response = await _httpClient.PostAsJsonAsync("/api/agents/generateAvatar", request);
         Dictionary<string, string>? responseContent = await response.Content.ReadFromJsonAsync<Dictionary<string, string>>();
         // throw exception if the request failed
         if (response.StatusCode != System.Net.HttpStatusCode.OK)
         {
             throw new ServiceErrorException(
                 response.StatusCode,
-                $"Failed to generate a sprite for agent with Id: {agentId}.");
+                $"Failed to generate a sprite for description: {description}.");
         }
         return responseContent;
 
     }
 
-    public async Task<string> GenerateWorldThumbnail(Guid worldId, Guid creatorId, string description)
+    public async Task<string> GenerateWorldThumbnail(Guid worldID, Guid creatorId, string description)
     {
-        _ = await _worldRepository.GetWorld(worldId) ?? throw new NotFoundException(nameof(World), worldId);
+        _ = await _worldRepository.GetWorld(worldID) ?? throw new NotFoundException(nameof(World), worldID);
         _ = await _userRepository.GetUser(creatorId) ?? throw new NotFoundException(nameof(User), creatorId);
 
         var request = new
         {
-            worldId,
+            worldID,
             creatorId,
             description
         };
 
-        var response = await _httpClient.PostAsJsonAsync("/thumbnails", request);
+        var response = await _httpClient.PostAsJsonAsync("/api/thumbnails", request);
         var responseContent = await response.Content.ReadAsStringAsync();
         // throw exception if the request failed
         if (response.StatusCode != System.Net.HttpStatusCode.OK)
         {
             throw new ServiceErrorException(
                 response.StatusCode,
-                $"Failed to generate a thumbnail for world with Id: {worldId}.");
+                $"Failed to generate a thumbnail for world with Id: {worldID}.");
         }
-        return responseContent;
+        var jsonDocument = JsonDocument.Parse(responseContent);
+        var thumbnailUrl = jsonDocument.RootElement.GetProperty("thumbnailURL").GetString();
+
+        return thumbnailUrl ?? throw new ServiceErrorException(
+            response.StatusCode,
+            $"Failed to generate a thumbnail for world with Id: {worldID}.");
     }
 
 }

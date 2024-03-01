@@ -55,7 +55,7 @@ public class WorldsController : ControllerBase
         return Ok(_mapper.MapToWorldResponse(world));
     }
 
-    [HttpGet("{code}", Name = "GetWorldIdFromWorldCode")]
+    [HttpGet("code/{code}", Name = "GetWorldIdFromWorldCode")]
     public async Task<ActionResult<IdResponse>> GetWorldIdFromWorldCode(string code)
     {
         var worldId = await _mediator.Send(new GetWorldIdFromWorldCodeQuery(code));
