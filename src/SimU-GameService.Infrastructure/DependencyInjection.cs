@@ -26,7 +26,7 @@ public static class DependencyInjection
         else
         {
             services.AddDbContext<SimUDbContext>(options =>
-                options.UseNpgsql(configuration.GetConnectionString("SimUDbDev")));
+                options.UseNpgsql(configuration.GetConnectionString("SimUDbCloud")));
         }
 
         // add repository abstractions
