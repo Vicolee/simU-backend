@@ -1,5 +1,4 @@
 using MediatR;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SimU_GameService.Api.Common;
 using SimU_GameService.Application.Common.Exceptions;
@@ -29,21 +28,6 @@ public class UsersController : ControllerBase
         var user = await _mediator.Send(new GetUserQuery(userId))
             ?? throw new NotFoundException(nameof(Domain.Models.User), userId);
         return Ok(_mapper.MapToUserResponse(user));
-    }
-
-    [Authorize]
-    [HttpDelete("{userId}/friends", Name = "RemoveFriend")]
-    public async Task<ActionResult> RemoveFriend(Guid userId, Guid friendId)
-    {
-        await _mediator.Send(new RemoveFriendCommand(userId, friendId));
-        return NoContent();
-    }
-
-    [HttpGet("{userId}/friends", Name = "GetFriends")]
-    public async Task<ActionResult<IEnumerable<FriendResponse>>> GetFriends(Guid userId)
-    {
-        var friends = await _mediator.Send(new GetFriendsQuery(userId));
-        return Ok(friends.Select(f => new FriendResponse(f.FriendId, f.CreatedTime)));
     }
 
     [HttpGet("{id}/worlds", Name = "GetUserWorlds")]

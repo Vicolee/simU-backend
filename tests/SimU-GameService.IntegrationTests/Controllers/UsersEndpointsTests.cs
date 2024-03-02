@@ -29,9 +29,7 @@ public class UsersEndpointsTests : IClassFixture<TestWebApplicationFactory<Progr
         var password = Constants.User.TestPassword;
 
         var registerRequest = new RegisterRequest(
-            username,
-            email,
-            password);
+            username, email, password);
 
         var registerResult = await _client.PostAsJsonAsync(
             Constants.Routes.AuthenticationEndpoints.RegisterUser, registerRequest);
@@ -48,5 +46,25 @@ public class UsersEndpointsTests : IClassFixture<TestWebApplicationFactory<Progr
         Assert.Equal(registerResponse.Id, response.Id);
         Assert.Equal(username, response.Username);
         Assert.Equal(email, response.Email);
+    }
+
+    [Fact]
+    public void GetUserWorlds_WhenUserExists_ShouldReturnOk()
+    {
+    }
+
+    [Fact]
+    public void GetUserSummary_WhenUserExists_ShouldReturnOk()
+    {
+    }
+
+    [Fact]
+    public void UpdateSprite_WhenValid_ShouldReturnOk()
+    {
+    }
+
+    [Fact]
+    public void UpdateUserSummary_WhenValid_ShouldReturnOk()
+    {
     }
 }

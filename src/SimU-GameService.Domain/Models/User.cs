@@ -10,6 +10,7 @@ public class User : Character
     public List<Guid> WorldsJoined { get; set; }
     public List<Guid> WorldsCreated { get; set; }
     public List<int> SpriteAnimations { get; set; }
+    public List<UserQuestionResponse> QuestionResponses { get; set; }
 
     public User() : base()
     {
@@ -17,6 +18,7 @@ public class User : Character
         WorldsJoined = new();
         WorldsCreated = new();
         SpriteAnimations = new();
+        QuestionResponses = new();
     }
 
     public User(string identityId, string username, string email, bool isOnline = true)
@@ -29,6 +31,7 @@ public class User : Character
         Friends = new();
         WorldsJoined = new();
         WorldsCreated = new();
+        QuestionResponses = new();
         SpriteAnimations = new List<int> { 0, 0, 0, 0};
     }
 
