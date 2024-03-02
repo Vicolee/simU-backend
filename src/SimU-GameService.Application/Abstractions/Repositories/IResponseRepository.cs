@@ -12,36 +12,41 @@ public interface IResponseRepository
     /// <summary>
     /// Adds response to a question to the repository.
     /// </summary>
+    /// <param name="isUser"></param>
     /// <param name="response"></param>
     /// <returns></returns>
-    public Task PostResponse(Response response);
+    public Task PostResponse(bool isUser, Response response);
 
     /// <summary>
     /// Adds responses to questions (in bulk) to the repository.
     /// </summary>
     /// <param name="responses"></param>
+    /// <param name="responses"></param>
     /// <returns></returns>
-    public Task PostResponses(IEnumerable<Response> responses);
+    public Task PostResponses(bool isUser, IEnumerable<Response> responses);
 
     /// <summary>
     /// Returns all the questions and corresponding responses about a user or agent.
     /// </summary>
+    /// <param name="isUser"></param>
     /// <param name="targetId"></param>
     /// <returns></returns>
-    public Task<IEnumerable<Response>> GetResponses(Guid targetId);
+    public Task<IEnumerable<Response>> GetResponses(bool isUser, Guid targetId);
 
     /// <summary>
     /// Returns the responses for a specific question about a user or agent.
     /// </summary>
+    /// <param name="isUser"></param>
     /// <param name="targetId"></param>
     /// <param name="questionId"></param>
     /// <returns></returns>
-    public Task<IEnumerable<Response>> GetResponsesToQuestion(Guid targetId, Guid questionId);
+    public Task<IEnumerable<Response>> GetResponsesToQuestion(bool isUser, Guid targetId, Guid questionId);
 
     /// <summary>
     /// Returns a mapping of question IDs to responses for a specific character.
     /// </summary>
+    /// <param name="isUser"></param>
     /// <param name="targetId"></param>
     /// <returns></returns>
-    public Task<(IEnumerable<Guid>, IEnumerable<IEnumerable<string>>)> GetQuestionIdResponsesMapping(Guid targetId);
+    public Task<(IEnumerable<Guid>, IEnumerable<IEnumerable<string>>)> GetQuestionIdResponsesMapping(bool isUser, Guid targetId);
 }

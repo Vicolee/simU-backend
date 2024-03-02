@@ -1,7 +1,7 @@
 using SimU_GameService.Domain.Primitives;
 namespace SimU_GameService.Domain.Models;
 
-public class Response : Entity
+public abstract class Response : Entity
 {
     public Guid ResponderId { get; set; }
     public Guid TargetId { get; set; }

@@ -12,7 +12,6 @@ public class AgentConfigurations : IEntityTypeConfiguration<Agent>
         builder.HasKey(builder => builder.Id);
 
         // configure Guid properties to be user-generated
-       
         builder.Property(builder => builder.Id)
             .ValueGeneratedNever();
 
@@ -21,10 +20,10 @@ public class AgentConfigurations : IEntityTypeConfiguration<Agent>
             .HasConversion(v => v.ToUniversalTime(), v => DateTime.SpecifyKind(v, DateTimeKind.Utc));
 
         // question responses
-        builder.OwnsMany(a => a.QuestionResponses, qr =>
-        {
-            qr.WithOwner().HasForeignKey(nameof(Agent.Id));
-        });
+        // builder.OwnsMany(a => a.QuestionResponses, qr =>
+        // {
+        //     qr.WithOwner().HasForeignKey(nameof(Agent.Id));
+        // });
 
         // location
         

@@ -8,11 +8,9 @@ public class Character : Entity
     public string? Summary { get; set; }
     public DateTime CreatedTime { get; set; }
     public Location? Location { get; set; }
-    public List<Response> QuestionResponses { get; set; }
 
     protected Character() : base()
     {
-        QuestionResponses = new();
     }
 
     protected Character(string username, string summary)

@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using SimU_GameService.Infrastructure.Persistence;
@@ -12,9 +13,11 @@ using SimU_GameService.Infrastructure.Persistence;
 namespace SimU_GameService.Infrastructure.Migrations
 {
     [DbContext(typeof(SimUDbContext))]
-    partial class SimUDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240302213937_SplitQuestionResponsesTable")]
+    partial class SplitQuestionResponsesTable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -56,35 +59,6 @@ namespace SimU_GameService.Infrastructure.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Agents");
-                });
-
-            modelBuilder.Entity("SimU_GameService.Domain.Models.AgentQuestionResponse", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<Guid?>("AgentId")
-                        .HasColumnType("uuid");
-
-                    b.Property<string>("Content")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<Guid>("QuestionId")
-                        .HasColumnType("uuid");
-
-                    b.Property<Guid>("ResponderId")
-                        .HasColumnType("uuid");
-
-                    b.Property<Guid>("TargetId")
-                        .HasColumnType("uuid");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("AgentId");
-
-                    b.ToTable("AgentQuestionResponses");
                 });
 
             modelBuilder.Entity("SimU_GameService.Domain.Models.Chat", b =>
@@ -233,35 +207,6 @@ namespace SimU_GameService.Infrastructure.Migrations
                     b.ToTable("Users");
                 });
 
-            modelBuilder.Entity("SimU_GameService.Domain.Models.UserQuestionResponse", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<string>("Content")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<Guid>("QuestionId")
-                        .HasColumnType("uuid");
-
-                    b.Property<Guid>("ResponderId")
-                        .HasColumnType("uuid");
-
-                    b.Property<Guid>("TargetId")
-                        .HasColumnType("uuid");
-
-                    b.Property<Guid?>("UserId")
-                        .HasColumnType("uuid");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("UserQuestionResponses");
-                });
-
             modelBuilder.Entity("SimU_GameService.Domain.Models.World", b =>
                 {
                     b.Property<Guid>("Id")
@@ -325,14 +270,41 @@ namespace SimU_GameService.Infrastructure.Migrations
                                 .HasForeignKey("AgentId");
                         });
 
-                    b.Navigation("Location");
-                });
+                    b.OwnsMany("SimU_GameService.Domain.Models.AgentQuestionResponse", "QuestionResponses", b1 =>
+                        {
+                            b1.Property<Guid>("Id")
+                                .HasColumnType("uuid");
 
-            modelBuilder.Entity("SimU_GameService.Domain.Models.AgentQuestionResponse", b =>
-                {
-                    b.HasOne("SimU_GameService.Domain.Models.Agent", null)
-                        .WithMany("QuestionResponses")
-                        .HasForeignKey("AgentId");
+                            b1.Property<int>("Id1")
+                                .ValueGeneratedOnAdd()
+                                .HasColumnType("integer");
+
+                            NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b1.Property<int>("Id1"));
+
+                            b1.Property<string>("Content")
+                                .IsRequired()
+                                .HasColumnType("text");
+
+                            b1.Property<Guid>("QuestionId")
+                                .HasColumnType("uuid");
+
+                            b1.Property<Guid>("ResponderId")
+                                .HasColumnType("uuid");
+
+                            b1.Property<Guid>("TargetId")
+                                .HasColumnType("uuid");
+
+                            b1.HasKey("Id", "Id1");
+
+                            b1.ToTable("AgentQuestionResponses");
+
+                            b1.WithOwner()
+                                .HasForeignKey("Id");
+                        });
+
+                    b.Navigation("Location");
+
+                    b.Navigation("QuestionResponses");
                 });
 
             modelBuilder.Entity("SimU_GameService.Domain.Models.User", b =>
@@ -351,6 +323,38 @@ namespace SimU_GameService.Infrastructure.Migrations
                             b1.HasKey("Id", "FriendId");
 
                             b1.ToTable("Friend");
+
+                            b1.WithOwner()
+                                .HasForeignKey("Id");
+                        });
+
+                    b.OwnsMany("SimU_GameService.Domain.Models.UserQuestionResponse", "QuestionResponses", b1 =>
+                        {
+                            b1.Property<Guid>("Id")
+                                .HasColumnType("uuid");
+
+                            b1.Property<int>("Id1")
+                                .ValueGeneratedOnAdd()
+                                .HasColumnType("integer");
+
+                            NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b1.Property<int>("Id1"));
+
+                            b1.Property<string>("Content")
+                                .IsRequired()
+                                .HasColumnType("text");
+
+                            b1.Property<Guid>("QuestionId")
+                                .HasColumnType("uuid");
+
+                            b1.Property<Guid>("ResponderId")
+                                .HasColumnType("uuid");
+
+                            b1.Property<Guid>("TargetId")
+                                .HasColumnType("uuid");
+
+                            b1.HasKey("Id", "Id1");
+
+                            b1.ToTable("UserQuestionResponses");
 
                             b1.WithOwner()
                                 .HasForeignKey("Id");
@@ -380,22 +384,7 @@ namespace SimU_GameService.Infrastructure.Migrations
                     b.Navigation("Friends");
 
                     b.Navigation("Location");
-                });
 
-            modelBuilder.Entity("SimU_GameService.Domain.Models.UserQuestionResponse", b =>
-                {
-                    b.HasOne("SimU_GameService.Domain.Models.User", null)
-                        .WithMany("QuestionResponses")
-                        .HasForeignKey("UserId");
-                });
-
-            modelBuilder.Entity("SimU_GameService.Domain.Models.Agent", b =>
-                {
-                    b.Navigation("QuestionResponses");
-                });
-
-            modelBuilder.Entity("SimU_GameService.Domain.Models.User", b =>
-                {
                     b.Navigation("QuestionResponses");
                 });
 #pragma warning restore 612, 618

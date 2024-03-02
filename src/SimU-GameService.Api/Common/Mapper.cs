@@ -50,10 +50,20 @@ public class Mapper : IMapper
     public QuestionResponse MapToQuestionResponse(Question question)
         => new(question.Id, question.Content);
 
-    public PostResponsesCommand MapToPostResponsesCommand(ResponsesRequest request)
+    public PostResponsesCommand MapToPostResponsesCommand(bool isUser, ResponsesRequest request)
     {
-        var responses = request.Responses
-            .Select(r => new Response(request.ResponderId, request.TargetId, r.QuestionId, r.Response));
+        IEnumerable<Response> responses;
+        if (isUser)
+        {
+            responses = request.Responses.Select(r => new UserQuestionResponse(
+                request.ResponderId, request.TargetId, r.QuestionId, r.Response));
+        }
+        else
+        {
+            responses = request.Responses.Select(r => new AgentQuestionResponse(
+                request.ResponderId, request.TargetId, r.QuestionId, r.Response));
+        }
+
         return new PostResponsesCommand(request.TargetId, responses);
     }
 
@@ -103,7 +113,7 @@ public interface IMapper
     WorldAgentResponse MapToWorldAgentResponse(Agent agent);
     IncubatingAgentResponse MapToIncubatingAgentResponse(Agent agent);
     QuestionResponse MapToQuestionResponse(Question question);
-    PostResponsesCommand MapToPostResponsesCommand(ResponsesRequest request);
+    PostResponsesCommand MapToPostResponsesCommand(bool isUser, ResponsesRequest request);
     AnswersResponse MapToAnswersResponse(Response response);
     AnswersToQuestionResponse MapToAnswersToQuestionResponse(Response response);
     ChatResponse MapToChatResponse(Chat chat);

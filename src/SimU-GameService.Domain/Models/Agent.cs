@@ -7,9 +7,11 @@ public class Agent : Character
     public DateTime HatchTime { get; set; }
     public Uri? SpriteURL { get; set; }
     public Uri? SpriteHeadshotURL { get; set; }
+    public List<AgentQuestionResponse> QuestionResponses { get; set; }
 
     public Agent() : base()
     {
+        QuestionResponses = new();
     }
 
     public Agent(string username,
@@ -21,7 +23,9 @@ public class Agent : Character
         HatchTime = ComputeHatchTime(collabDurationInHours);
         SpriteURL = spriteURL;
         SpriteHeadshotURL = spriteHeadshotUrl;
+        QuestionResponses = new();
     }
+    
     public bool IsHatched => DateTime.UtcNow > HatchTime;
 
     private DateTime ComputeHatchTime(float collabDurationInHours)
