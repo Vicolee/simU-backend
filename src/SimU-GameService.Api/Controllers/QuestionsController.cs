@@ -2,8 +2,10 @@ using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using SimU_GameService.Api.Common;
 using SimU_GameService.Application.Services.QuestionResponses.Queries;
+using SimU_GameService.Application.Services.Questions.Commands;
 using SimU_GameService.Application.Services.Questions.Queries;
 using SimU_GameService.Application.Services.Responses.Commands;
+using SimU_GameService.Application.Services.Responses.Queries;
 using SimU_GameService.Contracts.Requests;
 using SimU_GameService.Contracts.Responses;
 
@@ -20,6 +22,13 @@ public class QuestionsController : ControllerBase
     {
         _mediator = mediator;
         _mapper = mapper;
+    }
+
+    [HttpPost(Name = "PostQuestion")]
+    public async Task<ActionResult> PostQuestion(PostQuestionRequest request)
+    {
+        await _mediator.Send(new PostQuestionCommand(request.QuestionText, request.Type));
+        return NoContent();
     }
 
     [HttpGet("users", Name = "GetUserQuestions")]
@@ -39,7 +48,8 @@ public class QuestionsController : ControllerBase
     [HttpPost("responses", Name = "PostResponses")]
     public async Task<ActionResult<SummaryResponse>> PostResponses(ResponsesRequest request)
     {
-        var command = _mapper.MapToPostResponsesCommand(request);
+        bool isUser = await _mediator.Send(new CheckIfUserQuery(request.TargetId));
+        var command = _mapper.MapToPostResponsesCommand(isUser, request);
         var summary = await _mediator.Send(command);
         return Ok(new SummaryResponse(summary));
     }

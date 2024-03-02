@@ -38,10 +38,10 @@ public class UserConfigurations : IEntityTypeConfiguration<User>
         });
 
         // question responses
-        builder.OwnsMany(u => u.QuestionResponses, qr =>
-        {
-            qr.WithOwner().HasForeignKey(nameof(User.Id));
-        });
+        // builder.OwnsMany(u => u.QuestionResponses, qr =>
+        // {
+        //     qr.WithOwner().HasForeignKey(nameof(User.Id));
+        // });
 
         // worldsJoined
         builder.Property(e => e.WorldsJoined)

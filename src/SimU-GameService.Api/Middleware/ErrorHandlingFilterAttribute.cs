@@ -20,6 +20,7 @@ namespace SimU_GameService.Api.Middleware
                 NotImplementedException => HttpStatusCode.NotImplemented,
                 NotFoundException => HttpStatusCode.NotFound,
                 BadRequestException => HttpStatusCode.BadRequest,
+                ServiceErrorException => HttpStatusCode.ServiceUnavailable,
                 _ => HttpStatusCode.InternalServerError
             };
 

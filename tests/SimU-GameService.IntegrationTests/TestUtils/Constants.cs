@@ -76,6 +76,14 @@ public static class Constants
         {
             public const string BaseUri = "/worlds";
         }
+
+        public static class QuestionsEndpoints
+        {
+            public const string BaseUri = "/questions";
+            public const string GetUserQuestions = $"{BaseUri}/users";
+            public const string GetAgentQuestions = $"{BaseUri}/agents";
+            public const string PostResponses = $"{BaseUri}/responses";
+        }
     }
 }
 

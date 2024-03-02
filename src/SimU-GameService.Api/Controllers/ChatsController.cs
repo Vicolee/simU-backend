@@ -5,7 +5,6 @@ using SimU_GameService.Api.Common;
 using SimU_GameService.Application.Common.Exceptions;
 using SimU_GameService.Application.Services.Chats.Commands;
 using SimU_GameService.Application.Services.Chats.Queries;
-using SimU_GameService.Contracts.Requests;
 using SimU_GameService.Contracts.Responses;
 using SimU_GameService.Domain.Models;
 
@@ -66,13 +65,7 @@ public class ChatsController : ControllerBase
         [FromQuery] Guid senderId,
         [FromQuery] Guid recipientId)
     {
-        Chat? question = await _mediator.Send(new AskForQuestionQuery(senderId, recipientId));
-
-        if (question is null)
-        {
-            return NotFound(new { message = "No question generated, probably because the recipient had difficulty creating one." });
-        }
-
-        return Ok(_mapper.MapToChatResponse(question));
+        var chat = await _mediator.Send(new AskForQuestionQuery(senderId, recipientId));
+        return Ok(_mapper.MapToChatResponse(chat));
     }
 }
