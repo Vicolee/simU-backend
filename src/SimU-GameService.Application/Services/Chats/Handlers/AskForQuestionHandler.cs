@@ -7,7 +7,7 @@ using SimU_GameService.Application.Common.Exceptions;
 
 namespace SimU_GameService.Application.Services.Chats.Handlers;
 
-public class AskForQuestionHandler : IRequestHandler<AskForQuestionQuery, Chat?>
+public class AskForQuestionHandler : IRequestHandler<AskForQuestionQuery, Chat>
 {
     private readonly IChatRepository _chatRepository;
     private readonly ILLMService _agentService;
@@ -24,7 +24,7 @@ public class AskForQuestionHandler : IRequestHandler<AskForQuestionQuery, Chat?>
         _agentRepository = agentRepository;
     }
 
-    public async Task<Chat?> Handle(AskForQuestionQuery request, CancellationToken cancellationToken)
+    public async Task<Chat> Handle(AskForQuestionQuery request, CancellationToken cancellationToken)
     {
         // sender is always a user, check that they exist
         _ = await _userRepository.GetUser(request.SenderId)
