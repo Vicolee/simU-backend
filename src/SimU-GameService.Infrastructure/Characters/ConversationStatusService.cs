@@ -9,6 +9,7 @@ public class ConversationStatusService : IHostedService, IConversationStatusServ
 {
     private Timer? _timer;
     private readonly IServiceScopeFactory _serviceScopeFactory;
+    private readonly CancellationTokenSource _cts = new();
 
     public ConversationStatusService(IServiceScopeFactory serviceScopeFactory)
     {
@@ -29,6 +30,10 @@ public class ConversationStatusService : IHostedService, IConversationStatusServ
 
         foreach (var conversation in activeConversations)
         {
+            if (_cts.Token.IsCancellationRequested)
+            {
+                return;
+            }
             if (DateTime.UtcNow - conversation.LastMessageSentAt > TimeSpan.FromMinutes(15))
             {
                 await conversationRepository.MarkConversationAsOver(conversation.Id);
@@ -39,14 +44,10 @@ public class ConversationStatusService : IHostedService, IConversationStatusServ
     public Task StopAsync(CancellationToken cancellationToken)
     {
         _timer?.Change(Timeout.Infinite, 0);
+        _cts.Cancel(); // cancel the token
         _timer?.Dispose();
         _timer = null;
 
         return Task.CompletedTask;
-    }
-
-    public void Dispose()
-    {
-        _timer?.Dispose();
     }
 }

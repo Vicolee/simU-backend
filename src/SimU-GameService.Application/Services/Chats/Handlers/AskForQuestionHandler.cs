@@ -7,7 +7,7 @@ using SimU_GameService.Application.Common.Exceptions;
 
 namespace SimU_GameService.Application.Services.Chats.Handlers;
 
-public class AskForQuestionHandler : IRequestHandler<AskForQuestionQuery, string?>
+public class AskForQuestionHandler : IRequestHandler<AskForQuestionQuery, Chat?>
 {
     private readonly IChatRepository _chatRepository;
     private readonly ILLMService _agentService;
@@ -24,7 +24,7 @@ public class AskForQuestionHandler : IRequestHandler<AskForQuestionQuery, string
         _agentRepository = agentRepository;
     }
 
-    public async Task<string?> Handle(AskForQuestionQuery request, CancellationToken cancellationToken)
+    public async Task<Chat?> Handle(AskForQuestionQuery request, CancellationToken cancellationToken)
     {
         // sender is always a user, check that they exist
         _ = await _userRepository.GetUser(request.SenderId) ?? throw new NotFoundException(nameof(User), request.SenderId);
@@ -65,6 +65,6 @@ public class AskForQuestionHandler : IRequestHandler<AskForQuestionQuery, string
         Chat question = new(request.RecipientId, request.SenderId, conversationId, chatResponse, false);
         await _chatRepository.AddChat(question);
         await _conversationRepository.UpdateLastMessageSentAt(conversationId);
-        return question.Content;
+        return question;
     }
 }

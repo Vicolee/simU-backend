@@ -66,14 +66,13 @@ public class ChatsController : ControllerBase
         [FromQuery] Guid senderId,
         [FromQuery] Guid recipientId)
     {
-        var question = await _mediator.Send(new AskForQuestionQuery(senderId, recipientId));
+        Chat? question = await _mediator.Send(new AskForQuestionQuery(senderId, recipientId));
 
         if (question is null)
         {
             return NotFound(new { message = "No question generated, probably because the recipient had difficulty creating one." });
         }
 
-        return Ok(question);
+        return Ok(_mapper.MapToChatResponse(question));
     }
-
 }
