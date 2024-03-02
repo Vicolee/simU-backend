@@ -210,9 +210,9 @@ public class LLMService : ILLMService
         // throw exception if the request failed
         if (response.StatusCode != System.Net.HttpStatusCode.OK)
         {
-            // throw new ServiceErrorException(
-            //     response.StatusCode,
-            //     $"Failed to send finished conversation with ID: {conversationId} to LLM service.");
+            throw new ServiceErrorException(
+                response.StatusCode,
+                $"Failed to send finished conversation with ID: {conversationId} to LLM service.");
         }
     }
 
@@ -306,5 +306,7 @@ public class LLMService : ILLMService
             response.StatusCode,
             $"Failed to generate a thumbnail for world with Id: {worldID}.");
     }
+
+    internal record LLMChatResponse(string Response);
 
 }
