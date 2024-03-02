@@ -61,6 +61,43 @@ public class LLMService : ILLMService
         };
 
         var response = await _httpClient.PostAsJsonAsync("/api/agents/prompt", request);
+
+        // TO DO: DEBUG THE STREAM RESPONSE CODE HERE
+        if (streamResponse) {
+            //  TO DO: store entire message in another string to save in database after
+            using Stream stream = await response.Content.ReadAsStreamAsync();
+            using StreamReader reader = new(stream);
+            char[] buffer = new char[1024];
+            int bytesRead;
+            // message to store in the database
+            // TO DO: GET CHAT ID FROM LLM SERVICE
+            string entireMessage = "";
+
+            while ((bytesRead = await reader.ReadAsync(buffer, 0, buffer.Length)) > 0)
+            {
+                string chunk = new string(buffer, 0, bytesRead);
+                //to do: append the chatid in front of every chunk
+                Console.WriteLine(chunk);
+                entireMessage += chunk;
+                // await _unityHub.SendChat(agentId, chunk);
+            }
+            // send the user a terminating character so they know that the stream is over
+            // await _unityHub.SendChat(agentId, "\n");
+            // TO DO: REVISE THIS!!
+            var agentResponse = new Chat
+            {
+                SenderId = recipientId,
+                RecipientId = senderId,
+                ConversationId = conversationId,
+                Content = entireMessage,
+                IsSenderOnline = false
+            };
+
+            await _chatRepository.AddChat(agentResponse);
+            // TO DO: REVISE THIS RETURN STATEMENT
+            return entireMessage;
+        }
+
         var responseContent = await response.Content.ReadAsStringAsync();
 
         // throw exception if the request failed

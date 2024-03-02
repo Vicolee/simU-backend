@@ -80,7 +80,6 @@ public class WorldsController : ControllerBase
     [HttpGet("{id}/agents", Name = "GetWorldAgents")]
     public async Task<ActionResult<IEnumerable<WorldAgentResponse>>> GetWorldAgents(Guid id)
     {
-        // added CreatedTime to the GetWorldAgents Response
         var agents = await _mediator.Send(new GetWorldAgentsQuery(id));
         return Ok(agents.Select(_mapper.MapToWorldAgentResponse));
     }
