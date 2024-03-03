@@ -41,7 +41,7 @@ public class PostResponseHandler : IRequestHandler<PostResponseCommand, string>
         Response response = isUser
             ? new UserQuestionResponse(request.ResponderId, request.TargetCharacterId, request.QuestionId, request.Response)
             : new AgentQuestionResponse(request.ResponderId, request.TargetCharacterId, request.QuestionId, request.Response);
-        
+
         await _responseRepository.PostResponse(isUser, response);
 
         var (questionIds, responses) = await _responseRepository
