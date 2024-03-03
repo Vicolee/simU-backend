@@ -17,8 +17,7 @@ public class RemoveAgentHandler : IRequestHandler<RemoveAgentCommand, Unit>
 
     public async Task<Unit> Handle(RemoveAgentCommand request, CancellationToken cancellationToken)
     {
-        var creatorId = await _userRepository.GetUserIdFromIdentityId(request.CreatorIdentityId);
-        await _worldRepository.RemoveAgent(request.Id, creatorId, request.AgentId);
+        await _worldRepository.RemoveAgent(request.Id, request.CreatorId, request.AgentId);
         return Unit.Value;
     }
 }
