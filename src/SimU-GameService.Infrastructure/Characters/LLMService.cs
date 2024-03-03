@@ -220,6 +220,7 @@ public class LLMService : ILLMService
     {
         User? user = null;
         Agent? agent = null;
+        string? name = "";
 
         try
         {
@@ -238,9 +239,16 @@ public class LLMService : ILLMService
             throw new NotFoundException("Neither a user nor an agent matches the provided characterId to generate a summary: " + characterId);
         }
 
+        if (user != null) {
+            name = user.Username;
+        }
+        else if (agent != null) {
+            name = agent.Username;
+        }
+
         var request = new
         {
-            characterId,
+            name,
             questions,
             answers
         };

@@ -41,7 +41,7 @@ public class PostResponsesHandler : IRequestHandler<PostResponsesCommand, string
 
         // add responses to the repository
         await _responseRepository.PostResponses(isUser, request.Responses);
-        
+
         // get character summary from LLM service
         var (questionIds, responses) = await _responseRepository
             .GetQuestionIdResponsesMapping(isUser, request.TargetCharacterId);
