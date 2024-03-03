@@ -106,7 +106,7 @@ public class WorldRepository : IWorldRepository
 
         // the user who requests the removal of an agent must either be
         // the creator of the agent or the owner of world.
-        if (world.CreatorId != creatorId || agent?.CreatorId != creatorId)
+        if (world.CreatorId != creatorId && agent?.CreatorId != creatorId)
         {
             throw new BadRequestException("Only the creator of the world or the creator of the agent can remove the agent");
         }
