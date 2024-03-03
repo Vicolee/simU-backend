@@ -50,8 +50,8 @@ public class QuestionsController : ControllerBase
     {
         bool isUser = await _mediator.Send(new CheckIfUserQuery(request.TargetId));
         var command = _mapper.MapToPostResponsesCommand(isUser, request);
-        string summary = await _mediator.Send(command);
-        return Ok(summary);
+        var summary = await _mediator.Send(command);
+        return Ok(new SummaryResponse(summary));
     }
 
     [HttpPost("response", Name = "PostResponse")]
@@ -59,8 +59,8 @@ public class QuestionsController : ControllerBase
     {
         var command = new PostResponseCommand(
             request.TargetId, request.ResponderId, request.QuestionId, request.Response);
-        string summary = await _mediator.Send(command);
-        return Ok(summary);
+        var summary = await _mediator.Send(command);
+        return Ok(new SummaryResponse(summary));
     }
 
     [HttpGet("responses/{targetId}", Name = "GetResponses")]
