@@ -311,6 +311,12 @@ Deletes a world. Note that only the world's creator can delete it.
 
 `DELETE /worlds/{id}`
 
+```json
+{
+    "ownerId" : "00000-00000-00000-00000-00000"
+}
+```
+
 #### Response
 
 `No Content`
@@ -376,6 +382,12 @@ Removes an agent from a world. Only the owner of the world or the creator of the
 #### Request
 
 `DELETE /worlds/{id}/agents/{agentId}`
+
+```json
+{
+    "creatorId" : "00000-00000-00000-00000-00000"
+}
+```
 
 #### Response
 
