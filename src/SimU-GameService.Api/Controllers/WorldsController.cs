@@ -2,6 +2,7 @@ using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SimU_GameService.Api.Common;
+using SimU_GameService.Api.DomainEvents.Events;
 using SimU_GameService.Application.Common.Exceptions;
 using SimU_GameService.Application.Services.Worlds.Commands;
 using SimU_GameService.Application.Services.Worlds.Queries;
@@ -37,6 +38,7 @@ public class WorldsController : ControllerBase
     public async Task<ActionResult> AddUserToWorld(Guid id, Guid userId)
     {
         await _mediator.Send(new AddUserCommand(id, userId));
+        await _mediator.Publish(new UserAddedToWorldEvent(userId));
         return NoContent();
     }
 

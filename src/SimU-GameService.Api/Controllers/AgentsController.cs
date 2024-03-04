@@ -1,6 +1,7 @@
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using SimU_GameService.Api.Common;
+using SimU_GameService.Api.DomainEvents.Events;
 using SimU_GameService.Application.Common.Exceptions;
 using SimU_GameService.Application.Services.Agents.Commands;
 using SimU_GameService.Application.Services.Agents.Queries;
@@ -28,6 +29,7 @@ public class AgentsController : ControllerBase
     {
         var agentId = await _mediator.Send(new CreateAgentCommand(
             request.Username, request.Description, request.CreatorId, request.IncubationDurationInHours, request.SpriteURL, request.SpriteHeadshotURL));
+        await _mediator.Publish(new AgentAddedToWorldEvent(agentId, request.CreatorId));
         return Ok(new IdResponse(agentId));
     }
 

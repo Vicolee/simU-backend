@@ -52,10 +52,6 @@ public static class DependencyInjection
             httpClient.BaseAddress = new Uri(baseUri);
         });
 
-        // service that checks if ongoing conversations have had recent activity.
-        // it checks every 15 minutes.
-        // services.AddHostedService<ConversationStatusService>();
-
         // authentication
         FirebaseApp.Create(new AppOptions()
         {

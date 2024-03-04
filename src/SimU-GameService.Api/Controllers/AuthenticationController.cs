@@ -1,5 +1,6 @@
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using SimU_GameService.Api.DomainEvents.Events;
 using SimU_GameService.Application.Services.Authentication.Commands;
 using SimU_GameService.Application.Services.Users.Commands;
 using SimU_GameService.Contracts.Requests;
@@ -28,6 +29,7 @@ public class AuthenticationController : ControllerBase
     {
         var (id, authToken) = await _mediator.Send(
             new LoginUserCommand(request.Email, request.Password));
+        await _mediator.Publish(new UserLoggedInEvent(id));
         return Ok(new AuthenticationResponse(id, authToken));
     }
 

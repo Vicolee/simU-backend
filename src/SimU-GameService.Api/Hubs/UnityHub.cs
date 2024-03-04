@@ -1,4 +1,3 @@
-using System.Collections.Concurrent;
 using MediatR;
 using Microsoft.AspNetCore.SignalR;
 using SignalRSwaggerGen.Attributes;
@@ -8,8 +7,10 @@ using SimU_GameService.Application.Services.Chats.Commands;
 using SimU_GameService.Application.Services.Users.Commands;
 using SimU_GameService.Application.Services.Users.Queries;
 using SimU_GameService.Domain.Models;
-using SimU_GameService.Application.Services.Worlds.Queries;
 using SimU_GameService.Api.Common;
+using SimU_GameService.Api.OnlineStatus;
+using SimU_GameService.Application.Services.Worlds.Queries;
+using SimU_GameService.Api.DomainEvents.Events;
 
 namespace SimU_GameService.Api.Hubs;
 
@@ -19,53 +20,39 @@ namespace SimU_GameService.Api.Hubs;
 [SignalRHub]
 public class UnityHub : Hub<IUnityClient>, IUnityServer
 {
-    // private readonly Timer _timer;
-    private readonly IMediator _mediator;
     private readonly IMapper _mapper;
-    private static readonly TimeSpan _pingInterval = TimeSpan.FromMinutes(3);
+    private readonly IMediator _mediator;
+    private readonly ConnectionService _connectionService;
 
-    public UnityHub(IMediator mediator, IMapper mapper)
+    public UnityHub(IMediator mediator, IMapper mapper, ConnectionService connectionService)
     {
         _mediator = mediator;
         _mapper = mapper;
-        // _timer = new Timer(PingClient, null, TimeSpan.Zero, _pingInterval);
+        _connectionService = connectionService;
     }
 
-    /// <summary>
-    /// A mapping between user identity IDs and connection IDs.
-    /// </summary>
-    private static readonly ConcurrentDictionary<string, string> _connectionIdMap = new();
-
-    /// <summary>
-    /// A mapping between user identity IDs and the time of the user's last ping.
-    /// </summary>
-    private static readonly ConcurrentDictionary<string, DateTime> _lastPingMap = new();
-
     private string? GetIdentityIdFromConnectionMap()
-        => _connectionIdMap.FirstOrDefault(x => x.Value == Context.ConnectionId).Key;
+        => _connectionService.GetIdentityIdFromConnectionId(Context.ConnectionId);
 
     private async Task<Guid> GetUserIdFromIdentityId(string identityId)
         => await _mediator.Send(new GetUserIdFromIdentityIdQuery(identityId));
 
-    private async Task<string?> GetIdentityIdFromUserId(Guid userId)
-        => await _mediator.Send(new GetIdentityIdFromUserIdQuery(userId));
+    private async Task<string> GetIdentityIdFromUserId(Guid userId)
+        => await _mediator.Send(new GetIdentityIdFromUserIdQuery(userId))
+        ?? throw new NotFoundException(nameof(User), userId);
 
     public override async Task OnConnectedAsync()
     {
-        // create mapping between identity ID and connection ID
         var identityId = (Context.User?.FindFirst("user_id")?.Value)
-            ?? throw new UnauthorizedAccessException("User not authenticated");
-        _connectionIdMap[identityId] = Context.ConnectionId;
+            ?? throw new UnauthorizedAccessException("User not authenticated");        
+        _connectionService.AddConnection(identityId, Context.ConnectionId);
 
         await base.OnConnectedAsync();
     }
 
     public override async Task OnDisconnectedAsync(Exception? exception)
     {
-        // remove mapping between identity ID and connection ID
-        _connectionIdMap.TryRemove(
-            _connectionIdMap.FirstOrDefault(x => x.Value == Context.ConnectionId));
-
+        _connectionService.RemoveConnectionByConnectionId(Context.ConnectionId);
         await base.OnDisconnectedAsync(exception);
     }
 
@@ -79,7 +66,8 @@ public class UnityHub : Hub<IUnityClient>, IUnityServer
 
         // send chat to receiver
         var receiverIdentityId = await GetIdentityIdFromUserId(receiverId);
-        if (receiverIdentityId is not null && _connectionIdMap.TryGetValue(receiverIdentityId, out string? connectionId))
+        var connectionId = _connectionService.GetConnectionId(receiverIdentityId);
+        if (receiverIdentityId is not null && connectionId is not null)
         {
             await Clients.Client(connectionId).ChatHandler(_mapper.MapToChatResponse(chat));
         }
@@ -110,57 +98,23 @@ public class UnityHub : Hub<IUnityClient>, IUnityServer
     {
         var identityId = GetIdentityIdFromConnectionMap()
             ?? throw new NotFoundException(nameof(User), Context.ConnectionId);
-        _lastPingMap[identityId] = DateTime.Now;
+        _connectionService.UpdateLastPingTime(identityId);
     }
 
-
-    /// <summary>
-    /// Sends a ping request to the client to check if the client is still logged in.
-    /// Removes users who have not pinged the server since the last contact.
-    /// </summary>
-    /// <param name="state">Default is null</param>
-    private async void PingClient(object? state)
+    private async Task<string> CreateSameWorldUsersGroup(Guid userId, CancellationToken cancellationToken)
     {
-        // logout users who have not pinged the server since the last ping
-        foreach (var (identityId, lastPing) in _lastPingMap)
-        {
-            if (DateTime.Now - lastPing > _pingInterval)
-            {
-                await LogoutUser(identityId);
-            }
-        }
-
-        // for each logged-in user, send a ping request to the client
-        foreach (var identityId in _connectionIdMap.Keys)
-        {
-            if (_connectionIdMap.TryGetValue(identityId, out string? connectionId))
-            {
-                await Clients.Client(connectionId).UserOnlineCheckHandler();
-            }
-        }
-    }
-
-    /// <summary>
-    /// Logs out a user from the server and notifies users in the same world that the user has logged out.
-    /// </summary>
-    /// <param name="identityId">The identity ID of the user to log out.</param>
-    /// <returns></returns>
-    private async Task LogoutUser(string identityId)
-    {
-        _connectionIdMap.TryRemove(identityId, out _);
-        _lastPingMap.TryRemove(identityId, out _);
-
-        var userId = await GetUserIdFromIdentityId(identityId);
-        await _mediator.Send(new LogoutUserCommand(userId));
-
-        var (worldName, worldUserIdentities) = await _mediator.Send(new GetUsersInSameWorldQuery(userId));
+        var (worldName, worldUserIdentities) = await _mediator.Send(
+                    new GetUsersInSameWorldQuery(userId), cancellationToken);
+        var groupName = $"world_{worldName}";
         foreach (var userIdentityId in worldUserIdentities)
         {
-            if (_connectionIdMap.TryGetValue(userIdentityId, out string? connectionId))
+            var connectionId = _connectionService.GetConnectionId(userIdentityId);
+            if (connectionId is not null)
             {
-                await Groups.AddToGroupAsync(connectionId!, $"world_{worldName}");
+                await Groups.AddToGroupAsync(connectionId, groupName, cancellationToken);
             }
         }
-        await Clients.Group(worldName).OnUserLoggedOutHandler(userId);
+
+        return groupName;
     }
 }

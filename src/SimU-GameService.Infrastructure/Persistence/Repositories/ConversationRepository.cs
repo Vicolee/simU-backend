@@ -82,7 +82,7 @@ public class ConversationRepository : IConversationRepository
     public async Task<IEnumerable<Conversation>> GetActiveConversations()
     {
         return await _dbContext.Conversations
-            .Where(c => c.IsConversationOver == false)
+            .Where(c => !c.IsConversationOver)
             .ToListAsync();
     }
 
@@ -90,7 +90,7 @@ public class ConversationRepository : IConversationRepository
     {
         var conversation = await _dbContext.Conversations
             .Where(c => c.Id == conversationId)
-            .FirstOrDefaultAsync() ?? throw new InvalidOperationException("Conversation not found");
+            .FirstOrDefaultAsync() ?? throw new NotFoundException(nameof(Conversation), conversationId);
         conversation.IsConversationOver = true;
         // make call to LLM to let them know the conversation ended.
         await LLMService.EndConversation(conversationId, conversation.ParticipantA, conversation.ParticipantB);
