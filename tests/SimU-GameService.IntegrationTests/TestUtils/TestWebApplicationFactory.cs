@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.Extensions.Configuration;
+using SimU_GameService.Api;
 using SimU_GameService.Api.Hubs;
 using SimU_GameService.Api.Middleware;
 using SimU_GameService.Application;

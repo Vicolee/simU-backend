@@ -1,5 +1,5 @@
 using Microsoft.OpenApi.Models;
-using SimU_GameService.Api.Middleware;
+using SimU_GameService.Api;
 using SimU_GameService.Api.Hubs;
 using SimU_GameService.Application;
 using SimU_GameService.Infrastructure.Persistence;
@@ -32,7 +32,6 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-// app.UseMiddleware<HubAuthenticationMiddleware>();
 app.UseAuthentication();
 app.UseAuthorization();
 

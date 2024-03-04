@@ -1,53 +1,36 @@
-using SimU_GameService.Application.Abstractions.Services;
 using SimU_GameService.Application.Abstractions.Repositories;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace SimU_GameService.Infrastructure.Characters;
 
-public class ConversationStatusService : IHostedService, IConversationStatusService
+public class ConversationStatusService : BackgroundService
 {
-    private Timer? _timer;
     private readonly IServiceScopeFactory _serviceScopeFactory;
-    private readonly CancellationTokenSource _cts = new();
+    private readonly TimeSpan _checkInterval = TimeSpan.FromMinutes(15);
 
     public ConversationStatusService(IServiceScopeFactory serviceScopeFactory)
     {
         _serviceScopeFactory = serviceScopeFactory;
     }
 
-    public Task StartAsync(CancellationToken cancellationToken)
+    protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
-        _timer = new Timer(CheckConversations, null, TimeSpan.Zero, TimeSpan.FromMinutes(15));
-        return Task.CompletedTask;
-    }
-
-    public async void CheckConversations(object? state)
-    {
-        using var scope = _serviceScopeFactory.CreateScope();
-        var conversationRepository = scope.ServiceProvider.GetRequiredService<IConversationRepository>();
-        var activeConversations = await conversationRepository.GetActiveConversations();
-
-        foreach (var conversation in activeConversations)
+        while (!stoppingToken.IsCancellationRequested)
         {
-            if (_cts.Token.IsCancellationRequested)
+            using var scope = _serviceScopeFactory.CreateScope();
+            var conversationRepository = scope.ServiceProvider.GetRequiredService<IConversationRepository>();
+            var activeConversations = await conversationRepository.GetActiveConversations();
+
+            foreach (var conversation in activeConversations)
             {
-                return;
+                if (DateTime.UtcNow - conversation.LastMessageSentAt > _checkInterval)
+                {
+                    await conversationRepository.MarkConversationAsOver(conversation.Id);
+                }
             }
-            if (DateTime.UtcNow - conversation.LastMessageSentAt > TimeSpan.FromMinutes(15))
-            {
-                await conversationRepository.MarkConversationAsOver(conversation.Id);
-            }
+
+            await Task.Delay(_checkInterval, stoppingToken);
         }
-    }
-
-    public Task StopAsync(CancellationToken cancellationToken)
-    {
-        _timer?.Change(Timeout.Infinite, 0);
-        _cts.Cancel(); // cancel the token
-        _timer?.Dispose();
-        _timer = null;
-
-        return Task.CompletedTask;
     }
 }
