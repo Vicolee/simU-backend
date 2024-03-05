@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using SimU_GameService.Api.Common;
 using SimU_GameService.Api.DomainEvents.Events;
 using SimU_GameService.Application.Common.Exceptions;
+using SimU_GameService.Application.Services.Users.Commands;
 using SimU_GameService.Application.Services.Worlds.Commands;
 using SimU_GameService.Application.Services.Worlds.Queries;
 using SimU_GameService.Contracts.Requests;
@@ -38,6 +39,7 @@ public class WorldsController : ControllerBase
     public async Task<ActionResult> AddUserToWorld(Guid id, Guid userId)
     {
         await _mediator.Send(new AddUserCommand(id, userId));
+        await _mediator.Send(new UpdateOnlineStatusCommand(userId, true));
         await _mediator.Publish(new UserAddedToWorldEvent(userId));
         return NoContent();
     }
@@ -86,21 +88,9 @@ public class WorldsController : ControllerBase
         return Ok(agents.Select(_mapper.MapToWorldAgentResponse));
     }
 
-    // [Authorize]
-    // [HttpDelete("{id}}", Name = "DeleteWorld")]
-    // public async Task<ActionResult> DeleteWorld(Guid id)
-    // {
-    //     // var identityId = User.FindFirst("sub")?.Value
-    //     //     ?? throw new UnauthorizedAccessException("Error authorizing user");
-    //     await _mediator.Send(new DeleteWorldCommand(id, identityId));
-    //     return NoContent();
-    // }
-
     [HttpDelete("{id}", Name = "DeleteWorld")]
     public async Task<ActionResult> DeleteWorld(Guid id, DeleteWorldRequest request)
     {
-        // var identityId = User.FindFirst("sub")?.Value
-        //     ?? throw new UnauthorizedAccessException("Error authorizing user");
         await _mediator.Send(new DeleteWorldCommand(id, request.OwnerId));
         return NoContent();
     }
@@ -123,17 +113,11 @@ public class WorldsController : ControllerBase
     public async Task<ActionResult> RemoveUserFromWorld(Guid id, Guid userId, DeleteWorldRequest request)
     {
         await _mediator.Send(new RemoveUserCommand(id, userId, request.OwnerId));
+        await _mediator.Send(new UpdateOnlineStatusCommand(userId, false));
+
+        await _mediator.Publish(new UserRemovedFromWorldEvent(userId));
         return NoContent();
     }
-    // [Authorize]
-    // [HttpDelete("{id}/users/{userId}", Name = "RemoveUserFromWorld")]
-    // public async Task<ActionResult> RemoveUserFromWorld(Guid id, Guid userId)
-    // {
-    //     var identityId = User.FindFirst("sub")?.Value
-    //         ?? throw new UnauthorizedAccessException("Error authorizing user");
-    //     await _mediator.Send(new RemoveUserCommand(id, userId, identityId));
-    //     return NoContent();
-    // }
 
     [HttpDelete("{id}/agents/{agentId}", Name = "RemoveAgentFromWorld")]
     public async Task<ActionResult> RemoveAgentFromWorld(Guid id, Guid agentId, DeleteAgentFromWorldRequest request)
@@ -141,14 +125,4 @@ public class WorldsController : ControllerBase
         await _mediator.Send(new RemoveAgentCommand(id, agentId, request.CreatorId));
         return NoContent();
     }
-
-    // [Authorize]
-    // [HttpDelete("{id}/agents/{agentId}", Name = "RemoveAgentFromWorld")]
-    // public async Task<ActionResult> RemoveAgentFromWorld(Guid id, Guid agentId)
-    // {
-    //     var identityId = User.FindFirst("sub")?.Value
-    //         ?? throw new UnauthorizedAccessException("Error authorizing user");
-    //     await _mediator.Send(new RemoveAgentCommand(id, agentId, identityId));
-    //     return NoContent();
-    // }
 }

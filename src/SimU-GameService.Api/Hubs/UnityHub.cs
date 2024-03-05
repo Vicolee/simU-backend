@@ -64,6 +64,9 @@ public class UnityHub : Hub<IUnityClient>, IUnityServer
         var (chat, response) = await _mediator.Send(
             new SendChatCommand(await GetUserIdFromIdentityId(senderIdentityId), receiverId, message));
 
+        // send chat back to sender for confirmation/displays
+        await Clients.Caller.ChatHandler(_mapper.MapToChatResponse(chat));
+
         // send chat to receiver
         var receiverIdentityId = await GetIdentityIdFromUserId(receiverId);
         var connectionId = _connectionService.GetConnectionId(receiverIdentityId);
@@ -71,9 +74,6 @@ public class UnityHub : Hub<IUnityClient>, IUnityServer
         {
             await Clients.Client(connectionId).ChatHandler(_mapper.MapToChatResponse(chat));
         }
-
-        // send chat back to sender
-        await Clients.Caller.ChatHandler(_mapper.MapToChatResponse(chat));
 
         // send agent response to sender
         if (response is not null)
@@ -94,10 +94,13 @@ public class UnityHub : Hub<IUnityClient>, IUnityServer
         await Clients.All.UpdateLocationHandler(senderId, location);
     }
 
-    public void PingServer()
+    public async void PingServer()
     {
         var identityId = GetIdentityIdFromConnectionMap()
             ?? throw new NotFoundException(nameof(User), Context.ConnectionId);
+        var userId = await GetUserIdFromIdentityId(identityId);
+        
+        await _mediator.Send(new UpdateOnlineStatusCommand(userId, true));
         _connectionService.UpdateLastPingTime(identityId);
     }
 

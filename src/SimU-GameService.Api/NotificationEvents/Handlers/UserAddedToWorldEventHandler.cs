@@ -25,12 +25,11 @@ public class UserAddedToWorldEventHandler : INotificationHandler<UserAddedToWorl
 
     public async Task Handle(UserAddedToWorldEvent notification, CancellationToken cancellationToken)
     {
-        var groupName = await DomainEventsUtils.CreateSameWorldUsersGroup(notification.UserId, 
+        var groupName = await DomainEventsUtils.CreateSameWorldUsersGroup(notification.UserId,
             _mediator, _connectionService, _hubContext, cancellationToken);
-        if (groupName is null)
+        if (groupName is not null)
         {
-            return;
+            await _hubContext.Clients.Group(groupName).OnUserAddedToWorldHandler(notification.UserId);
         }
-        await _hubContext.Clients.Group(groupName).OnUserAddedToWorldHandler(notification.UserId);
     }
 }

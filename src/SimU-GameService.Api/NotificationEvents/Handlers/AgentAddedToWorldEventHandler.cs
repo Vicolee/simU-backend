@@ -25,12 +25,11 @@ public class AgentAddedToWorldEventHandler : INotificationHandler<AgentAddedToWo
 
     public async Task Handle(AgentAddedToWorldEvent notification, CancellationToken cancellationToken)
     {
-        var groupName = await DomainEventsUtils.CreateSameWorldUsersGroup(notification.CreatorId, 
+        var groupName = await DomainEventsUtils.CreateSameWorldUsersGroup(notification.CreatorId,
             _mediator, _connectionService, _hubContext, cancellationToken);
-        if (groupName is null)
+        if (groupName is not null)
         {
-            return;
+            await _hubContext.Clients.Group(groupName).OnAgentAddedHandler(notification.AgentId);
         }
-        await _hubContext.Clients.Group(groupName).OnAgentAddedHandler(notification.AgentId);
     }
 }

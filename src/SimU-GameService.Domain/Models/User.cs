@@ -35,5 +35,6 @@ public class User : Character
         SpriteAnimations = new List<int> { 0, 0, 0, 0};
     }
 
+    public void Login() => IsOnline = true;
     public void Logout() => IsOnline = false;
 }
