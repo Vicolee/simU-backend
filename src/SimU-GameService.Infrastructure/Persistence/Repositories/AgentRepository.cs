@@ -49,4 +49,11 @@ public class AgentRepository : IAgentRepository
 
         await _dbContext.SaveChangesAsync();
     }
+    public async Task UpdateAgentSummary(Guid agentId, string summary)
+    {
+        var agent = await GetAgent(agentId) ?? throw new NotFoundException(nameof(Agent), agentId);
+        string summaryWithoutQuotes = summary.Substring(1, summary.Length - 2);
+        agent.Summary = summaryWithoutQuotes;
+        await _dbContext.SaveChangesAsync();
+    }
 }

@@ -49,6 +49,8 @@ public class PostResponseHandler : IRequestHandler<PostResponseCommand, string>
         var questions = questionIds.Select(
             async questionId => await _questionRepository.GetQuestion(questionId)).Select(task => task.Result);
 
-        return await _llmService.GenerateCharacterSummary(request.TargetCharacterId, questions, responses);
+        string summary = await _llmService.GenerateCharacterSummary(request.TargetCharacterId, questions, responses);
+        await _agentRepository.UpdateAgentSummary(request.TargetCharacterId, summary);
+        return summary;
     }
 }

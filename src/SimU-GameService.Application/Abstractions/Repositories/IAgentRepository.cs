@@ -53,4 +53,11 @@ public interface IAgentRepository
     /// <param name="description"></param>
     /// <returns></returns>
     public Task UpdateDescription(Guid agentId, string description);
+    /// <summary>
+    /// Updates an agent's summary in the repository.
+    /// </summary>
+    /// <param name="agentId"></param>
+    /// <param name="summary"></param>
+    /// <returns></returns>
+    public Task UpdateAgentSummary(Guid agentId, string summary);
 }
