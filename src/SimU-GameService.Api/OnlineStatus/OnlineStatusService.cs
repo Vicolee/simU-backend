@@ -3,8 +3,10 @@ using Microsoft.AspNetCore.SignalR;
 using SimU_GameService.Api.DomainEvents;
 using SimU_GameService.Api.Hubs;
 using SimU_GameService.Api.Hubs.Abstractions;
+using SimU_GameService.Application.Common.Exceptions;
 using SimU_GameService.Application.Services.Users.Commands;
 using SimU_GameService.Application.Services.Users.Queries;
+using SimU_GameService.Domain.Models;
 
 namespace SimU_GameService.Api.OnlineStatus;
 
@@ -32,11 +34,14 @@ public class OnlineStatusService : BackgroundService
             var mediator = scope.ServiceProvider.GetRequiredService<IMediator>();
 
             // get all users currently online and their last ping times
-            var onlineUserIdentities = await mediator.Send(new GetOnlineUsersQuery(), stoppingToken);
-            var lastPings = onlineUserIdentities
+            var IdIdentityPairs = await mediator.Send(new GetOnlineUsersQuery(), stoppingToken);
+            _connectionService.UpdateUserIdentityMap(IdIdentityPairs);
+
+            var onlineUserIds = IdIdentityPairs.Select(pair => pair.Item2).ToList();
+            var lastPings = onlineUserIds
                 .Select(identityId => (identityId, _connectionService.GetLastPingTime(identityId)))
                 .Where(pair => pair.Item2 != null)!;
-            
+
             // mark users as offline if they have not responded to the last 2 ping requests
             var loggedOutUserIdentities = new List<string>();
             foreach (var (identityId, lastPing) in lastPings)
@@ -53,12 +58,12 @@ public class OnlineStatusService : BackgroundService
             }
 
             // ping remaining online users
-            var loggedInUsers = onlineUserIdentities.Except(loggedOutUserIdentities).ToList();
+            var loggedInUsers = onlineUserIds.Except(loggedOutUserIdentities).ToList();
             var connectionIds = loggedInUsers
                 .Select(_connectionService.GetConnectionId)
                 .Where(connectionId => connectionId != null)!
                 .ToList();
-            
+
             foreach (var connectionId in connectionIds)
             {
                 await _hubContext.Clients.Client(connectionId!).UserOnlineCheckHandler();
@@ -72,9 +77,10 @@ public class OnlineStatusService : BackgroundService
     private async Task MarkOffline(string identityId, IMediator mediator, CancellationToken cancellationToken)
     {
         // log out user
-        var userId = await mediator.Send(new GetUserIdFromIdentityIdQuery(identityId), cancellationToken);
-        await mediator.Send(new LogoutUserCommand(userId), cancellationToken);  
-        
+        var userId = _connectionService.GetUserIdFromIdentityId(identityId)
+            ?? throw new NotFoundException(nameof(User), identityId);
+        await mediator.Send(new LogoutUserCommand(userId), cancellationToken);
+
         // notify users in the same world that the user has logged out
         var groupName = await DomainEventsUtils.CreateSameWorldUsersGroup(
             userId, mediator, _connectionService, _hubContext, cancellationToken);

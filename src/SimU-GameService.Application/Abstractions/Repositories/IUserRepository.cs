@@ -96,5 +96,5 @@ public interface IUserRepository
     Task<string?> GetIdentityIdFromUserId(Guid userId);
     Task Login(Guid userId);
     Task Logout(Guid userId);
-    Task<IEnumerable<string>> GetOnlineUsers();
+    Task<IEnumerable<(Guid, string)>> GetOnlineUsers();
 }

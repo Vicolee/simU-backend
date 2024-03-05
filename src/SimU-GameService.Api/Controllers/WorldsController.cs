@@ -39,8 +39,9 @@ public class WorldsController : ControllerBase
     public async Task<ActionResult> AddUserToWorld(Guid id, Guid userId)
     {
         await _mediator.Send(new AddUserCommand(id, userId));
-        await _mediator.Send(new UpdateOnlineStatusCommand(userId, true));
+        await _mediator.Publish(new UserChangedOnlineStatusEvent(userId, true));
         await _mediator.Publish(new UserAddedToWorldEvent(userId));
+
         return NoContent();
     }
 
@@ -113,7 +114,7 @@ public class WorldsController : ControllerBase
     public async Task<ActionResult> RemoveUserFromWorld(Guid id, Guid userId, DeleteWorldRequest request)
     {
         await _mediator.Send(new RemoveUserCommand(id, userId, request.OwnerId));
-        await _mediator.Send(new UpdateOnlineStatusCommand(userId, false));
+        await _mediator.Publish(new UserChangedOnlineStatusEvent(userId, false));
 
         await _mediator.Publish(new UserRemovedFromWorldEvent(userId));
         return NoContent();
