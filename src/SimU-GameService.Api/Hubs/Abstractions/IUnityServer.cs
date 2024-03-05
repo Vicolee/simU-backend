@@ -26,5 +26,5 @@ public interface IUnityServer
     /// Notifies the server that the user is online. We use this to keep track of active users. 
     /// </summary>
     /// <returns></returns>
-    void PingServer();
+    Task PingServer();
 }

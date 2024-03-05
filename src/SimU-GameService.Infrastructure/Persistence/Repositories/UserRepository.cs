@@ -161,8 +161,8 @@ public class UserRepository : IUserRepository
         return user?.IdentityId ?? default;
     }
 
-    public async Task<IEnumerable<string>> GetOnlineUsers() => await _dbContext.Users
+    public async Task<IEnumerable<(Guid, string)>> GetOnlineUsers() => await _dbContext.Users
             .Where(u => u.IsOnline)
-            .Select(u => u.IdentityId)
+            .Select(u => new ValueTuple<Guid, string>(u.Id, u.IdentityId))
             .ToListAsync();
 }
