@@ -61,13 +61,16 @@ public class SendChatHandler : IRequestHandler<SendChatCommand, (Chat, Chat?)>
         await _chatRepository.AddChat(chat);
         await _conversationRepository.UpdateLastMessageSentAt(conversationId);
 
-        // send the chat to the LLM agent if the recipient is an agent or an offline user
         string? response = default;
+
+        // receiver is an agent
         if (!receiverIsUser)
         {
             response = await _agentService.SendChat(
                 chat.SenderId, chat.RecipientId, chat.ConversationId, chat.Content, false, senderIsUser, false);
         }
+
+        // receiver is an offline user
         else if (!receiverIsOnlineUser)
         {
             response = await _agentService.SendChat(

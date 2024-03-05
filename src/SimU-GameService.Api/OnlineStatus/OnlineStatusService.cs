@@ -1,10 +1,10 @@
 using MediatR;
 using Microsoft.AspNetCore.SignalR;
+using SimU_GameService.Api.DomainEvents;
 using SimU_GameService.Api.Hubs;
 using SimU_GameService.Api.Hubs.Abstractions;
 using SimU_GameService.Application.Services.Users.Commands;
 using SimU_GameService.Application.Services.Users.Queries;
-using SimU_GameService.Application.Services.Worlds.Queries;
 
 namespace SimU_GameService.Api.OnlineStatus;
 
@@ -13,7 +13,7 @@ public class OnlineStatusService : BackgroundService
     private readonly IServiceProvider _serviceProvider;
     private readonly ConnectionService _connectionService;
     private readonly IHubContext<UnityHub, IUnityClient> _hubContext;
-    private readonly TimeSpan _pingInterval = TimeSpan.FromMinutes(5);
+    private readonly TimeSpan _pingInterval = TimeSpan.FromMinutes(1);
 
     public OnlineStatusService(IServiceProvider serviceProvider,
         ConnectionService connectionService, IHubContext<UnityHub, IUnityClient> hubContext)
@@ -27,52 +27,60 @@ public class OnlineStatusService : BackgroundService
     {
         while (!stoppingToken.IsCancellationRequested)
         {
-            var lastPingMap = _connectionService.GetAllLastPingTimes();
-            foreach (var (identityId, lastPing) in lastPingMap)
+            // resolve scoped services
+            using var scope = _serviceProvider.CreateScope();
+            var mediator = scope.ServiceProvider.GetRequiredService<IMediator>();
+
+            // get all users currently online and their last ping times
+            var onlineUserIdentities = await mediator.Send(new GetOnlineUsersQuery(), stoppingToken);
+            var lastPings = onlineUserIdentities
+                .Select(identityId => (identityId, _connectionService.GetLastPingTime(identityId)))
+                .Where(pair => pair.Item2 != null)!;
+            
+            // mark users as offline if they have not responded to the last 2 ping requests
+            var loggedOutUserIdentities = new List<string>();
+            foreach (var (identityId, lastPing) in lastPings)
             {
-                // if the user has not responded to the last 3 ping requests, log them out
-                if (DateTime.UtcNow - lastPing > (3 * _pingInterval))
+                if (DateTime.UtcNow - lastPing > (2 * _pingInterval + TimeSpan.FromSeconds(5)))
                 {
-                    await LogoutUser(identityId);
+                    loggedOutUserIdentities.Add(identityId);
                 }
             }
 
-            // for each logged-in user, send a ping request to the client
-            var connectionIds = _connectionService.GetAllConnectionIds();
+            foreach (var identityId in loggedOutUserIdentities)
+            {
+                await MarkOffline(identityId, mediator, stoppingToken);
+            }
+
+            // ping remaining online users
+            var loggedInUsers = onlineUserIdentities.Except(loggedOutUserIdentities).ToList();
+            var connectionIds = loggedInUsers
+                .Select(_connectionService.GetConnectionId)
+                .Where(connectionId => connectionId != null)!
+                .ToList();
+            
             foreach (var connectionId in connectionIds)
             {
-                await _hubContext.Clients.Client(connectionId).UserOnlineCheckHandler();
+                await _hubContext.Clients.Client(connectionId!).UserOnlineCheckHandler();
             }
+
+            // wait for the next ping interval
             await Task.Delay(_pingInterval, stoppingToken);
         }
     }
 
-    /// <summary>
-    /// Logs out a user from the server and notifies users in the same world that the user has logged out.
-    /// </summary>
-    /// <param name="identityId">The identity ID of the user to log out.</param>
-    /// <returns></returns>
-    public async Task LogoutUser(string identityId)
+    private async Task MarkOffline(string identityId, IMediator mediator, CancellationToken cancellationToken)
     {
-        _connectionService.RemoveConnectionByIdentityId(identityId);
-        _connectionService.RemoveLastPingTime(identityId);
-
-        using var scope = _serviceProvider.CreateScope();
-        var mediator = scope.ServiceProvider.GetRequiredService<IMediator>();
-
-        var userId = await mediator.Send(new GetUserIdFromIdentityIdQuery(identityId));
-        await mediator.Send(new LogoutUserCommand(userId));
-
-        var (worldName, worldUserIdentities) = await mediator.Send(new GetUsersInSameWorldQuery(userId));
-        var groupName = $"world_{worldName}";
-        foreach (var userIdentityId in worldUserIdentities)
+        // log out user
+        var userId = await mediator.Send(new GetUserIdFromIdentityIdQuery(identityId), cancellationToken);
+        await mediator.Send(new LogoutUserCommand(userId), cancellationToken);  
+        
+        // notify users in the same world that the user has logged out
+        var groupName = await DomainEventsUtils.CreateSameWorldUsersGroup(
+            userId, mediator, _connectionService, _hubContext, cancellationToken);
+        if (groupName is not null)
         {
-            var connectionId = _connectionService.GetConnectionId(userIdentityId);
-            if (connectionId is not null)
-            {
-                await _hubContext.Groups.AddToGroupAsync(connectionId, groupName);
-            }
+            await _hubContext.Clients.Group(groupName).OnUserLoggedOutHandler(userId);
         }
-        await _hubContext.Clients.Group(groupName).OnUserLoggedOutHandler(userId);
     }
 }

@@ -141,6 +141,13 @@ public class UserRepository : IUserRepository
         await _dbContext.SaveChangesAsync();
     }
 
+    public async Task Login(Guid userId)
+    {
+        var user = await GetUser(userId) ?? throw new NotFoundException(nameof(User), userId);
+        user.Login();
+        await _dbContext.SaveChangesAsync();
+    }
+
     public async Task Logout(Guid userId)
     {
         var user = await GetUser(userId) ?? throw new NotFoundException(nameof(User), userId);
@@ -153,4 +160,9 @@ public class UserRepository : IUserRepository
         var user = await GetUser(userId);
         return user?.IdentityId ?? default;
     }
+
+    public async Task<IEnumerable<string>> GetOnlineUsers() => await _dbContext.Users
+            .Where(u => u.IsOnline)
+            .Select(u => u.IdentityId)
+            .ToListAsync();
 }
