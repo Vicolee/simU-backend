@@ -79,15 +79,8 @@ public class OnlineStatusService : BackgroundService
         // log out user
         var userId = _connectionService.GetUserIdFromIdentityId(identityId)
             ?? throw new NotFoundException(nameof(User), identityId);
+
         await mediator.Send(new LogoutUserCommand(userId), cancellationToken);
         await _hubContext.Clients.All.OnUserLoggedOutHandler(userId);
-
-        // // notify users in the same world that the user has logged out
-        // var groupName = await DomainEventsUtils.CreateSameWorldUsersGroup(
-        //     userId, mediator, _connectionService, _hubContext, cancellationToken);
-        // if (groupName is not null)
-        // {
-        //     await _hubContext.Clients.Group(groupName).OnUserLoggedOutHandler(userId);
-        // }
     }
 }

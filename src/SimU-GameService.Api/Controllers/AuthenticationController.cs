@@ -36,6 +36,7 @@ public class AuthenticationController : ControllerBase
     public async Task<ActionResult> LogoutUser(Guid id)
     {
         await _mediator.Send(new LogoutUserCommand(id));
+        await _mediator.Publish(new UserLoggedOutEvent(id));
         return NoContent();
     }
 }

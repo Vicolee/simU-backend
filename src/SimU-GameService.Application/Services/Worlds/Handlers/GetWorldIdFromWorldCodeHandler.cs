@@ -14,5 +14,5 @@ public class GetWorldIdFromWorldCodeHandler : IRequestHandler<GetWorldIdFromWorl
 
     public async Task<Guid> Handle(GetWorldIdFromWorldCodeQuery request,
     CancellationToken cancellationToken) => await _worldRepository.GetWorldIdByWorldCode(request.WorldCode)
-        ?? throw new NotFoundException("World", request.WorldCode);
+        ?? throw new NotFoundException(nameof(World), request.WorldCode);
 }

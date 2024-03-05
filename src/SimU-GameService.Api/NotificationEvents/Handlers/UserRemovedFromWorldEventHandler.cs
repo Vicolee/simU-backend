@@ -24,12 +24,5 @@ public class UserRemovedFromWorldEventHandler : INotificationHandler<UserRemoved
     }
 
     public async Task Handle(UserRemovedFromWorldEvent notification, CancellationToken cancellationToken)
-    {
-        var groupName = await DomainEventsUtils.CreateSameWorldUsersGroup(notification.UserId,
-            _mediator, _connectionService, _hubContext, cancellationToken);
-        if (groupName is not null)
-        {
-            await _hubContext.Clients.Group(groupName).OnUserRemovedFromWorldHandler(notification.UserId);
-        }
-    }
+        => await _hubContext.Clients.All.OnUserRemovedFromWorldHandler(notification.UserId);
 }

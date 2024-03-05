@@ -131,8 +131,8 @@ public class WorldRepository : IWorldRepository
 
     public async Task<Guid?> GetWorldIdByWorldCode(string worldCode)
     {
-        var world = await _dbContext.Worlds.FirstOrDefaultAsync(w => w.WorldCode == worldCode)
-            ?? throw new NotFoundException(nameof(World), worldCode);
+        var world = await _dbContext.Worlds.FirstOrDefaultAsync(w => w.WorldCode == worldCode.ToLower())
+            ?? throw new NotFoundException(nameof(World), worldCode.ToLower());
         return world.Id;
     }
 

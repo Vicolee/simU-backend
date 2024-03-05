@@ -10,4 +10,5 @@ public interface ILLMService
                                           IEnumerable<IEnumerable<string>> answers);
     Task<Dictionary<string, string>?> GenerateAgentSprite(string description);
     Task<string> GenerateWorldThumbnail(Guid worldId, Guid creatorId, string description);
+    Task UpdateUserSummary(Guid userId, string summary);
 }

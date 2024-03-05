@@ -315,6 +315,14 @@ public class LLMService : ILLMService
             $"Failed to generate a thumbnail for world with Id: {worldID}.");
     }
 
-    internal record LLMChatResponse(string Response);
+    public async Task UpdateUserSummary(Guid userId, string summary)
+    {
+        var request = new
+        {
+            userId,
+            summary
+        };
 
+        await _httpClient.PostAsJsonAsync("/api/agents/updateUserSummary", request);
+    }
 }
