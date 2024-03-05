@@ -104,9 +104,10 @@ public class UnityHub : Hub<IUnityClient>, IUnityServer
     {
         var identityId = GetIdentityIdFromConnectionMap()
             ?? throw new NotFoundException(nameof(User), Context.ConnectionId);
-        var userId = await GetUserIdFromIdentityId(identityId);
-        
-        await _mediator.Publish(new UserChangedOnlineStatusEvent(userId, true));
         _connectionService.UpdateLastPingTime(identityId);
+
+        var userId = await GetUserIdFromIdentityId(identityId);
+        await _mediator.Publish(new UserChangedOnlineStatusEvent(userId, true));        
+        await Clients.All.OnUserLoggedInHandler(userId);
     }
 }

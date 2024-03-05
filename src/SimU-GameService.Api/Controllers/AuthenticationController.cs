@@ -29,7 +29,6 @@ public class AuthenticationController : ControllerBase
     {
         var (id, authToken) = await _mediator.Send(
             new LoginUserCommand(request.Email, request.Password));
-        await _mediator.Publish(new UserLoggedInEvent(id));
         return Ok(new AuthenticationResponse(id, authToken));
     }
 
