@@ -693,6 +693,7 @@ Gets all the chats sent by the user matching given `id`.
     }
 ]
 ```
+
 ### AskForQuestion
 
 #### Description
@@ -706,11 +707,10 @@ When this route is pinged, the AI Service will be prompted by the back-end for a
 #### Response
 
 ```json
-[
+{
     "question": "how are you doing today?"
-]
+}
 ```
-
 
 ## Question Endpoints
 
